@@ -17,9 +17,15 @@ public class Result {
     }
     private static Result result(int code,String msg,Object data){//相当于构造器
         Result res=new Result();
-        res.setCode(code);
-        res.setMsg(msg);
-        res.setData(data);
+        res.code = code;
+        res.msg = msg;
+        res.data = data;
         return res;
+    }
+    public Result(){}
+    public Result(int code,String msg,Object data) {
+        this.code = code;
+        this.data = data;
+        this.msg = msg;
     }
 }

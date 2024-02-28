@@ -2,6 +2,8 @@ package com.example.cs304.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
+
 import java.io.Serializable;
 
 /**
@@ -13,6 +15,7 @@ import java.io.Serializable;
  * @since 2024-02-27
  */
 //@ApiModel(value = "Course对象", description = "")
+    @Data
 public class Course implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -28,54 +31,5 @@ public class Course implements Serializable {
 
     private String courseName;
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTeachingClass() {
-        return teachingClass;
-    }
-
-    public void setTeachingClass(String teachingClass) {
-        this.teachingClass = teachingClass;
-    }
-
-    public String getTraingType() {
-        return traingType;
-    }
-
-    public void setTraingType(String traingType) {
-        this.traingType = traingType;
-    }
-
-    public String getCourseCode() {
-        return courseCode;
-    }
-
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
-    }
-
-    public String getCourseName() {
-        return courseName;
-    }
-
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
-
-    @Override
-    public String toString() {
-        return "Course{" +
-            "id = " + id +
-            ", teachingClass = " + teachingClass +
-            ", traingType = " + traingType +
-            ", courseCode = " + courseCode +
-            ", courseName = " + courseName +
-        "}";
-    }
 }
