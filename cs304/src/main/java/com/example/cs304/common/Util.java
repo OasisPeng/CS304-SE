@@ -23,14 +23,43 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-@Component
+
 public class Util {
+    private static HashMap<Integer, String> timeConvert = new HashMap<>() {
+        {
+            put(1, "8:00");
+            put(2, "9:50");
+            put(3, "10:20");
+            put(4, "12:10");
+            put(5, "14:00");
+            put(6, "15:50");
+            put(7, "16:20");
+            put(8, "18:10");
+            put(9, "19:00");
+            put(10, "20:50");
+            put(11, "21:00");
+            put(12, "21:50");
+        }
+    };
+
     private static HttpClient httpClient = HttpClients.custom()
             .setRedirectStrategy(new DisableRedirectStrategy())
             .build();
+    public static String[] TimeConvert(String time) {
+        String[] raw = time.split("]");
+        String t = raw[2];
+        Integer st = Integer.valueOf(t.substring(1,2));
+        Integer et = Integer.valueOf(t.substring(3,4));
+        String[] times = new String[2];
+        times[0] = timeConvert.get(st);
+        times[1] = timeConvert.get(et);
+        return times;
+    }
+
     public static ArrayList<CourseForTimetable> getCourses(String coursesJSON) {
         if (Objects.equals(coursesJSON, "")) {
             return null;
@@ -45,11 +74,14 @@ public class Util {
             courseForTimetable.setTeacher(details[1]);
             courseForTimetable.setChineseName(details[2]);
             courseForTimetable.setTeachingBuilding(details[3]);
+            String times[] = TimeConvert(details[3]);
             courseForTimetable.setEnglishName(course.getString("SKSJ_EN").split("\n")[2]);
             String[] XQJZ = course.getString("KEY").split("_");
             courseForTimetable.setXq(Integer.parseInt(XQJZ[0].split("xq")[1]));
             courseForTimetable.setJc(Integer.parseInt(XQJZ[1].split("jc")[1]));
             courseForTimetable.setColor(Integer.parseInt(course.getString("XB")));
+            courseForTimetable.setStartTime(times[0]);
+            courseForTimetable.setEndTime(times[1]);
             courseForTimetables.add(courseForTimetable);
         }
         return courseForTimetables;
