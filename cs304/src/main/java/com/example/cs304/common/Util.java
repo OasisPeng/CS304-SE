@@ -73,12 +73,14 @@ public class Util {
             String[] details = SKSJ.split("\n");
             courseForTimetable.setTeacher(details[1]);
             courseForTimetable.setChineseName(details[2]);
-            courseForTimetable.setTeachingBuilding(details[3]);
-            String times[] = TimeConvert(details[3]);
+            String[] buildingDetail = details[3].split("]");
+            courseForTimetable.setWeeks(buildingDetail[0] + "]");
+            courseForTimetable.setTeachingBuilding(buildingDetail[1] + "]");
+            courseForTimetable.setJc(buildingDetail[2] + "]");
+            String[] times = TimeConvert(details[3]);
             courseForTimetable.setEnglishName(course.getString("SKSJ_EN").split("\n")[2]);
             String[] XQJZ = course.getString("KEY").split("_");
             courseForTimetable.setXq(Integer.parseInt(XQJZ[0].split("xq")[1]));
-            courseForTimetable.setJc(Integer.parseInt(XQJZ[1].split("jc")[1]));
             courseForTimetable.setColor(Integer.parseInt(course.getString("XB")));
             courseForTimetable.setStartTime(times[0]);
             courseForTimetable.setEndTime(times[1]);
