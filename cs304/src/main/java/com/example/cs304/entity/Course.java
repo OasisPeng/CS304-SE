@@ -25,7 +25,7 @@ public class Course implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    private String teachingClass;
+    private String teachingClas;
 
     private String traingType;
 
