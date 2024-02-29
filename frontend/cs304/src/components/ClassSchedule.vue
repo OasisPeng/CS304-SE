@@ -188,8 +188,8 @@ export default {
 
     value: '',
     ready: false,
-    username: '12112323',
-    password: 'yyc.20020418',
+    username: '',
+    password: '',
     courseList: [], // 存储课程列表的数组
      colors :['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'deep-green','red','yellow'],
      events:[]
