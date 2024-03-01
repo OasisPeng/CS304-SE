@@ -1,23 +1,25 @@
 <template>
   <v-row >
     <v-col cols="12">
-      <v-sheet class="fuck">
+      <v-sheet >
         <v-btn icon @click="selectedOpen = false">
           <v-icon>mdi-backspace-outline
           </v-icon>
 
         </v-btn>
-        <v-calendar
+        <v-calendar class="fuck"
+
             ref="calendar"
             v-model="today"
             :events=this.events
-            color="primary"
+            color="#6fa0e9"
+
             type="week"
             @click:event="showEvent"
             :weekdays="weekday"
-            :first-interval="7"
+            :first-interval="8"
             :last-interval="21"
-            :interval-count="14"
+            :interval-count="13"
             :interval-height="55"
         >
           <template v-slot:day-body="{ date, week }">
@@ -74,7 +76,7 @@
                 <v-btn icon color="orange">
                   <v-icon>mdi-clock-time-five-outline</v-icon>
                 </v-btn>
-                <span class="detail-text" v-html="selectedEvent"></span>
+                <span class="detail-text" v-html="selectedEvent.table"></span>
               </v-card-text>
             </div>
             <div class="row" >
@@ -101,6 +103,14 @@
                 <span class="detail-text" v-html="selectedEvent.jc"></span>
               </v-card-text>
             </div>
+            <div class="row" >
+              <v-card-text>
+                <v-btn icon color="purple">
+                  <v-icon>mdi-translate</v-icon>
+                </v-btn>
+                <span class="detail-text" v-html="selectedEvent.language"></span>
+              </v-card-text>
+            </div>
           </v-card>
         </v-menu>
 
@@ -111,14 +121,6 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-// const weekdays = ref([
-//   { title: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
-// ])
-
-
-
-
-
 
 const selectedEvent = ref({})
 const selectedElement = ref(null)
@@ -146,7 +148,6 @@ function showEvent ({ nativeEvent, event }) {
 const today = ref(new Date())
 const calendar = ref()
 
-// const value = ref('')
 const ready = ref(false)
 
 const cal = computed(() => {
@@ -191,7 +192,7 @@ export default {
     username: '',
     password: '',
     courseList: [], // 存储课程列表的数组
-     colors :['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'deep-green','red','yellow'],
+     colors :['blue lighten-3', 'teal accent-2', 'purple accent-2', 'cyan', 'green', 'orange', "red accent-2",'red lighten-3','yellow','pink dark-1','pink lighten-4','blue lighten-2','light-blue lighten-2'],
      events:[]
   }),
 
@@ -232,9 +233,11 @@ export default {
                   color: evo.color || "",
                   startTime: evo. startTime || "",
                   endTime: evo.endTime || "",
+                  classes:evo.classes || "",
+                  language:evo.language || "",
                 };
               }); // 将响应数据赋值给courseList数组
-          this.events= this.courseList.map(event => this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName,event.color,event.teachingBuilding,event.teacher,event.weeks,event.jc));
+          this.events= this.courseList.map(event => this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName,event.color,event.teachingBuilding,event.teacher,event.weeks,event.jc,event.classes,event.language));
           console.log("kebiao",this.courseList)
         } catch (error) {
           console.error('Error querying current course:', error);
@@ -264,7 +267,7 @@ export default {
       },
 
 // 将时间和日期合并为完整的事件对象
-      createEventObject(start, end, dayOfWeek,name,color,building,teacher,week,jc) {
+      createEventObject(start, end, dayOfWeek,name,color,building,teacher,week,jc,classes,language) {
         const date = this.getDateFromDayOfWeek(dayOfWeek);
         const startTime = this.getTimeFromString(start);
         const endTime = this.getTimeFromString(end);
@@ -277,11 +280,12 @@ export default {
           start: this.formatDateTime(startDateTime),
           end: this.formatDateTime(endDateTime),
           color:this.colors[color],
-          building:building,
+          building:building+"-"+classes,
           teacher:teacher,
           week:week,
           jc:jc,
-          table:start+"-"+end
+          table:start+"-"+end,
+          language:language
         };
       },
       getCurrentTime () {
@@ -305,14 +309,25 @@ export default {
 .row + .row {
   margin-top: -30px;
 }
+
+
+.v-event-timed-container{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-right: 0;
+  pointer-events: none
+}
+
 .my-event {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   border-radius: 2px;
-  background-color: #1867c0;
-  color: #ffffff;
-  border: 1px solid #1867c0;
+
+
   font-size: 12px;
   padding: 3px;
   cursor: pointer;
@@ -374,5 +389,12 @@ export default {
   font-size: 0.8rem;
   margin-top: 4px;
 }
-
+.v-btn--fab.v-size--default {
+  height: 40px;
+  width: 40px;
+}
+.v-application .primary {
+  background-color: #6fa0e9 !important;
+  border-color: #d3f7b6 !important;
+}
 </style>
