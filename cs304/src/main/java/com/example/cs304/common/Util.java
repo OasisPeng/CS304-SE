@@ -46,9 +46,7 @@ public class Util {
         }
     };
 
-    private static HttpClient httpClient = HttpClients.custom()
-            .setRedirectStrategy(new DisableRedirectStrategy())
-            .build();
+
     public static String[] TimeConvert(String time) {
         String[] raw = time.split("]");
         String t = raw[2];
@@ -64,6 +62,7 @@ public class Util {
         if (Objects.equals(coursesJSON, "")) {
             return null;
         }
+
         JSONArray courses = JSON.parseArray(coursesJSON);
         ArrayList<CourseForTimetable> courseForTimetables = new ArrayList<>();
         for (int i = 0; i < courses.size(); i++) {
@@ -92,6 +91,9 @@ public class Util {
         if (Objects.equals(route, "") || (Objects.equals(js, ""))) {
             return "";
         }
+        HttpClient httpClient = HttpClients.custom()
+                .setRedirectStrategy(new DisableRedirectStrategy())
+                .build();
         Header[] headers = new Header[3];
         Header header = new BasicHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.0.0 Safari/537.36");
         Header header1 = new BasicHeader("x-requested-with", "XMLHttpRequest");
@@ -106,12 +108,16 @@ public class Util {
         params.add(new BasicNameValuePair("xn", XNXQ[0]));
         params.add(new BasicNameValuePair("xq", XNXQ[1]));
         HttpPost postLoginRequest = new HttpPost(selectString);
+        postLoginRequest.setHeaders(headers);
         postLoginRequest.setEntity(new UrlEncodedFormEntity(params));
         HttpResponse response = httpClient.execute(postLoginRequest);
         return getResponseString(response);
     }
     public static String[] casLogin(String username, String password) throws IOException, URISyntaxException {
         System.out.println("[\u001B[0;36m!\u001B[0m] " + "测试CAS链接...");
+        HttpClient httpClient = HttpClients.custom()
+                .setRedirectStrategy(new DisableRedirectStrategy())
+                .build();
         Header[] headers = new Header[2];
         Header header = new BasicHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.0.0 Safari/537.36");
         Header header1 = new BasicHeader("x-requested-with", "XMLHttpRequest");
@@ -185,6 +191,9 @@ public class Util {
         return responseBody.toString();
     }
     private static String[] checkXNXQ(String route, String js) throws IOException {
+        HttpClient httpClient = HttpClients.custom()
+                .setRedirectStrategy(new DisableRedirectStrategy())
+                .build();
         Header[] headers = new Header[3];
         Header header = new BasicHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.0.0 Safari/537.36");
         Header header1 = new BasicHeader("x-requested-with", "XMLHttpRequest");
