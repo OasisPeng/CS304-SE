@@ -16,4 +16,6 @@ public class CourseForTimetable {
     Integer color; //颜色编号（同一个课的lab和大课一样）
     String startTime; //开始时间
     String endTime; //下课时间
+    String classes; //班级
+    String language; //语言
 }

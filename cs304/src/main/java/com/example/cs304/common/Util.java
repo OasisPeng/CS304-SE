@@ -76,7 +76,10 @@ public class Util {
             String SKSJ = course.getString("SKSJ");
             String[] details = SKSJ.split("\n");
             courseForTimetable.setTeacher(details[1]);
-            courseForTimetable.setChineseName(details[2]);
+            String[] keBanYu = details[2].split("-");
+            courseForTimetable.setChineseName(keBanYu[0] + "]");
+            courseForTimetable.setClasses("[" + keBanYu[1] + "]");
+            courseForTimetable.setLanguage("[" + keBanYu[2]);
             String[] buildingDetail = details[3].split("]");
             courseForTimetable.setWeeks(buildingDetail[0] + "]");
             courseForTimetable.setTeachingBuilding(buildingDetail[1] + "]");
