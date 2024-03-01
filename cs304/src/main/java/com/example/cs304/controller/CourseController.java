@@ -1,5 +1,9 @@
 package com.example.cs304.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.cs304.common.Code;
 import com.example.cs304.common.Result;
 import com.example.cs304.common.Util;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * <p>
@@ -31,12 +36,38 @@ import java.util.ArrayList;
 public class CourseController {
     @Autowired
     private ICourseService courseService;
-    //新增
-    @PostMapping("/save")
-    @Operation(summary = "save", description = "add a course")
-    public Result save(@RequestBody Course course){
-        return courseService.save(course)?Result.suc(course):Result.fail();
+
+    //分页查询
+    @PostMapping("/listPage")
+    public Result listPage(@RequestBody HashMap param) {
+        String courseCategory = (String) param.get("courseCategory");
+        String traingType = (String) param.get("traingType");
+        String department = (String) param.get("department");
+        String teacher = (String) param.get("teacher");
+
+        int pageSize = (int) param.get("pageSize");
+        int pageNum = (int) param.get("pageNum");
+
+        Page<Course> page = new Page<>();
+        page.setCurrent(pageSize);
+        page.setSize(pageNum);
+
+        LambdaQueryWrapper<Course> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.isNotBlank(courseCategory) && !courseCategory.equals("null"))
+            lambdaQueryWrapper.like(Course::getCourseCategory, courseCategory);//设置查询条件
+        if (StringUtils.isNotBlank(traingType) && !traingType.equals("null"))
+            lambdaQueryWrapper.eq(Course::getTraingType, traingType);//设置查询条件
+        if (StringUtils.isNotBlank(department) && !department.equals("null"))
+            lambdaQueryWrapper.eq(Course::getDepartment, department);//设置查询条件
+        if (StringUtils.isNotBlank(teacher) && !teacher.equals("null"))
+            lambdaQueryWrapper.eq(Course::getTeacher, teacher);//设置查询条件
+
+
+        IPage result = courseService.page(page,lambdaQueryWrapper);
+
+        return Result.suc(result.getRecords());
     }
+
 
     @PostMapping ("/queryCurrentCourse")
     public Result queryKCB(@RequestBody Student student) throws IOException, URISyntaxException {
