@@ -10,8 +10,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.message.BasicHeader;
@@ -67,7 +69,6 @@ public class Util {
         if (Objects.equals(coursesJSON, "")) {
             return null;
         }
-
         JSONArray courses = JSON.parseArray(coursesJSON);
         ArrayList<CourseForTimetable> courseForTimetables = new ArrayList<>();
         for (int i = 0; i < courses.size(); i++) {
@@ -99,7 +100,7 @@ public class Util {
         if (Objects.equals(route, "") || (Objects.equals(js, ""))) {
             return "";
         }
-        HttpClient httpClient = HttpClients.custom()
+        CloseableHttpClient httpClient = HttpClients.custom()
                 .setRedirectStrategy(new DisableRedirectStrategy())
                 .build();
         Header[] headers = new Header[3];
@@ -118,12 +119,14 @@ public class Util {
         HttpPost postLoginRequest = new HttpPost(selectString);
         postLoginRequest.setHeaders(headers);
         postLoginRequest.setEntity(new UrlEncodedFormEntity(params));
-        HttpResponse response = httpClient.execute(postLoginRequest);
-        return getResponseString(response);
+        CloseableHttpResponse response = httpClient.execute(postLoginRequest);
+        String res = getResponseString(response);
+        release(response, httpClient);
+        return res;
     }
     public static String[] casLogin(String username, String password) throws IOException, URISyntaxException {
         System.out.println("[\u001B[0;36m!\u001B[0m] " + "测试CAS链接...");
-        HttpClient httpClient = HttpClients.custom()
+        CloseableHttpClient httpClient = HttpClients.custom()
                 .setRedirectStrategy(new DisableRedirectStrategy())
                 .build();
         Header[] headers = new Header[2];
@@ -137,7 +140,7 @@ public class Util {
             // 发送GET请求获取CAS登录页面
             HttpGet getLoginRequest = new HttpGet(loginUrl);
             getLoginRequest.setHeaders(headers);
-            HttpResponse loginResponse = httpClient.execute(getLoginRequest);
+            CloseableHttpResponse loginResponse = httpClient.execute(getLoginRequest);
             // 检查响应状态码
             if (loginResponse.getStatusLine().getStatusCode() == 200) {
                 System.out.println("[\u001B[0;32m+\u001B[0m] " + "成功连接到CAS...");
@@ -159,7 +162,7 @@ public class Util {
             postLoginRequest.setHeaders(headers);
 
             postLoginRequest.setEntity(new UrlEncodedFormEntity(params));
-            HttpResponse postLoginResponse = httpClient.execute(postLoginRequest);
+            CloseableHttpResponse postLoginResponse = httpClient.execute(postLoginRequest);
             Header[] headers2 = postLoginResponse.getAllHeaders();
             // 检查是否登录成功
             if (postLoginResponse.containsHeader("Location")) {
@@ -172,10 +175,11 @@ public class Util {
             // 获取重定向后的页面，从中提取cookie信息
             String redirectedUrl = postLoginResponse.getFirstHeader("Location").getValue();
             HttpGet getRedirectedRequest = new HttpGet(redirectedUrl);
-            HttpResponse redirectedResponse = httpClient.execute(getRedirectedRequest);
+            CloseableHttpResponse redirectedResponse = httpClient.execute(getRedirectedRequest);
             String route = extractCookieValue(redirectedResponse, "route");
             String jsessionId = extractCookieValue(redirectedResponse, "JSESSIONID");
-
+            release(redirectedResponse, httpClient);
+            loginResponse.close();
             return new String[]{route, jsessionId};
 
         } catch (IOException e) {
@@ -183,12 +187,11 @@ public class Util {
         }
     }
 
-    private static String parseExecution(HttpResponse response) throws IOException {
+    private static String parseExecution(CloseableHttpResponse response) throws IOException {
         String responseBody = getResponseString(response);
-
         return responseBody.split("name=\"execution\" value=\"")[1].split("\"")[0];
     }
-    private static String getResponseString(HttpResponse response) throws IOException {
+    private static String getResponseString(CloseableHttpResponse response) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
         String line;
         StringBuilder responseBody = new StringBuilder();
@@ -199,7 +202,7 @@ public class Util {
         return responseBody.toString();
     }
     private static String[] checkXNXQ(String route, String js) throws IOException {
-        HttpClient httpClient = HttpClients.custom()
+        CloseableHttpClient httpClient = HttpClients.custom()
                 .setRedirectStrategy(new DisableRedirectStrategy())
                 .build();
         Header[] headers = new Header[3];
@@ -212,15 +215,16 @@ public class Util {
         String checkURL = "https://tis.sustech.edu.cn/component/querydangqianxnxq";
         HttpPost postLoginRequest = new HttpPost(checkURL);
         postLoginRequest.setHeaders(headers);
-        HttpResponse httpResponse = httpClient.execute(postLoginRequest);
+        CloseableHttpResponse httpResponse = httpClient.execute(postLoginRequest);
         String re = getResponseString(httpResponse);
         JSONObject jsonObject = JSON.parseObject(re);
         String[] result = new String[2];
         result[0] = (String) jsonObject.get("XN");
         result[1] = (String) jsonObject.get("XQ");
+        release(httpResponse, httpClient);
         return result;
     }
-    private static String extractCookieValue(HttpResponse response, String cookieName) throws IOException {
+    private static String extractCookieValue(CloseableHttpResponse response, String cookieName) throws IOException {
         System.out.println(getResponseString(response));
         Header[] cookieHeader = response.getHeaders("Set-Cookie");
         int index = 0;
@@ -236,6 +240,15 @@ public class Util {
         protected boolean isRedirectable(String method) {
             // 禁止所有的重定向
             return false;
+        }
+    }
+    public static void release(CloseableHttpResponse httpResponse, CloseableHttpClient httpClient) throws IOException {
+        // 释放资源
+        if (httpResponse != null) {
+            httpResponse.close();
+        }
+        if (httpClient != null) {
+            httpClient.close();
         }
     }
 }
