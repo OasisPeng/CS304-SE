@@ -51,7 +51,12 @@ public class Util {
         String[] raw = time.split("]");
         String t = raw[2];
         Integer st = Integer.valueOf(t.substring(1,2));
-        Integer et = Integer.valueOf(t.substring(3,4));
+        Integer et;
+        if (t.charAt(4) == '节') {
+            et = Integer.valueOf(t.substring(3,4));
+        } else {
+            et = Integer.valueOf(t.substring(3,5));
+        }
         String[] times = new String[2];
         times[0] = timeConvert.get(st);
         times[1] = timeConvert.get(et);
