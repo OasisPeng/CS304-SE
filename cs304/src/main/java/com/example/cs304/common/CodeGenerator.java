@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class CodeGenerator {
     public static void main(String[] args) {
-        FastAutoGenerator.create("jdbc:mysql://localhost:3306/cs304?useUnicode=true&characterEncoding=utf-8&useSSL=false&severTimezone=GM%2B8", "root", "")
+        FastAutoGenerator.create("jdbc:mysql://120.77.79.53:3306/cs304?useUnicode=true&characterEncoding=utf-8&useSSL=false&severTimezone=GM%2B8", "root", "123456")
                 .globalConfig(builder -> {
                     builder.author("cs304")// 设置作者
 //                            .enableSwagger()// 开启 swagger 模式
