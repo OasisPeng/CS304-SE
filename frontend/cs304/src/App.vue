@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <ClassSchedule/>
+      <HomePage/>
     </v-main>
   </v-app>
 </template>
@@ -9,14 +9,16 @@
 <script>
 
 
-import ClassSchedule from './components/ClassSchedule.vue';
+// import ClassSchedule from './components/ClassSchedule.vue';
+import HomePage from './views/HomePage.vue';
 
 export default {
   name: 'App',
 
   components: {
-    ClassSchedule,
-  },
+    // ClassSchedule,
+    HomePage
+},
 
   data: () => ({
     //
