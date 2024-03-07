@@ -24,10 +24,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 public class Util {
@@ -49,9 +46,9 @@ public class Util {
     };
 
 
-    public static String[] TimeConvert(String time) {
+    public static String[] TimeConvert(String time, int index) {
         String[] raw = time.split("]");
-        String t = raw[2];
+        String t = raw[index];
         Integer st = Integer.valueOf(t.substring(1,2));
         Integer et;
         if (t.charAt(4) == '节') {
@@ -69,23 +66,47 @@ public class Util {
         if (Objects.equals(coursesJSON, "")) {
             return null;
         }
+        System.out.println(coursesJSON);
+        HashSet<String> name = new HashSet<>();
         JSONArray courses = JSON.parseArray(coursesJSON);
         ArrayList<CourseForTimetable> courseForTimetables = new ArrayList<>();
         for (int i = 0; i < courses.size(); i++) {
             CourseForTimetable courseForTimetable = new CourseForTimetable();
             JSONObject course = courses.getJSONObject(i);
+            String rwh = course.getString("RWH");
+            if (name.contains(rwh)) {
+                continue;
+            } else {
+                name.add(rwh);
+            }
             String SKSJ = course.getString("SKSJ");
             String[] details = SKSJ.split("\n");
             courseForTimetable.setTeacher(details[1]);
             String[] keBanYu = details[2].split("-");
             courseForTimetable.setChineseName(keBanYu[0] + "]");
+            if (details[0].contains("体育VI")) {
+                courseForTimetable.setClasses("[" + keBanYu[2]);
+                courseForTimetable.setLanguage("[" + keBanYu[1] + "]");
+            } else {
             courseForTimetable.setClasses("[" + keBanYu[1] + "]");
             courseForTimetable.setLanguage("[" + keBanYu[2]);
-            String[] buildingDetail = details[3].split("]");
-            courseForTimetable.setWeeks(buildingDetail[0] + "]");
-            courseForTimetable.setTeachingBuilding(buildingDetail[1] + "]");
-            courseForTimetable.setJc(buildingDetail[2] + "]");
-            String[] times = TimeConvert(details[3]);
+            }
+            String[] times;
+            if (details.length > 4) {
+                courseForTimetable.setWeeks(details[3]);
+                String[] buildingDetail = details[4].split("]");
+                courseForTimetable.setTeachingBuilding(buildingDetail[0] + "]");
+                courseForTimetable.setJc(buildingDetail[1] + "]");
+                times = TimeConvert(details[4], 1);
+            }
+            else {
+                String[] buildingDetail = details[3].split("]");
+                courseForTimetable.setWeeks(buildingDetail[0] + "]");
+                courseForTimetable.setTeachingBuilding(buildingDetail[1] + "]");
+                courseForTimetable.setJc(buildingDetail[2] + "]");
+                times = TimeConvert(details[3], 2);
+            }
+
             courseForTimetable.setEnglishName(course.getString("SKSJ_EN").split("\n")[2]);
             String[] XQJZ = course.getString("KEY").split("_");
             courseForTimetable.setXq(Integer.parseInt(XQJZ[0].split("xq")[1]));
