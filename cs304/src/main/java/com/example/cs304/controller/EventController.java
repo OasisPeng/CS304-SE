@@ -3,6 +3,7 @@ package com.example.cs304.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.example.cs304.common.Result;
+import com.example.cs304.common.Util;
 import com.example.cs304.entity.Course;
 import com.example.cs304.entity.Event;
 import com.example.cs304.mapper.EventMapper;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.Date;
 import java.util.Locale;
@@ -35,9 +37,6 @@ public class EventController {
     @Autowired
     private IEventService eventService;
 
-    @Autowired
-    private EventMapper eventMapper;
-
     /**
      * 新增
      * @param event
@@ -55,7 +54,7 @@ public class EventController {
         int[] date = calculateWeek(LocalDate.now());
         event.setWeek(date[0]);
         event.setXq(date[1]);
-        return eventService.save(event)?Result.suc(event):Result.fail();
+        return (eventService.save(event) != null) ? Result.suc(event):Result.fail();
     }
 
     /**
@@ -67,7 +66,7 @@ public class EventController {
     @Operation(description = "修改一个待办")
     @Parameter(name = "event")
     public Result update(@RequestBody Event event){
-        return eventService.updateById(event)?Result.suc(event):Result.fail();
+        return (eventService.updateById(event) != null) ? Result.suc(event):Result.fail();
     }
 
     /**
@@ -79,7 +78,7 @@ public class EventController {
     @Operation(description = "删除一个待办")
     @Parameter(name = "event")
     public Result del(@RequestBody Event event){
-        return eventService.removeById(event)?Result.suc(event):Result.fail();
+       return  (eventService.removeById(event) != null) ? Result.suc(event):Result.fail();
     }
 
     /**
@@ -93,7 +92,7 @@ public class EventController {
         if (StringUtils.isBlank(owner) || owner.equals("null")) {
             return Result.fail();
         }
-        return Result.suc(eventService.queryByDateAndOwner(date, owner)); // date形如YYYY-MM-DD
+        return Result.suc(eventService.queryByDateAndOwner(getCalculateDate(date), owner)); // date形如YYYY-MM-DD
     }
 
     public static int[] calculateWeek(LocalDate date) {
@@ -101,5 +100,12 @@ public class EventController {
         int weekOfYear = date.get(weekFields.weekOfWeekBasedYear()); //2024年1月1日是第一周周一
         int dayOfWeek = date.getDayOfWeek().getValue();
         return new int[]{weekOfYear, dayOfWeek};
+    }
+    private static int[] getCalculateDate(String date) {
+        if (StringUtils.isBlank(date) || date.equals("null")) { //查询当前日期
+            date = LocalDate.now().toString();
+        }
+        LocalDate time = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return calculateWeek(time);
     }
 }

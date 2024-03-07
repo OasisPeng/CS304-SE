@@ -24,21 +24,36 @@ import static com.example.cs304.controller.EventController.calculateWeek;
  * @since 2024-03-06
  */
 @Service
-public class EventServiceImpl extends ServiceImpl<EventMapper, Event> implements IEventService {
+public class EventServiceImpl implements IEventService {
     @Autowired
     EventMapper eventMapper;
     @Override
-    public List<Event> queryByDateAndOwner(String date, String owner) {
+    public List<Event> queryByDateAndOwner(int[] calculateDate, String owner) {
         LambdaQueryWrapper<Event> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Event::getOwner,owner);
-        if (StringUtils.isBlank(date) || date.equals("null")) { //查询当前日期
-            date = LocalDate.now().toString();
-        }
-        LocalDate time = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        int[] calculateDate = calculateWeek(time);
         lambdaQueryWrapper.eq(Event::getWeek, calculateDate[0]);
         lambdaQueryWrapper.eq(Event::getXq, calculateDate[1]);
         List<Event> res = eventMapper.selectList(lambdaQueryWrapper);
         return res;
     }
+
+    @Override
+    public Event save(Event event) {
+        int cnt = eventMapper.insert(event);
+        return (cnt == 1) ? event : null;
+    }
+
+    @Override
+    public Event updateById(Event event) {
+        int cnt = eventMapper.updateById(event);
+        return (cnt == 1) ? event : null;
+    }
+
+    @Override
+    public Event removeById(Event event) {
+        int cnt = eventMapper.deleteById(event);
+        return (cnt == 1) ? event : null;
+    }
+
+
 }
