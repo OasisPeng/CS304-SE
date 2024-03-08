@@ -99,32 +99,30 @@
                                 height="200px"
                                 :src="detailBackground"
                                 cover
-                            ></v-img>
+                            >
+
+
+                            </v-img>
 
                             <v-card-title>
                               {{ selectedTaskDetails.title }}
+                              <div class="emotion-indicator">
+                                {{ selectedTaskDetails.emotion }}
+                              </div>
                             </v-card-title>
-
                             <v-card-subtitle>
-                              {{ selectedTaskDetails.emotion }}
+                              {{ selectedTaskDetails.category }}
                             </v-card-subtitle>
 
                             <v-card-actions>
-
-
                               <v-spacer></v-spacer>
-
-
                             </v-card-actions>
-
                             <v-expand-transition>
                               <div >
                                 <v-divider></v-divider>
-
                                 <v-card-text>
                                   {{ selectedTaskDetails.text }}
                                 </v-card-text>
-
                               </div>
                             </v-expand-transition>
                           </v-card>
@@ -175,8 +173,8 @@ export default {
         xq:"1",
         level:"important",
         finish:"no",
-        category:"",
-        emotion:"",
+        category:"life",
+        emotion:"😀",
         text:"I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape."
       },
       {
@@ -335,5 +333,7 @@ export default {
 .btn-margin2 {
   margin-left: 2px; /* 调整第二个按钮的间距 */
 }
-
+.emotion-indicator {
+  margin-left: auto; /* 将情感指示器放置到右侧 */
+}
 </style>
