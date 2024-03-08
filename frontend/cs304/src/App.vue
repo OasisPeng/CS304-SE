@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <HomePage/>
+      <DoList/>
     </v-main>
   </v-app>
 </template>
@@ -10,14 +10,16 @@
 
 
 // import ClassSchedule from './components/ClassSchedule.vue';
-import HomePage from './views/HomePage.vue';
-
+//import HomePage from './views/HomePage.vue';
+// import ClassSchedule from "@/components/scheduletable/ClassSchedule.vue";
+import DoList from "@/components/toDoList/DoList.vue"
 export default {
   name: 'App',
 
   components: {
-    // ClassSchedule,
-    HomePage
+    //ClassSchedule,
+    // HomePage
+    DoList
 },
 
   data: () => ({

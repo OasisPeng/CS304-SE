@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import HomePage from '@/views/HomePage.vue';
-import ClassSchedulePage from './components/ClassSchedule.vue';
+import ClassSchedulePage from './components/scheduletable/ClassSchedule.vue';
 
 Vue.use(Router);
 
