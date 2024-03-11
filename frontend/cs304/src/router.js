@@ -17,6 +17,16 @@ export default new Router({
       path: '/ClassSchedule',
       name: 'ClassSchedulePage',
       component: ClassSchedulePage
+    },
+    {
+      path: '/Course',
+      name: 'Course',
+      component:()=>import('./components/CourseList.vue')
+    },
+    {
+      path: '/Page',
+      name: 'Page',
+      component:()=>import('./components/CoursePage.vue')
     }
   ]
 });
