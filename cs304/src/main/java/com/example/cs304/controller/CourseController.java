@@ -71,7 +71,7 @@ public class CourseController {
         return Result.suc(result.getRecords());
     }
 
-
+    //查找课程表
     @PostMapping ("/queryCurrentCourse")
     public Result queryKCB(@RequestBody Student student) throws IOException, URISyntaxException {
        String[] cookies =  Util.casLogin(student.getUsername(), student.getPassword());
