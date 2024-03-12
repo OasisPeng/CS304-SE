@@ -28,6 +28,7 @@ public class CacheConfig {
     }
 
     public CaffeineCache buildCache(String name) {
+//        System.out.println("缓存启动");
         return new CaffeineCache(name, Caffeine.newBuilder()
                 .maximumSize(100)
                 .initialCapacity(100)

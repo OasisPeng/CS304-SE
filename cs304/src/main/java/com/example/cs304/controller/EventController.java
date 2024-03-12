@@ -51,7 +51,7 @@ public class EventController {
         }
         //Todo:设置owner
         //2024-01-01是第一周周一
-        int[] date = calculateWeek(LocalDate.now());
+        int[] date = Util.calculateWeek(LocalDate.now());
         event.setWeek(date[0]);
         event.setXq(date[1]);
         return (eventService.save(event) != null) ? Result.suc(event):Result.fail();
@@ -92,20 +92,6 @@ public class EventController {
         if (StringUtils.isBlank(owner) || owner.equals("null")) {
             return Result.fail();
         }
-        return Result.suc(eventService.queryByDateAndOwner(getCalculateDate(date), owner)); // date形如YYYY-MM-DD
-    }
-
-    public static int[] calculateWeek(LocalDate date) {
-        WeekFields weekFields = WeekFields.of(Locale.getDefault());
-        int weekOfYear = date.get(weekFields.weekOfWeekBasedYear()); //2024年1月1日是第一周周一
-        int dayOfWeek = date.getDayOfWeek().getValue();
-        return new int[]{weekOfYear, dayOfWeek};
-    }
-    private static int[] getCalculateDate(String date) {
-        if (StringUtils.isBlank(date) || date.equals("null")) { //查询当前日期
-            date = LocalDate.now().toString();
-        }
-        LocalDate time = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        return calculateWeek(time);
+        return Result.suc(eventService.queryByDateAndOwner(Util.getCalculateDate(date), owner)); // date形如YYYY-MM-DD
     }
 }

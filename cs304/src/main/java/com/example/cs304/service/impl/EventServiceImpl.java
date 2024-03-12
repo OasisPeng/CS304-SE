@@ -1,19 +1,12 @@
 package com.example.cs304.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.example.cs304.entity.Event;
 import com.example.cs304.mapper.EventMapper;
 import com.example.cs304.service.IEventService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import static com.example.cs304.controller.EventController.calculateWeek;
 
 /**
  * <p>
