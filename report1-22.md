@@ -92,8 +92,8 @@
 
 # Part Ⅱ. Task Decomposition & Planning
 
-![1710152562849](C:\Users\86181\AppData\Roaming\Typora\typora-user-images\1710152562849.png)
-![1710152412803](C:\Users\86181\AppData\Roaming\Typora\typora-user-images\1710152412803.png)
+![Board](snapshots\Board.png)
+![Roadmap](snapshots\Roadmap.png)
 
 # Part Ⅲ. AI Usage
 
