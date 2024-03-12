@@ -92,8 +92,8 @@
 
 # Part Ⅱ. Task Decomposition & Planning
 
-![Board](snapshots\Board.png)
-![Roadmap](snapshots\Roadmap.png)
+![Board](snapshots/Board.png)
+![Roadmap](snapshots/Roadmap.png)
 
 # Part Ⅲ. AI Usage
 
