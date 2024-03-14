@@ -40,34 +40,7 @@ public class CourseController {
     //分页查询
     @PostMapping("/listPage")
     public Result listPage(@RequestBody HashMap param) {
-        String courseCategory = (String) param.get("courseCategory");
-        String trainingType = (String) param.get("trainingType");
-        String courseCode = (String) param.get("courseCode");
-        String department = (String) param.get("department");
-        String teacher = (String) param.get("teacher");
-
-        int pageSize = (int) param.get("pageSize");
-        int pageNum = (int) param.get("pageNum");
-
-        Page<Course> page = new Page<>();
-        page.setCurrent(pageNum);
-        page.setSize(pageSize);
-
-        LambdaQueryWrapper<Course> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.isNotBlank(courseCategory) && !courseCategory.equals("null"))
-            lambdaQueryWrapper.like(Course::getCourseCategory, courseCategory);//设置查询条件
-        if (StringUtils.isNotBlank(trainingType) && !trainingType.equals("null"))
-            lambdaQueryWrapper.eq(Course::getTrainingType, trainingType);//设置查询条件
-        if (StringUtils.isNotBlank(courseCode) && !courseCode.equals("null"))
-            lambdaQueryWrapper.eq(Course::getCourseCode, courseCode);//设置查询条件
-        if (StringUtils.isNotBlank(department) && !department.equals("null"))
-            lambdaQueryWrapper.eq(Course::getDepartment, department);//设置查询条件
-        if (StringUtils.isNotBlank(teacher) && !teacher.equals("null"))
-            lambdaQueryWrapper.eq(Course::getTeacher, teacher);//设置查询条件
-
-
-        IPage result = courseService.page(page,lambdaQueryWrapper);
-
+        IPage result = courseService.listPage(param);
         return Result.suc(result.getRecords());
     }
 

@@ -27,9 +27,8 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
 import java.util.*;
-
-import static com.example.cs304.controller.EventController.calculateWeek;
 
 
 public class Util {
@@ -276,6 +275,19 @@ public class Util {
         if (httpClient != null) {
             httpClient.close();
         }
+    }
+    public static int[] calculateWeek(LocalDate date) {
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+        int weekOfYear = date.get(weekFields.weekOfWeekBasedYear()); //2024年1月1日是第一周周一
+        int dayOfWeek = date.getDayOfWeek().getValue();
+        return new int[]{weekOfYear, dayOfWeek};
+    }
+    public static int[] getCalculateDate(String date) {
+        if (StringUtils.isBlank(date) || date.equals("null")) { //查询当前日期
+            date = LocalDate.now().toString();
+        }
+        LocalDate time = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return calculateWeek(time);
     }
 
 }
