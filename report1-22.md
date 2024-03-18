@@ -10,6 +10,7 @@
 
 - Mobile-friendly class schedule access
 - Inquire all the curriculum information
+- Schedule Planning
 - Course discussion platform
 - AI-driven course selection assistance
 - Second-hand textbooks and items trading platform 
@@ -30,19 +31,19 @@
 2. **University-wide Course Information:**
   - The system should allow users to search and retrieve detailed information about all university courses.
   - Course information should include descriptions, schedules, and instructor details.
-3. **Course Discussion Platform:**
+3. **Schedule Planning:**
+  - Users should be able to plan and organize their weekly routines using the scheduling feature.
+  - The scheduling feature supports easy editing, adding, and deleting of events.
+4. **Course Discussion Platform:**
   - Users should be able to post comments, share experiences, and engage in discussions related to specific courses.
   - The platform should support user interactions, including replies and likes.
-4. **AI Assistance:**
-  - The AI system will analyze user course schedules, offering personalized recommendations for elective courses.
-  - Users can interact with the AI for advice on course selection and general learning support.
+
+5. **AI Assistance:**
+   - The AI system will analyze user course schedules, offering personalized recommendations for elective courses.
+   - Users can interact with the AI for advice on course selection and general learning support.
 5. **Second-hand Textbooks and Items Trading Platform:**
   - Students can post and browse information about second-hand textbooks and items on the platform.
   - The trading platform supports buying, selling, or exchanging textbooks and items among students.
-6. **Schedule Planning:**
-  - Users should be able to plan and organize their weekly routines using the scheduling feature.
-  - The scheduling feature supports easy editing, adding, and deleting of events.
-
 **Non-functional Requirements:**
 
 1. **Usability:**
@@ -81,7 +82,7 @@
 
  - **Data Retrieval:** User submissions on the platform.
 
-**Technical requirements **
+**Technical requirements:**
 
 1. **Operating Environment:**
   - The system should be accessible through various mobile devices and mainstream web browsers.
