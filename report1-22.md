@@ -89,7 +89,7 @@
   - The system should be accessible through various mobile devices and mainstream web browsers.
   - Compatibility with major operating systems (iOS, Android) is essential.
 2. **Tech Stack:**
-  - Front-end: HTML, CSS , JavaScript, vuetify, Echarts
+  - Front-end: vue, vuetify, Echarts
   - Back-end: SpringBoot, Mybatis-plus, SpringCache, MySQL, Caffeine, SpringSecurity + JWT
 
 # Part Ⅱ. Task Decomposition & Planning
