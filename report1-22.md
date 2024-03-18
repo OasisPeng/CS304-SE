@@ -44,6 +44,7 @@
 5. **Second-hand Textbooks and Items Trading Platform:**
   - Students can post and browse information about second-hand textbooks and items on the platform.
   - The trading platform supports buying, selling, or exchanging textbooks and items among students.
+
 **Non-functional Requirements:**
 
 1. **Usability:**
@@ -100,5 +101,10 @@
 
 1. No. As we have completed the proposal of this project by ourselves earlier, we didn't ask ChatGPT to generate the propose features. But we tried to provide the decided features to it, and ask it to give advice on the exsiting features, the response is plain and not very valuable.
 2. Yes, we give ChatGPT a overview of our project and let it help to summarize it into the format of the "preliminary requirement analysis ", the result is not clear enough in data requirements and Functional requirements, we gave more details to ChatGPT on both two points, it generated clearer answer, and we made some simple modifications to his response to make it more specific and clear, resulting in our final version.
+![prompt1](snapshots/prompt1.png)
+![response1](snapshots/response1.png)
 3. Yes, we told ChatGPT the funtionailities, target users and expected outcome of our project, and ask it to generate the user stories from the information we provide. As we explained our project very detailedly, ChatGPT responded many useful user strories, and we select some of the reasonable user stories as our project's user stories.
+![prompt2](snapshots/prompt2.png)
+![response2](snapshots/response2.png)
 4. Yes, we feed the user stories that ChatGPT generated before back to itself, and ask it to extract some issues and tasks from the user stories. It did a good job and gave us many useful advice about how to decompose the task.
+![response3](snapshots/response3.png)
