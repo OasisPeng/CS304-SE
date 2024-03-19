@@ -108,3 +108,5 @@
 ![response2](snapshots/response2.png)
 4. Yes, we feed the user stories that ChatGPT generated before back to itself, and ask it to extract some issues and tasks from the user stories. It did a good job and gave us many useful advice about how to decompose the task.
 ![response3](snapshots/response3.png)
+## Summary
+The effectiveness of AI usage is closely related to the quality of the prompt. The higher the quality of the prompt you provide, with more comprehensive information, the better the answers it can give. Overall, GPT has strong text summarization capabilities when given precise information.
