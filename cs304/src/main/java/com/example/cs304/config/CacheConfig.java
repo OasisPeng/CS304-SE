@@ -23,6 +23,9 @@ public class CacheConfig {
         List<CaffeineCache> cacheList = new ArrayList<>();
         cacheList.add(buildCache("event"));
         cacheList.add(buildCache("course"));
+        cacheList.add(buildCache("dafen"));
+        cacheList.add(buildCache("dianzan"));
+        cacheList.add(buildCache("pinglun"));
         simpleCacheManager.setCaches(cacheList);
         return simpleCacheManager;
     }
