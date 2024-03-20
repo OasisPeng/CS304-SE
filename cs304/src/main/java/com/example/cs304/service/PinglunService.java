@@ -1,0 +1,32 @@
+package com.example.cs304.service;
+
+import com.example.cs304.entity.pinglun;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Transactional
+public interface PinglunService {
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "pinglun", key = "#pinglun.courseId", condition = "#result != null"),
+            @CacheEvict(cacheNames = "pinglun", key = "#pinglun.userId", condition = "#result != null")
+    })
+    public pinglun insert(pinglun pinglun);
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "pinglun", key = "#pinglun.courseId", condition = "#result != null"),
+            @CacheEvict(cacheNames = "pinglun", key = "#pinglun.userId", condition = "#result != null")
+    })
+    public pinglun deleteById(pinglun pinglun);
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "pinglun", key = "#pinglun.courseId", condition = "#result != null"),
+            @CacheEvict(cacheNames = "pinglun", key = "#pinglun.userId", condition = "#result != null")
+    })
+    public pinglun updateById(pinglun pinglun);
+    @Cacheable(cacheNames = "pinglun", key = "#courseId")
+    public List<pinglun> selectByCourseId(int courseId);
+    @Cacheable(cacheNames = "pinglun", key = "#userId")
+    public List<pinglun> selectByUserId(int userId);
+}
