@@ -48,9 +48,10 @@
               </v-btn>
             </template>
             <v-list>
-              <v-list-item>
+              <v-list-item   v-if="false"  >
 
                 <v-btn-toggle
+                     v-if="false"
                     v-model=" params.sort"
                     tile
                     color="blue"
@@ -60,7 +61,35 @@
                     class="d-flex flex-column"
                 >
 
+                  <v-subheader>排序方式</v-subheader>
 
+                  <v-btn
+                      value="left"
+                      x-large
+                  >
+                    课程评分
+                  </v-btn>
+
+                  <v-btn
+                      value="center"
+                      x-large
+                  >
+                    点评数量
+                  </v-btn>
+                </v-btn-toggle>
+                <v-spacer></v-spacer>
+                <!-- <v-list-item-title>个人信息</v-list-item-title> -->
+              </v-list-item>
+              <v-list-item>
+                <v-btn-toggle
+                    v-model=" params.type"
+                    tile
+                    color="blue"
+                    @change="changeBtn"
+                    background-color="#42A5F5"
+                    group
+                    class="d-flex flex-column"
+                >
                   <v-subheader>筛选类别</v-subheader>
                   <v-btn
                       v-for="item in list2"
@@ -284,9 +313,16 @@ export default {
       const obj={
         pageSize:10,
         pageNum:page,
+        trainingType: '',
+        courseNature: '',
+        courseCode:'',
+        courseCategory: '',
+        department: '',
+        teacher: '',
         [key]:this.params.value,
       }
       if(key==='1') delete obj[key]
+      if(obj[key]===null) obj[key]=''
       return obj
     }
   },
