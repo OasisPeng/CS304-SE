@@ -2,6 +2,10 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import HomePage from '@/views/HomePage.vue';
 import ClassSchedulePage from './components/scheduletable/ClassSchedule.vue';
+import CategorySelection from '@/components/toDoList/CategorySelection.vue'
+import EmotionSelection from '@/components/toDoList/EmotionSelection.vue'
+import LevelSelection from '@/components/toDoList/LevelSelection.vue'
+import TodoEdit from '@/components/toDoList/TodoEdit.vue'
 
 Vue.use(Router);
 
@@ -27,6 +31,26 @@ export default new Router({
       path: '/Page',
       name: 'Page',
       component:()=>import('./components/CoursePage.vue')
+    },
+    {
+      path: '/CategorySelection',
+      name: 'CategorySelection',
+      component: CategorySelection
+    },
+    {
+      path: '/EmotionSelection',
+      name: 'EmotionSelection',
+      component: EmotionSelection
+    },
+    {
+      path: '/LevelSelection',
+      name: 'LevelSelection',
+      component: LevelSelection
+    },
+    {
+      path: '/TodoEdit',
+      name: 'TodoEdit',
+      component: TodoEdit
     }
   ]
 });
