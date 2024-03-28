@@ -21,7 +21,7 @@
               <v-btn
                 block
                 large
-                color="deep-purple accent-4"
+                color="light-blue"
                 class="emotion-btn"
                 @click="selectEmotion(emotion.name)"
               >
@@ -50,7 +50,7 @@
           { name: "开心", icon: "mdi-emoticon-excited-outline" },
           { name: "平静", icon: "mdi-emoticon-neutral-outline" },
           { name: "孤独", icon: "mdi-emoticon-sad-outline" },
-          { name: "疲惫", icon: "mdi-emoticon-tired-outline" },
+          { name: "疲惫", icon: "mdi-emoticon-sick-outline" },
           { name: "难过", icon: "mdi-emoticon-cry-outline" },
         ],
       };
