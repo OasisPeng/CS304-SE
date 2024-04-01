@@ -6,6 +6,7 @@ import CategorySelection from '@/components/toDoList/CategorySelection.vue'
 import EmotionSelection from '@/components/toDoList/EmotionSelection.vue'
 import LevelSelection from '@/components/toDoList/LevelSelection.vue'
 import TodoEdit from '@/components/toDoList/TodoEdit.vue'
+import DoList from "@/components/toDoList/DoList.vue";
 
 Vue.use(Router);
 
@@ -51,6 +52,11 @@ export default new Router({
       path: '/TodoEdit',
       name: 'TodoEdit',
       component: TodoEdit
+    },
+    {
+      path: '/DoList',
+      name: 'DoList',
+      component: DoList
     }
   ]
 });
