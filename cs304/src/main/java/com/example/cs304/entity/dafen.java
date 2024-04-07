@@ -8,8 +8,7 @@ import lombok.Data;
 @TableName("dafen")
 @Data
 public class dafen {
-    @TableId
-    Integer id;
+
     Integer courseId;
     Integer score;
     Integer userId;

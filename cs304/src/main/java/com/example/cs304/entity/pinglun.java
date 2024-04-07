@@ -7,8 +7,7 @@ import lombok.Data;
 @TableName("pinglun")
 @Data
 public class pinglun {
-    @TableId
-    Integer id;
+
     Integer courseId;
     Integer userId;
     String content;
