@@ -46,14 +46,14 @@ public class EventController {
     @Operation(description = "新增一个待办, owner和title非空")
     @Parameter(name = "event")
     public Result save(@RequestBody Event event){
-        if(event.getOwner().equals("") || event.getTitle().equals("")){
-            return Result.fail();
-        }
+//        if(event.getOwner().equals("") || event.getTitle().equals("")){
+//            return Result.fail();
+//        }
         //Todo:设置owner
         //2024-01-01是第一周周一
-        int[] date = Util.calculateWeek(LocalDate.now());
-        event.setWeek(date[0]);
-        event.setXq(date[1]);
+//        int[] date = Util.calculateWeek(LocalDate.now());
+//        event.setWeek(date[0]);
+//        event.setXq(date[1]);
         return (eventService.save(event) != null) ? Result.suc(event):Result.fail();
     }
 
@@ -79,6 +79,19 @@ public class EventController {
     @Parameter(name = "event")
     public Result del(@RequestBody Event event){
        return  (eventService.removeById(event) != null) ? Result.suc(event):Result.fail();
+    }
+    /**
+     * 根据第几周和owner查询
+     * @return
+     */
+    @GetMapping("/queryByWeek")
+    @Operation(description = "根据owner和第几周查询一个待办，返回值类型是List<Event>")
+    @Parameters({@Parameter(name = "week"),@Parameter(name = "owner")})
+    public Result queryByWeek(@RequestParam int week, @RequestParam String owner){
+        if (StringUtils.isBlank(owner) || owner.equals("null")) {
+            return Result.fail();
+        }
+        return Result.suc(eventService.queryByWeekAndOwner(week, owner));
     }
 
     /**
