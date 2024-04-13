@@ -59,10 +59,10 @@ export default {
   data() {
     return {
       levels: [
-        { name: "重要紧急" },
-        { name: "重要不紧急" },
-        { name: "不重要紧急" },
-        { name: "不重要不紧急" },
+        { name: "重要紧急", icon: "alert"},
+        { name: "重要不紧急", icon: "bell-alert"},
+        { name: "不重要紧急", icon: "exclamation-thick"},
+        { name: "不重要不紧急", icon: "progress-alert"},
       ],
       selectedLevel: null,
       dialog: false
@@ -126,8 +126,8 @@ export default {
 }
 
 .pa-3 {
-  max-width: 500px;
-  max-height: 1111px;
+  width: 500px;
+  height: 1111px;
   background-image: url('../../assets/bg3.jpeg');
   background-size: cover;
 }

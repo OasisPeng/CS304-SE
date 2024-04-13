@@ -83,18 +83,18 @@ export default {
         text: '',
       },
       category: '学习', // 默认标签
-      emotion: '开心😀', // 默认标签
-      level: '重要紧急', // 默认标签
-      dialog: false, // 对话框显示状态
-      editingLabel: '', // 当前编辑的标签
-      items: [], // 标签选择项
+      emotion: '开心😀',
+      level: '不重要不紧急', // 默认标签
+      dialog: false,
+      editingLabel: '',
+      items: [],
     };
   },
   mounted() {
     // 从 localStorage 中获取已选择的标签
     this.category = localStorage.getItem("category") || '学习';
     this.emotion = localStorage.getItem("emotion") || '开心😀';
-    this.level = localStorage.getItem("level") || '重要紧急';
+    this.level = localStorage.getItem("level") || '不重要不紧急';
   },
   methods: {
     saveTodo() {
@@ -135,10 +135,10 @@ export default {
     editLevel() {
       this.editingLabel = '紧急程度';
       this.items = [
-        { name: "重要紧急" },
-        { name: "重要不紧急" },
-        { name: "不重要紧急" },
-        { name: "不重要不紧急" },
+        { name: "重要紧急", icon: "alert"},
+        { name: "重要不紧急", icon: "bell-alert"},
+        { name: "不重要紧急", icon: "exclamation-thick"},
+        { name: "不重要不紧急", icon: "progress-alert"},
       ];
       this.dialog = true;
     },
@@ -155,9 +155,8 @@ export default {
           this.level = item.name;
           break;
       }
-      this.dialog = false; // 关闭对话框
+      this.dialog = false;
     },
-    // 关闭对话框
     closeDialog() {
       this.dialog = false;
     },
@@ -169,4 +168,12 @@ export default {
 </script>
 
 <style scoped>
+.pa-3 {
+  opacity: 0.9;
+  filter: brightness(1);
+  width: 500px;
+  height: 1111px;
+  background-image: url('../../assets/bg2.jpeg');
+  background-size: cover;
+}
 </style>

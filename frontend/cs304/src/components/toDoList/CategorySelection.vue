@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app class="bg">
     <v-main>
       <v-container class="pa-3" fluid>
           
@@ -133,8 +133,8 @@ export default {
 }
 
 .pa-3 {
-  max-width: 500px;
-  max-height: 1111px;
+  width: 500px;
+  height: 1111px;
   background-image: url('../../assets/bg3.jpeg');
   background-size: cover;
 }
