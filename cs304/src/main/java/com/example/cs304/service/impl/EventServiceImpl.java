@@ -48,5 +48,14 @@ public class EventServiceImpl implements IEventService {
         return (cnt == 1) ? event : null;
     }
 
+    @Override
+    public List<Event> queryByWeekAndOwner(int week, String owner) {
+        LambdaQueryWrapper<Event> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Event::getOwner,owner);
+        lambdaQueryWrapper.eq(Event::getWeek, week);
+        List<Event> res = eventMapper.selectList(lambdaQueryWrapper);
+        return res;
+    }
+
 
 }

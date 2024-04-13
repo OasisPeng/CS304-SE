@@ -34,6 +34,7 @@
         <v-btn  variant="text"
                 color="rgba(0, 0, 0, 0)"
                 theme="dark"
+                @click=newEvent()
         >
           <v-icon color="cyan">mdi-pencil-plus-outline</v-icon>
         </v-btn>
@@ -100,8 +101,6 @@
                                 :src="detailBackground"
                                 cover
                             >
-
-
                             </v-img>
 
                             <v-card-title>
@@ -168,8 +167,10 @@ export default {
   data: () => ({
     list:[
       {
+        id:"1",
         title:"Play LOL",
         owner:"yangyu" ,
+        week:"1",
         xq:"1",
         level:"important",
         finish:"no",
@@ -241,7 +242,9 @@ export default {
       this.selectedTaskDetails = task;
 
     },
-
+    newEvent(){
+      this.$router.push("/CategorySelection");
+    },
   }
 
 }
@@ -270,31 +273,31 @@ export default {
 </style>
 <style lang="scss">
 .v-btn:not(.v-btn--round).v-size--default {
-  height: 40px;
-  min-width: 40px;
-  padding: 0;
+  height: 40px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
 }
 .general-header {
-  font-size: 1.3rem; /* 调整字体大小 */
-  font-weight: bold; /* 加粗 */
+  font-size: 1.3rem!important; /* 调整字体大小 */
+  font-weight: bold!important; /* 加粗 */
 }
 
 .list-spacing {
-  margin-top: 20px; /* 添加间距 */
+  margin-top: 20px!important; /* 添加间距 */
 }
 .completed {
-  text-decoration: line-through;
-  opacity: 0.5;
+  text-decoration: line-through!important;
+  opacity: 0.5!important;
 }
 .larger-font {
-  font-size: 15px!important; /* 根据需要调整字体大小 */
+  font-size: 20px!important; /* 根据需要调整字体大小 */
 }
 
 .v-list-item--dense .v-list-item__icon, .v-list--dense .v-list-item .v-list-item__icon {
-  height: 12px;
-  margin-top: 0;
-  margin-bottom: 0;
-  margin-right: 5px;
+  height: 12px!important;
+  margin-top: 0!important;;
+  margin-bottom: 0!important;;
+  margin-right: 5px!important;;
 
 }
 .v-input--selection-controls__input {

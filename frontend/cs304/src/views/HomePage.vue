@@ -34,7 +34,7 @@
                 <v-card-title>课程信息</v-card-title>
               </v-card>
             </v-col>
-            <v-col cols="6" md="3" @click="navigateTo('CategorySelection')">
+            <v-col cols="6" md="3" @click="navigateTo('DoList')">
               <v-card class="pa-5" outlined tile>
                 <v-icon large>mdi-checkbox-marked-outline</v-icon>
                 <v-card-title>待办事项</v-card-title>
