@@ -258,15 +258,23 @@
         暂无评论
       </div>
       <div class="pinglun" v-else v-for="item in ContentList" :key="item.userId+Math.random()">
-        <div class="img">
-          <img :src="getRandomElement()" alt="">
+        <div class="img" >
+
+          <img :src="item.img" alt="">
           <p class="name" v-if="item.userId<10000">
             {{item.userId}}
           </p>
           <p class="name" v-else>
             匿名{{item.userId}}
           </p>
+          <div class="img-delete" style="" @click="openDel(item)">
+            <v-icon>
+              mdi-delete-outline
+            </v-icon>
+
+          </div>
         </div>
+
         <div class="c">{{item.content}}</div>
         <div class="footer"></div>
       </div>
@@ -320,6 +328,40 @@
         </v-card>
       </v-dialog>
     </v-row>
+    <v-row>
+      <v-dialog
+          v-model="delDialog"
+          persistent
+          max-width="290"
+      >
+
+        <v-card>
+          <v-card-title class="text-h5">
+            提示：
+          </v-card-title>
+          <v-card-text xs3>
+            确认要删除此条评论？
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+                color="green darken-1"
+                text
+                @click="delDialog = false"
+            >
+              取消
+            </v-btn>
+            <v-btn
+                color="green darken-1"
+                text
+                @click="delContent"
+            >
+              删除
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
     <v-progress-circular
         indeterminate
         v-if="loading"
@@ -340,7 +382,8 @@ import {
   saveFen,
   deleteFen,
   saveContent,
-  getContentList
+  getContentList,
+  deleteContent
 } from "../api/index";
 export default {
   data: () => ({
@@ -361,6 +404,8 @@ export default {
     change: true,
     isZan: false,
     dialog: false,
+    delDialog:false,
+    delItem:null,
     loading: false,
     content: "",
     ContentList:[],
@@ -416,6 +461,23 @@ export default {
       this.content = "";
       this.dialog = true;
     },
+    openDel(item){
+      this.delItem=item
+      this.delDialog=!this.delDialog
+    },
+    async delContent(){
+      this.delDialog = false;
+
+
+      const params = {
+        ...this.delItem,img:undefined
+      };
+      const {code,msg} = await deleteContent(params);
+      if(code===200){
+        console.log(msg)
+        this.getContentList()
+      }
+    },
     async savaContent() {
       this.dialog = false;
       const { id } = this.pageInfo;
@@ -437,7 +499,7 @@ export default {
       this.loading=true
       const {code ,data}=await getContentList(this.pageInfo.id)
       if(code===200){
-        this.ContentList=data
+        this.ContentList=data.map(i=>({...i,img:this.getRandomElement()}))
       }
       this.loading=false
       console.log(code,this.ContentList)
@@ -507,8 +569,14 @@ export default {
   width: 100%;
   background-color: #e9ecef;
   display: flex;
+  position: relative;
   align-items: center;
   padding: 0 20px;
+}
+.img-delete{
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
 }
 img{
   width: 30px;

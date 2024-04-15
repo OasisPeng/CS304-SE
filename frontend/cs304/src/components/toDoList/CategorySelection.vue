@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app class="bg">
     <v-main>
       <v-container class="pa-3" fluid>
           
@@ -20,7 +20,7 @@
             <v-btn
               block
               large
-              :outlined="selectedCategory === category.name"
+              :class="{ 'is-selected': selectedCategory === category.name }"
               :color="selectedCategory === category.name ? 'primary' : ''"
               class="category-btn"
               @click="selectCategory(category.name)"
@@ -88,7 +88,7 @@ export default {
     },
     cancel() {
       localStorage.clear();
-      this.$router.push("/");
+      this.$router.go(-1);
     },
   },
 };
@@ -96,24 +96,46 @@ export default {
 
 <style scoped>
 .category-btn {
-  transition: transform 0.3s ease;
+  transition: transform 0.5s ease, opacity 0.3s ease, filter 0.3s ease;
+  opacity: 0.9;
 }
 
 .category-btn:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  opacity: 1;
+  filter: blur(0px);
 }
 
-.category-btn.outlined {
+.category-btn.is-selected {
   border: 2px solid currentColor;
-  background-color: transparent;
+  /* background-color: transparent; */
+  background-color: primary;
   color: inherit;
+  opacity: 0.7;
 }
 
-/* 确保内容适应不同屏幕尺寸 */
+/* tab键导航时会触发 */
+.category-btn:active,
+.category-btn:focus{
+  opacity: 0.9;
+  filter: blur(0.5px);
+}
+
 @media (max-width: 600px) {
   .category-btn {
     margin-bottom: 20px;
   }
+}
+
+.text-center{
+  opacity: 0.7;
+}
+
+.pa-3 {
+  width: 500px;
+  height: 1111px;
+  background-image: url('../../assets/bg3.jpeg');
+  background-size: cover;
 }
 </style>

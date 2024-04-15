@@ -20,7 +20,7 @@
             <v-btn
               block
               large
-              :outlined="selectedLevel === level.name"
+              :class="{ 'is-selected': selectedLevel === level.name }"
               :color="selectedLevel === level.name ? 'orange darken-2' : ''"
               class="level-btn"
               @click="selectLevel(level.name)"
@@ -59,10 +59,10 @@ export default {
   data() {
     return {
       levels: [
-        { name: "重要紧急" },
-        { name: "重要不紧急" },
-        { name: "不重要紧急" },
-        { name: "不重要不紧急" },
+        { name: "重要紧急", icon: "alert"},
+        { name: "重要不紧急", icon: "bell-alert"},
+        { name: "不重要紧急", icon: "exclamation-thick"},
+        { name: "不重要不紧急", icon: "progress-alert"},
       ],
       selectedLevel: null,
       dialog: false
@@ -89,25 +89,46 @@ export default {
 
 <style scoped>
 .level-btn {
-  transition: transform 0.3s ease;
-  margin-bottom: 20px; /* 保证按钮之间的间距 */
+  transition: transform 0.5s ease, opacity 0.3s ease, filter 0.3s ease;
+  opacity: 0.9;
 }
 
 .level-btn:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  opacity: 1;
+  filter: blur(0px);
 }
 
-.level-btn.outlined {
+.level-btn.is-selected {
   border: 2px solid currentColor;
-  background-color: transparent;
+  /* background-color: transparent; */
+  background-color: primary;
   color: inherit;
+  opacity: 0.7;
 }
 
-/* 确保内容适应不同屏幕尺寸 */
+/* tab键导航时会触发 */
+.level-btn:active,
+.level-btn:focus{
+  opacity: 0.9;
+  filter: blur(0.5px);
+}
+
 @media (max-width: 600px) {
-  .level-btn {
-    margin-bottom: 10px;
+  .category-btn {
+    margin-bottom: 20px;
   }
+}
+
+.text-center{
+  opacity: 0.7;
+}
+
+.pa-3 {
+  width: 500px;
+  height: 1111px;
+  background-image: url('../../assets/bg3.jpeg');
+  background-size: cover;
 }
 </style>

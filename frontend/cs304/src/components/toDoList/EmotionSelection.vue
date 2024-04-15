@@ -20,7 +20,7 @@
             <v-btn
               block
               large
-              :outlined="selectedEmotion === emotion.name"
+              :class="{ 'is-selected': selectedEmotion === emotion.name }"
               :color="selectedEmotion === emotion.name ? 'light-blue' : ''"
               class="emotion-btn"
               @click="selectEmotion(emotion.name)"
@@ -91,25 +91,46 @@ export default {
 
 <style scoped>
 .emotion-btn {
-  transition: transform 0.3s ease;
-  margin-bottom: 20px; /* 保证按钮之间的间距 */
+  transition: transform 0.5s ease, opacity 0.3s ease, filter 0.3s ease;
+  opacity: 0.9;
 }
 
 .emotion-btn:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  opacity: 1;
+  filter: blur(0px);
 }
 
-.emotion-btn.outlined {
+.emotion-btn.is-selected {
   border: 2px solid currentColor;
-  background-color: transparent;
+  /* background-color: transparent; */
+  background-color: primary;
   color: inherit;
+  opacity: 0.7;
 }
 
-/* 确保内容适应不同屏幕尺寸 */
+/* tab键导航时会触发 */
+.emotion-btn:active,
+.emotion-btn:focus{
+  opacity: 0.9;
+  filter: blur(0.5px);
+}
+
 @media (max-width: 600px) {
-  .emotion-btn {
-    margin-bottom: 10px;
+  .category-btn {
+    margin-bottom: 20px;
   }
+}
+
+.text-center{
+  opacity: 0.7;
+}
+
+.pa-3 {
+  width: 500px;
+  height: 1111px;
+  background-image: url('../../assets/bg3.jpeg');
+  background-size: cover;
 }
 </style>
