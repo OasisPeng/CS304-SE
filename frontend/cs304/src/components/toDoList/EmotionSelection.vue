@@ -92,7 +92,7 @@ export default {
 <style scoped>
 .emotion-btn {
   transition: transform 0.5s ease, opacity 0.3s ease, filter 0.3s ease;
-  opacity: 0.9;
+  opacity: 0.6;
 }
 
 .emotion-btn:hover {
@@ -130,7 +130,7 @@ export default {
 .pa-3 {
   width: 500px;
   height: 1111px;
-  background-image: url('../../assets/bg3.jpeg');
+  background-image: url('../../assets/pink2.jpeg');
   background-size: cover;
 }
 </style>

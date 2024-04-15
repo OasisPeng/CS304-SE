@@ -19,6 +19,8 @@
               <v-chip outlined @click="editCategory">{{ category }}</v-chip>
               <v-chip outlined @click="editEmotion">{{ emotion }}</v-chip>
               <v-chip outlined @click="editLevel">{{ level }}</v-chip>
+              <v-chip outlined @click="editWeek">第 {{ week }} 周</v-chip>
+              <v-chip outlined @click="editDayOfWeek">星期 {{ xq }}</v-chip>
             </v-col>
           </v-row>
           
@@ -70,6 +72,37 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 周数选择对话框 -->
+    <v-dialog v-model="weekDialog" persistent max-width="290px">
+      <v-card>
+        <v-card-title>选择周数</v-card-title>
+        <v-text-field
+            v-model="weekInput"
+            label="输入周数 (1-52)"
+            type="number"
+            @keyup.enter="setWeekFromInput"
+        ></v-text-field>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-btn
+                  v-for="n in 52"
+                  :key="n"
+                  @click="setWeek(n)"
+                  outlined
+                  color="primary"
+                  class="ma-1"
+              >{{ n }}</v-btn>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="weekDialog = false">关闭</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-app>
 </template>
 
@@ -85,20 +118,22 @@ export default {
       level: '不重要不紧急',
       week: 1,
       xq: 1,
-      owner: '1',
+      owner: 'visitor',
       finish: 0,
-      dialog: false,
       editingLabel: '',
       items: [],
+      dialog: false,
+      weekDialog: false,
+      weekInput: '',
     };
   },
   mounted() {
-    // 从 localStorage 中获取已选择的标签
-
     this.title = localStorage.getItem("title") || '';
     this.text = localStorage.getItem("text") || '';
     this.finish = localStorage.getItem("finish") || 0;
-    this.level = localStorage.getItem("level") || '不重要不紧急';
+    this.owner = localStorage.getItem("owner") || 'visitor';
+    this.week = localStorage.getItem("week") || '1';
+    this.xq = localStorage.getItem("xq") || '1';
     this.category = localStorage.getItem("category") || '学习';
     this.emotion = localStorage.getItem("emotion") || '开心😀';
     this.level = localStorage.getItem("level") || '不重要不紧急';
@@ -114,10 +149,11 @@ export default {
         category: this.category,
         emotion: this.emotion,
         level: this.level,
-        finish: 0,
+        finish: this.finish,
       };
       console.log("Saving todo:", todoData);
       saveEvent(todoData);
+      localStorage.clear();
       this.$router.push("/");
     },
     // 打开编辑标签的对话框
@@ -155,6 +191,19 @@ export default {
       ];
       this.dialog = true;
     },
+    editDayOfWeek() {
+      this.editingLabel = '星期';
+      this.items = [
+        { name: "Sunday", value: 0, icon: "mdi-calendar-today"},
+        { name: "Monday", value: 1, icon: "mdi-calendar-today" },
+        { name: "Tuesday", value: 2, icon: "mdi-calendar-today" },
+        { name: "Wednesday", value: 3, icon: "mdi-calendar-today" },
+        { name: "Thursday", value: 4, icon: "mdi-calendar-today" },
+        { name: "Friday", value: 5, icon: "mdi-calendar-today" },
+        { name: "Saturday", value: 6, icon: "mdi-calendar-today" },
+      ];
+      this.dialog = true;
+    },
     // 选择新的标签项
     selectItem(item) {
       switch (this.editingLabel) {
@@ -167,8 +216,32 @@ export default {
         case '紧急程度':
           this.level = item.name;
           break;
+        case '周数':
+          this.week = item.name;
+          break;
+        case '星期':
+          this.xq = item.value;
+          break;
       }
       this.dialog = false;
+    },
+    editWeek() {
+      // this.editingLabel = '周数';
+      // this.items = Array.from({ length: 52 }, (_, i) => ({ name: i + 1, icon: 'mdi-calendar-week' }));
+      // this.dialog = true;
+      this.weekDialog = true;
+    },
+    setWeek(week) {
+      this.week = week;
+      localStorage.setItem("week", week);
+      this.weekDialog = false;
+    },
+    setWeekFromInput() {
+      if (this.weekInput >= 1 && this.weekInput <= 52) {
+        this.setWeek(this.weekInput);
+      } else {
+        alert("请输入有效的周数 (1-52)");
+      }
     },
     closeDialog() {
       this.dialog = false;
@@ -186,7 +259,7 @@ export default {
   filter: brightness(1);
   width: 500px;
   height: 1111px;
-  background-image: url('../../assets/bg5.jfif');
+  background-image: url('../../assets/pinkBG2.jfif');
   background-size: cover;
 }
 </style>

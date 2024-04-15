@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import HomePage from '@/views/HomePage.vue';
-import ClassSchedulePage from './components/scheduletable/ClassSchedule.vue';
+import ClassSchedule from './components/scheduletable/ClassSchedule.vue';
 import CategorySelection from '@/components/toDoList/CategorySelection.vue'
 import EmotionSelection from '@/components/toDoList/EmotionSelection.vue'
 import LevelSelection from '@/components/toDoList/LevelSelection.vue'
@@ -20,17 +20,17 @@ export default new Router({
     },
     {
       path: '/ClassSchedule',
-      name: 'ClassSchedulePage',
-      component: ClassSchedulePage
+      name: 'ClassSchedule',
+      component: ClassSchedule
     },
     {
-      path: '/Course',
-      name: 'Course',
+      path: '/CourseList',
+      name: 'CourseList',
       component:()=>import('./components/CourseList.vue')
     },
     {
-      path: '/Page',
-      name: 'Page',
+      path: '/CoursePage',
+      name: 'CoursePage',
       component:()=>import('./components/CoursePage.vue')
     },
     {

@@ -92,6 +92,7 @@
                     <v-btn variant="text" class="btn-margin"
                            color="rgba(0, 0, 0, 0)"
                            theme="dark"
+                           @click="editEvent(task)"
                     >
                       <v-icon color="blue">mdi-receipt-text-edit-outline</v-icon>
                     </v-btn>
@@ -182,7 +183,7 @@ export default {
       Background: Background,
       list:[
         {
-          id:"1",
+          // id:"1",
           title:"Play LOL",
           owner:"yangyu" ,
           week:"1",
@@ -250,7 +251,6 @@ export default {
     getTasksByDay (xq) {
       return this.list.filter(task => task.xq === xq);
     },
-
     getTaskRowClass(level) {
       return {
         'normal-row': level === 'normal',
@@ -265,6 +265,35 @@ export default {
     },
     newEvent(){
       this.$router.push("/CategorySelection");
+    },
+    editEvent(task) {
+      localStorage.setItem("category", task.category);
+      localStorage.setItem("emotion", task.emotion);
+      localStorage.setItem("level", task.level);
+      localStorage.setItem("title", task.title);
+      localStorage.setItem("text", task.text);
+      if(task.finish=='no')
+        task.finish=0;
+      else
+        task.finish=1;
+      localStorage.setItem("finish", task.finish);
+      localStorage.setItem("owner", task.owner);
+
+      const taskDate = new Date(task.data);
+      const getWeekNumber = (date) => {
+        const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+        const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+        return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+      };
+      const getDayOfWeek = (date) => {
+        return date.getDay();
+      };
+      task.week = getWeekNumber(taskDate);
+      task.xq = getDayOfWeek(taskDate);
+
+      localStorage.setItem("week",task.week);
+      localStorage.setItem("xq", task.xq);
+      this.$router.push("/ToDoEdit");
     },
     updateWeek() {
       const startOfWeek = new Date(this.currentDate);

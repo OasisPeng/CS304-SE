@@ -63,9 +63,38 @@
 
 ### ![日常安排](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\日常安排.jpg)
 
+### 添加日程时选择标签
+
+![$J0OS9[JFP_RX`BP~]W60S4](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\$J0OS9[JFP_RX`BP~]W60S4.jpg)
+
+### 添加待办事项
+
+![[WU)G{DDL@Z`]1@D~)4(Z]R_tmb](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\[WU)G{DDL@Z`]1@D~)4(Z]R_tmb.jpg)
+
 ### 课程讨论
+
 ![img.png](snapshots/img1.png)
+### 二手交易平台
+
+![es1](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es1.png)
+
+![es7](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es7.png)
+
+![es2](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es2.png)
+
+
+
+![es3](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es3.png)
+
+![es4](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es4.png)
+
+![es5](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es5.png)
+
+![es6](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es6.png)
+
 ### AI 助手
+
+![ai](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\ai.png)
 
 ### 二手物品交易
 我们的UI设计遵循了简洁直观的原则，注重用户体验和易用性。通过这些设计，我们希望用户能够轻松地使用系统，并享受到优质的用户体验。
