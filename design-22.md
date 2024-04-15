@@ -61,6 +61,8 @@
 ![img.png](snapshots/img.png)
 ### 日程安排
 
+### ![日常安排](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\日常安排.jpg)
+
 ### 课程讨论
 ![img.png](snapshots/img1.png)
 ### AI 助手
