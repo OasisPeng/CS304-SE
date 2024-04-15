@@ -44,6 +44,13 @@
 ### 交互：
 前端通过API调用与后端进行交互。后端公开API，供前端使用以检索和操作数据。这种分离允许独立开发，并且容易维护前端和后端组件。
 
+<!-- AI-generated-content -->
+<!-- tool: ChatGPT -->
+<!-- version: 3.5 -->
+<!-- usage: I used the prompt "前后端分离架构的优点", and -->
+<!-- directly copy the code from its response -->
+
+
 ### 上述架构的优点：
 1. **高内聚低耦合**: 每个模块都有清晰的职责和功能，相互之间的依赖关系较少，易于理解和维护。
 2. **可扩展性**: 新功能的添加和现有功能的修改都相对容易，通过添加新的服务或控制器，而不会影响其他模块。
@@ -60,41 +67,14 @@
 ### 全校课表
 ![img.png](snapshots/img.png)
 ### 日程安排
-
-### ![日常安排](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\日常安排.jpg)
-
-### 添加日程时选择标签
-
-![$J0OS9[JFP_RX`BP~]W60S4](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\$J0OS9[JFP_RX`BP~]W60S4.jpg)
-
-### 添加待办事项
-
-![[WU)G{DDL@Z`]1@D~)4(Z]R_tmb](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\[WU)G{DDL@Z`]1@D~)4(Z]R_tmb.jpg)
-
+![日常安排](snapshots/日常安排.jpg)
+![img.png](snapshots/img2.png)
 ### 课程讨论
-
 ![img.png](snapshots/img1.png)
-### 二手交易平台
-
-![es1](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es1.png)
-
-![es7](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es7.png)
-
-![es2](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es2.png)
-
-
-
-![es3](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es3.png)
-
-![es4](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es4.png)
-
-![es5](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es5.png)
-
-![es6](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\es6.png)
-
-### AI 助手
-
-![ai](D:\ProProject\SoftwareEngineering\team-project-24spring-22\snapshots\ai.png)
-
+### AI助手
+![img.png](snapshots/img4.png)
 ### 二手物品交易
+![img.png](snapshots/img5.png)
+![img.png](snapshots/img6.png)
+
 我们的UI设计遵循了简洁直观的原则，注重用户体验和易用性。通过这些设计，我们希望用户能够轻松地使用系统，并享受到优质的用户体验。
