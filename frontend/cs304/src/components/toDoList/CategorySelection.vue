@@ -88,7 +88,7 @@ export default {
     },
     cancel() {
       localStorage.clear();
-      this.$router.push("/");
+      this.$router.go(-1);
     },
   },
 };

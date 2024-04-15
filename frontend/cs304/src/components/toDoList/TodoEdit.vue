@@ -7,7 +7,7 @@
             <v-col cols="7">
               <v-text-field
                 label="代办事项标题"
-                v-model="todo.title"
+                v-model="title"
                 prepend-icon="mdi-format-title"
                 outlined
               ></v-text-field>
@@ -26,7 +26,7 @@
             <v-col cols="12">
               <v-textarea
                 label="代办事项正文"
-                v-model="todo.text"
+                v-model="text"
                 rows="20"
                 auto-grow
                 prepend-icon="mdi-text"
@@ -78,13 +78,15 @@ import { saveEvent } from '../../api/index';
 export default {
   data() {
     return {
-      todo: {
-        title: '',
-        text: '',
-      },
+      title: '',
+      text: '',
       category: '学习', // 默认标签
       emotion: '开心😀',
-      level: '不重要不紧急', // 默认标签
+      level: '不重要不紧急',
+      week: 1,
+      xq: 1,
+      owner: '1',
+      finish: 0,
       dialog: false,
       editingLabel: '',
       items: [],
@@ -92,6 +94,11 @@ export default {
   },
   mounted() {
     // 从 localStorage 中获取已选择的标签
+
+    this.title = localStorage.getItem("title") || '';
+    this.text = localStorage.getItem("text") || '';
+    this.finish = localStorage.getItem("finish") || 0;
+    this.level = localStorage.getItem("level") || '不重要不紧急';
     this.category = localStorage.getItem("category") || '学习';
     this.emotion = localStorage.getItem("emotion") || '开心😀';
     this.level = localStorage.getItem("level") || '不重要不紧急';
@@ -99,13 +106,19 @@ export default {
   methods: {
     saveTodo() {
       const todoData = {
-        ...this.todo,
+        title: this.title,
+        text: this.text,
+        owner: this.owner,
+        week: this.week,
+        xq: this.xq,
         category: this.category,
         emotion: this.emotion,
         level: this.level,
+        finish: 0,
       };
       console.log("Saving todo:", todoData);
       saveEvent(todoData);
+      this.$router.push("/");
     },
     // 打开编辑标签的对话框
     editCategory() {
@@ -127,7 +140,7 @@ export default {
         { name: "开心😀", icon: "mdi-emoticon-excited-outline" },
         { name: "平静😐", icon: "mdi-emoticon-neutral-outline" },
         { name: "孤独🤡", icon: "mdi-emoticon-sad-outline" },
-        { name: "疲惫😵‍💫", icon: "mdi-emoticon-sick-outline" },
+        { name: "疲惫😵‍", icon: "mdi-emoticon-sick-outline" },
         { name: "难过😞", icon: "mdi-emoticon-cry-outline" },
       ];
       this.dialog = true;
@@ -173,7 +186,7 @@ export default {
   filter: brightness(1);
   width: 500px;
   height: 1111px;
-  background-image: url('../../assets/bg2.jpeg');
+  background-image: url('../../assets/bg5.jfif');
   background-size: cover;
 }
 </style>

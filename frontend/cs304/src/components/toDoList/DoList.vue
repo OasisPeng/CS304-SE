@@ -74,7 +74,8 @@
                          color="rgba(0, 0, 0, 0)"
                          theme="dark"
                   >
-                    <v-icon color="blue">mdi-receipt-text-edit-outline</v-icon>
+                    <v-icon color="blue"
+                    @click=editEvent(task)>mdi-receipt-text-edit-outline</v-icon>
                   </v-btn>
                   <!-- 第二个按钮 -->
 
@@ -245,6 +246,18 @@ export default {
     newEvent(){
       this.$router.push("/CategorySelection");
     },
+    editEvent(task){
+      // this.selectedTaskDetails = task;
+      localStorage.setItem("category", task.category);
+      localStorage.setItem("emotion", task.emotion);
+      localStorage.setItem("level", task.level);
+      localStorage.setItem("title", task.title);
+      localStorage.setItem("text", task.text);
+      localStorage.setItem("finish", task.finish);
+      localStorage.setItem("owner", task.owner);
+      localStorage.setItem("xq", task.xq);
+      this.$router.push("/ToDoEdit");
+    }
   }
 
 }
