@@ -58,11 +58,11 @@
 ### 课程表
 ![alt text](snapshots/image.png)
 ### 全校课表
-
+![img.png](snapshots/img.png)
 ### 日程安排
 
 ### 课程讨论
-
+![img.png](snapshots/img1.png)
 ### AI 助手
 
 ### 二手物品交易
