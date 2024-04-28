@@ -33,3 +33,6 @@ export const deleteContent = data => {
 export const getContentList = id => {
   return request.get(`/pinglun/course/${id}`);
 }
+export const Login = data => {
+  return request.post('/login/login',data);
+}

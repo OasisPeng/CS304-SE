@@ -10,7 +10,8 @@ const request = axios.create({
 request.interceptors.request.use(
   config => {
     // // 设置请求所带的token/session/'Content-Type'等
-    const token = `${sessionStorage.getItem('cdfu-token')}`;
+    const token= JSON.parse(localStorage.getItem('info'))?.token ?? ''
+    console.log(token,66)
     Object.assign(config.headers, { token });
     return config;
   },

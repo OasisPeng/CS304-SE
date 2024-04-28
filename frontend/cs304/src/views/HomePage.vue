@@ -68,6 +68,8 @@ export default {
     },
     logout() {
       // 执行退出登录逻辑
+      localStorage.clear()
+      this.$router.push({ path: '/login' });
     }
   }
 };

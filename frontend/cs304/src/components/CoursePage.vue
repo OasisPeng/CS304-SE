@@ -261,7 +261,7 @@
         <div class="img" >
 
           <img :src="item.img" alt="">
-          <p class="name" v-if="item.userId<10000">
+          <p class="name" v-if="item.userId>1000000">
             {{item.userId}}
           </p>
           <p class="name" v-else>
@@ -410,6 +410,7 @@ export default {
     content: "",
     ContentList:[],
     box:false,
+    params:null,
     imgArr:[img1,img2,img3,img4],
     es: " This experimental course is aimed at the junior students. A series of basic experiments are set up, involving information materials, energy materials, biomedical materials, advanced processing and manufacturing of materials, as well as the application of these materials and technologies in information, energy, biomedical, aerospace and other fields. Through both professional and interesting experiments, the basic experimental operation skills of students are cultivated, and the understanding of basic theory courses is improved. If the content of the experiment is properly expanded, it can be combined with the college scientific and technological activities and lay a foundation for students to carry out extracurricular scientific and technological innovation activities. At the same time, students will have a preliminary understanding of the connotation of materials discipline and the characteristics of related disciplines, to help students major selection. ",
     text: " 本实验课程面向全校低年级学生，设置一系列基础实验，利用奇妙的材料制备能够在生活中使用的趣味性作品。涉及信息材料、能源材料、生物医用材料、材料先进加工和制造，以及这些材料和技术在信息、能源、生物医疗、航空航天等领域的应用。通过兼具专业性、趣味性和实用性的实验，培养学生的基本实验操作技能，辅助基础理论课程理解。实验内容适当拓展，即可与书院学生科技活动结合，为学生开展课外科技创新活动打下基础。同时，学生将初步了解材料学科的内涵，以及相关学科的特点，为学生专业选择提供帮助。 ",
@@ -430,7 +431,17 @@ export default {
       immediate: true, // 组件实例创建时，立刻调用 handler 处理器
     },
   },
-  mounted() {},
+  computed: {
+    // 计算属性
+   commonParams() {
+      const {username=''}=this.params
+      return { userId:username} ;
+    },
+   
+  },
+  mounted() {
+     this.params=JSON.parse(localStorage.getItem("info"))
+  },
   methods: {
     async dianZan() {
       this.isZan = !this.isZan;
@@ -440,7 +451,7 @@ export default {
         // "id": id,
         courseId: id,
         // "zan": 1,
-        userId: 22,
+       ...this.commonParams
       };
 
       const res = await api(params);
@@ -452,7 +463,7 @@ export default {
       const params = {
         courseId: id,
         score: this.pageInfo.rating,
-        userId: 22,
+        ...this.commonParams
       };
       const res = await api(params);
       console.log(this.pageInfo.rating,res);
@@ -481,7 +492,7 @@ export default {
     async savaContent() {
       this.dialog = false;
       const { id } = this.pageInfo;
-      const userId=this.box? 11100+Math.floor(Math.random() * 10000):  Math.floor(Math.random() * 10000)
+      const userId=this.box? 11100+Math.floor(Math.random() * 1000):  this.commonParams.userId
       const params = {
         courseId: id,
         content: this.content,
