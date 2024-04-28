@@ -1,11 +1,4 @@
-/*
- * @Description: 路由级权限控制
- * @Author: Dong Wei
- * @Date: 2022-05-09 16:53:40
- * @LastEditors: Ren Bing
- * @LastEditTime: 2023-02-13 09:46:19
- * @FilePath: \ky-cdfu-FE\src\permission.js
- */
+
 import router from './router.js';
 
 router.beforeEach((to, from, next) => {
