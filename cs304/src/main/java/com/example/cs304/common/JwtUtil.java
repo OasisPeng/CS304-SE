@@ -28,7 +28,7 @@ public class JwtUtil {
                 // 缓存的最大容量
                 .maximumSize(1000)
                 // 设置缓存的过期时间，这里设置为 JWT 的过期时间的一半，以确保在 JWT 过期之前缓存失效
-                .expireAfterWrite(300, TimeUnit.MINUTES)
+                .expireAfterWrite(301, TimeUnit.MINUTES)
                 .build();
     }
 
