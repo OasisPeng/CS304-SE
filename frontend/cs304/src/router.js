@@ -1,13 +1,13 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import HomePage from '@/views/HomePage.vue';
+// import HomePage from '@/views/HomePage.vue';
 import ClassSchedule from './components/scheduletable/ClassSchedule.vue';
 import CategorySelection from '@/components/toDoList/CategorySelection.vue'
 import EmotionSelection from '@/components/toDoList/EmotionSelection.vue'
 import LevelSelection from '@/components/toDoList/LevelSelection.vue'
 import TodoEdit from '@/components/toDoList/TodoEdit.vue'
 import DoList from '@/components/toDoList/DoList.vue'
-
+import FirstPage from "@/components/second_hand/FirstPage.vue";
 Vue.use(Router);
 
 export default new Router({
@@ -16,7 +16,7 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: HomePage
+      component: FirstPage
     },
     {
       path: '/ClassSchedule',
