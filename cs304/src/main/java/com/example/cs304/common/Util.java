@@ -289,5 +289,50 @@ public class Util {
         LocalDate time = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         return calculateWeek(time);
     }
+    public static boolean loginVerify(String username, String password) {
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setRedirectStrategy(new DisableRedirectStrategy())
+                .build();
+        Header[] headers = new Header[2];
+        Header header = new BasicHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.0.0 Safari/537.36");
+        Header header1 = new BasicHeader("x-requested-with", "XMLHttpRequest");
+        headers[0] = header;
+        headers[1] = header1;
+        try {
+            // CAS登录，使用CAS的身份认证服务验证学号密码
+            String loginUrl = "https://cas.sustech.edu.cn/cas/login";
+            // 发送GET请求获取CAS登录页面
+            HttpGet getLoginRequest = new HttpGet(loginUrl);
+            getLoginRequest.setHeaders(headers);
+            CloseableHttpResponse loginResponse = httpClient.execute(getLoginRequest);
+            // 检查响应状态码
+            if (loginResponse.getStatusLine().getStatusCode() == 200) {
+                System.out.println("[\u001B[0;32m+\u001B[0m] " + "成功连接到CAS...");
+            } else {
+                System.out.println("[\u001B[0;31mx\u001B[0m] " + "不能访问CAS, 请检查您的网络连接状态");
+            }
+            // 解析HTML获取execution
+            String execution = parseExecution(loginResponse);
+            List<NameValuePair> params = new ArrayList<>();
+            /*添加post请求参数*/
+            params.add(new BasicNameValuePair("username", username));
+            params.add(new BasicNameValuePair("password", password));
+            params.add(new BasicNameValuePair("execution", execution));
+            params.add(new BasicNameValuePair("_eventId", "submit"));
+            // 发送POST请求进行登录
+            HttpPost postLoginRequest = new HttpPost(loginUrl);
+
+            postLoginRequest.setHeaders(headers);
+
+            postLoginRequest.setEntity(new UrlEncodedFormEntity(params));
+            CloseableHttpResponse postLoginResponse = httpClient.execute(postLoginRequest);
+            // 检查是否登录成功
+            return postLoginResponse.getStatusLine().getStatusCode() == 200;
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

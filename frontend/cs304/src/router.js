@@ -57,6 +57,18 @@ export default new Router({
       path: '/DoList',
       name: 'DoList',
       component: DoList
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      
+      component: ()=>import ('./components/CourseHelper.vue')
+    },
+    {
+      path: '/Page',
+      name: 'Page',
+      
+      component: ()=>import ('./components/CoursePage.vue')
     }
   ]
 });

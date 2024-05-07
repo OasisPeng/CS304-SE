@@ -10,3 +10,5 @@ spring:
 logging:
   level:
     com.example.wms.mapper: debug
+jwt:
+  secret-key: "KgszcQOvIT9j04Ri6Mn7Eo2H1CX8cXxquswNHDiyc34="
