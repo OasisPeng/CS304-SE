@@ -28,8 +28,10 @@ public class LoginController {
             Map<String, Object> claims = new HashMap<>();
             claims.put("username", student.getUsername());
             String token = util.createJWT(36000000, claims);
-            student.setToken(token);
-            return Result.suc(student);
+            HashMap<String, String> res = new HashMap<>();
+            res.put("token", token);
+            res.put("username", student.getUsername());
+            return Result.suc(res);
         }
     }
     @GetMapping("/logout/{username}")
