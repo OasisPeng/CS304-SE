@@ -327,7 +327,8 @@ public class Util {
             postLoginRequest.setEntity(new UrlEncodedFormEntity(params));
             CloseableHttpResponse postLoginResponse = httpClient.execute(postLoginRequest);
             // 检查是否登录成功
-            return postLoginResponse.getStatusLine().getStatusCode() == 200;
+            // 检查响应状态码是否为 200，并且响应包含 Set-Cookie 头
+            return postLoginResponse.getStatusLine().getStatusCode() == 200 && postLoginResponse.containsHeader("Set-Cookie");
 
 
         } catch (IOException e) {
