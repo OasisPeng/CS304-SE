@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.example.cs304.entity.Course;
 import com.example.cs304.entity.CourseForTimetable;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -321,14 +323,17 @@ public class Util {
             params.add(new BasicNameValuePair("_eventId", "submit"));
             // 发送POST请求进行登录
             HttpPost postLoginRequest = new HttpPost(loginUrl);
-
             postLoginRequest.setHeaders(headers);
-
             postLoginRequest.setEntity(new UrlEncodedFormEntity(params));
             CloseableHttpResponse postLoginResponse = httpClient.execute(postLoginRequest);
             // 检查是否登录成功
-            // 检查响应状态码是否为 200，并且响应包含 Set-Cookie 头
-            return postLoginResponse.getStatusLine().getStatusCode() == 200 && postLoginResponse.containsHeader("Set-Cookie");
+            if (postLoginResponse.getStatusLine().getStatusCode() == 200 && postLoginResponse.containsHeader("Set-Cookie")) {
+                HttpEntity entity = postLoginResponse.getEntity();
+//                System.out.println("Payload:");
+//                System.out.println(EntityUtils.toString(entity));
+                return EntityUtils.toString(entity).contains("登录成功 -  Central Authentication Service");
+            }
+            return false;
 
 
         } catch (IOException e) {
