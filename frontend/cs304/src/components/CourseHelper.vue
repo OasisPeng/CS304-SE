@@ -84,6 +84,7 @@ export default {
   methods:{
     async validate () {
       localStorage.clear()
+      this.config.show=false
       if(this.name&&this.password){
         const {code,msg,data}=   await Login({
           username:this.name,
@@ -91,9 +92,9 @@ export default {
         })
         this.config.text='登录'+msg
         if(code==200){
-
           localStorage.setItem('info',JSON.stringify(data))
           this.$router.push('/')
+
         }else{
           this.config.type='warning'
         }
@@ -120,14 +121,14 @@ export default {
   position: absolute;
   left: 50%;
   top: 50%;
-  opacity: 0.7;
+
   transform: translate(-50%,-50%);
 }
 .wrap {
   position: relative;
   width: 100vw;
   height: 100vh;
-  background: url('https://tse2-mm.cn.bing.net/th/id/OIP-C.iyrVOige0JxXhB83eQBkhAHaNK?w=187&h=333&c=7&r=0&o=5&pid=1.7') center/100% 20px no-repeat;
+  background: linear-gradient(to bottom,#3a6ec2 0%, #3d6ab1 40%,#84aaaa 60%, #fff 100%);
   background-size: cover;
 }
 .ff{
