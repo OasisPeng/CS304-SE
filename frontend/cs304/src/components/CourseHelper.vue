@@ -98,6 +98,7 @@ export default {
         }else{
           this.config.type='warning'
         }
+
         this.config.show=true
       }
     },

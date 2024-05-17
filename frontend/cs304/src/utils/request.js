@@ -29,8 +29,7 @@ request.interceptors.response.use(
         // 根据实际情况来设置
         /* ------------- */
         const resCode = res.code;
-
-        const successCodes = [200, 201]; // 正常返回
+        const successCodes = [200, 201,400]; // 正常返回
         const reloginCodes = [401]; // 需要进入登录页
         /* ------------- */
         const token = response.headers.token;
