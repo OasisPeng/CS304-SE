@@ -2,10 +2,9 @@ package com.example.cs304.controller;
 
 import com.example.cs304.common.Result;
 import com.example.cs304.entity.AiContent;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.cs304.service.AiContentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +15,8 @@ import java.io.InputStreamReader;
 @RequestMapping("/ai")
 public class AiController {
     static String aiPath = "./src/main/java/com/example/cs304/common/ai.py";
-
+    @Autowired
+    AiContentService aiContentService;
     @GetMapping("/chat")
     public Result chat(@RequestBody AiContent aiContent) {
         try {
@@ -25,6 +25,18 @@ public class AiController {
         } catch (Exception e) {
             return Result.fail();
         }
+    }
+    @GetMapping("/id/{id}")
+    public Result GetById(@PathVariable int id) {
+        return Result.suc(aiContentService.SelectById(id));
+    }
+    @DeleteMapping("/id/{id}")
+    public Result DeleteById(@PathVariable int id) {
+        return Result.suc(aiContentService.DeleteById(id));
+    }
+    @GetMapping("/user/{user}")
+    public Result GetByUser(@PathVariable int user) {
+        return Result.suc(aiContentService.SelectByUserName(user));
     }
     private static String CommandRun(AiContent aiContent) {
         try {
