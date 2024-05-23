@@ -26,6 +26,7 @@ public class CacheConfig {
         cacheList.add(buildCache("dafen"));
         cacheList.add(buildCache("dianzan"));
         cacheList.add(buildCache("pinglun"));
+        cacheList.add(buildCache("messages"));
         simpleCacheManager.setCaches(cacheList);
         return simpleCacheManager;
     }

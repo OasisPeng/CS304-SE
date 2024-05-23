@@ -12,6 +12,9 @@ public class Result {
     public static Result fail(){
         return result(400,"失败",null);
     }
+    public static Result fail(String msg){
+        return result(400,msg,null);
+    }
     public static Result suc(Object data){
         return result(200,"成功",data);
     }
