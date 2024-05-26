@@ -8,6 +8,10 @@ import LevelSelection from '@/components/toDoList/LevelSelection.vue'
 import TodoEdit from '@/components/toDoList/TodoEdit.vue'
 import DoList from '@/components/toDoList/DoList.vue'
 import FirstPage from "@/components/second_hand/FirstPage.vue";
+import person from "@/components/second_hand/PersonProfile.vue"
+import BuyPage from "@/components/second_hand/BuyPage.vue"
+import FavouritePage from "@/components/second_hand/FavouritePage.vue";
+import SalePage from "@/components/second_hand/SalePage.vue";
 Vue.use(Router);
 
 export default new Router({
@@ -17,6 +21,26 @@ export default new Router({
       path: '/',
       name: 'home',
       component: FirstPage
+    },
+    {
+      path: '/BuyPage',
+      name: 'BuyPage',
+      component: BuyPage
+    },
+    {
+      path: '/FavouritePage',
+      name: 'FavouritePage',
+      component: FavouritePage
+    },
+    {
+      path: '/SalePage',
+      name: 'SalePage',
+      component: SalePage
+    },
+    {
+      path: '/Person',
+      name: 'Person',
+      component: person
     },
     {
       path: '/ClassSchedule',
@@ -58,12 +82,12 @@ export default new Router({
       name: 'DoList',
       component: DoList
     },
-    {
-      path: '/login',
-      name: 'Login',
-      
-      component: ()=>import ('./components/CourseHelper.vue')
-    },
+    // {
+    //   path: '/login',
+    //   name: 'Login',
+    //
+    //   component: ()=>import ('./components/CourseHelper.vue')
+    // },
     {
       path: '/Page',
       name: 'Page',
