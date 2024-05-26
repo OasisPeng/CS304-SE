@@ -5,7 +5,7 @@
       <v-icon>mdi-home-heart</v-icon>
     </v-btn>
 
-    <v-btn value="market" @click="navigateTo('market')">
+    <v-btn value="MarketPage" @click="navigateTo('MarketPage')">
       <span>市场</span>
       <v-icon>mdi-storefront-outline</v-icon>
     </v-btn>
@@ -41,9 +41,13 @@ export default {
   },
   methods: {
     navigateTo(page) {
-      this.$emit('input', page);
-      this.$router.push({ name: page });
+      if (this.$route.name !== page) {
+        this.$emit('input', page);
+        this.$router.push({ name: page });
+      }
     }
   }
 };
 </script>
+
+

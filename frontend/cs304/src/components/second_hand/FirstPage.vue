@@ -5,12 +5,17 @@
         <v-row style="padding-bottom: 0 !important">
           <v-col cols="12" style="padding-bottom: 0 !important">
             <v-text-field
-                v-model="message"
+                v-model="searchText"
                 outlined
                 clearable
                 label="🔍搜索相关商品"
                 type="text"
             >
+              <template v-slot:append>
+                <v-btn icon @click="searchAndNavigateToMarketPage" color="green" text outlined  style="margin-top: -5px">
+                  <v-icon>mdi-magnify</v-icon>
+                </v-btn>
+              </template>
             </v-text-field>
           </v-col>
         </v-row>
@@ -86,6 +91,8 @@
 
 <script setup>
 import BottomNavigation from '@/components/second_hand/BottomNavigation.vue';
+import router from "@/router";
+import {ref} from "vue";
 
 const items = [
   {
@@ -101,6 +108,18 @@ const items = [
     src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg',
   },
 ];
+const searchText = ref('');
+
+const searchAndNavigateToMarketPage = () => {
+  // Perform search action with searchText value
+  // After search, navigate to MarketPage
+  // Example:
+  // this.$router.push({ name: 'MarketPage', query: { search: searchText.value } });
+  console.log('Searching for:', searchText.value);
+  // Placeholder navigation
+  router.push({ name: 'MarketPage', query: { search: searchText.value } });
+};
+
 
 // const user = {
 //   initials: 'JD',
@@ -217,7 +236,7 @@ export default {
 }
 
 .product-list-container {
-  max-height: 390px; /* 固定窗口高度 */
+  max-height: 385px; /* 固定窗口高度 */
   overflow-y: auto; /* 允许垂直滚动 */
 }
 

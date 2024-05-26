@@ -12,6 +12,7 @@ import person from "@/components/second_hand/PersonProfile.vue"
 import BuyPage from "@/components/second_hand/BuyPage.vue"
 import FavouritePage from "@/components/second_hand/FavouritePage.vue";
 import SalePage from "@/components/second_hand/SalePage.vue";
+import MarketPage from "@/components/second_hand/MarketPage.vue";
 Vue.use(Router);
 
 export default new Router({
@@ -41,6 +42,11 @@ export default new Router({
       path: '/Person',
       name: 'Person',
       component: person
+    },
+    {
+      path: '/MarketPage',
+      name: 'MarketPage',
+      component: MarketPage
     },
     {
       path: '/ClassSchedule',

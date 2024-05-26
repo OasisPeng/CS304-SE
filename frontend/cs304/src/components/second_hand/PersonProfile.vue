@@ -107,7 +107,7 @@
     </v-card>
 
     <!-- 底部导航栏 -->
-    <BottomNavigation v-model="selectedPage" />
+
 
     <!-- 编辑账户信息的对话框 -->
     <v-dialog v-model="editDialog" max-width="500px">
@@ -140,6 +140,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <BottomNavigation v-model="selectedPage" />
   </v-container>
 </template>
 
