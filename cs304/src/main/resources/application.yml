@@ -12,3 +12,9 @@ logging:
     com.example.wms.mapper: debug
 jwt:
   secret-key: "KgszcQOvIT9j04Ri6Mn7Eo2H1CX8cXxquswNHDiyc34="
+
+alioss:
+  endpoint: oss-cn-beijing.aliyuncs.com
+  access-key-id: LTAI5tHd81k9sjZ4AtV5RtZq
+  access-key-secret: zysTqJGfyjfCTtKHaSAyWL5Da9K8qz
+  bucket-name: sky-aliyunitcast
