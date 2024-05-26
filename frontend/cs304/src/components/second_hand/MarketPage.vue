@@ -83,6 +83,7 @@
       <v-pagination
           v-model="page"
           :length="totalPages"
+          color="green"
           circle
       ></v-pagination>
       <BottomNavigation :value="selectedPage" />

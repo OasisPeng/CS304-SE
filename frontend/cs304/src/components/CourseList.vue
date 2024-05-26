@@ -358,7 +358,7 @@ export default {
       console.log(item)
       const {id}=item
       this.$router.push({
-        path:'/Page',
+        path:'/CoursePage',
         query:{
           id,
           item:JSON.stringify(item)
