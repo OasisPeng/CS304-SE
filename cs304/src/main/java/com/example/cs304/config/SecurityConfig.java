@@ -31,7 +31,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(conf -> conf
                         //放行不需要鉴权/身份验证的路径(登录,swagger)
                         .requestMatchers(
-                                "ai/chat",
                                 "/login/login",
                                 "/v3/api-docs/**",
                                 "/swagger-resources",

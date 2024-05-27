@@ -22,5 +22,10 @@ public interface MessageService {
 
     })
     public Message InsertMessage(Message message);
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "messages", key = "#id1 + ' ' + #id2"),
+            @CacheEvict(cacheNames = "messages", key = "#id2 + ' ' + #id1")
+
+    })
     public Boolean InsertMessages(List<Message> messages);
 }
