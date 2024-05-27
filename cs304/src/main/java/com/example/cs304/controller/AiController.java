@@ -14,7 +14,8 @@ import java.io.InputStreamReader;
 @RestController
 @RequestMapping("/ai")
 public class AiController {
-    static String aiPath = "./src/main/java/com/example/cs304/common/ai.py";
+    static String work = System.getProperty("user.dir");
+    static String aiPath = work + "/cs304/src/main/java/com/example/cs304/common/ai.py";
     @Autowired
     AiContentService aiContentService;
     @GetMapping("/chat")
