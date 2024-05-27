@@ -30,12 +30,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             response.setHeader("Access-Control-Allow-Methods", "PUT, GET, DELETE, POST, OPTIONS");
             return;
         }
-        response.setHeader("Access-Control-Allow-Credentials", "false");
-        response.setContentType("application/json;charset=utf-8");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-        response.setHeader("Access-Control-Allow-Methods", "PUT, GET, DELETE, POST, OPTIONS");
-
         String token = util.extractJWT(request);
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             String username = util.parseJWT(token);
