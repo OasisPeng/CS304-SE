@@ -74,7 +74,7 @@ export default {
   },
   data() {
     return {
-      selectedPage: 'home',
+      selectedPage:'MessagesPage',
       tab: 0,
       orderMessages: [
         { name: 'Jun_', text: '你好，电脑还卖吗?', time: '12.14', avatar: 'path/to/avatar1.jpg', avatarError: false },

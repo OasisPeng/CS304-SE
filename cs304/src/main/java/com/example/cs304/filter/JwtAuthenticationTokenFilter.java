@@ -24,6 +24,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String token = util.extractJWT(request);
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             String username = util.parseJWT(token);
+            System.out.println("parsed from token: "+username);
             // TODO: 判断解析得到的username是否和真实username相同
             // 如果token有效
             if (username != null) {

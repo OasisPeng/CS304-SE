@@ -40,7 +40,7 @@
           <v-tab>电子产品</v-tab>
           <v-tab>书籍</v-tab>
           <v-tab>食物</v-tab>
-          <v-tab>其它</v-tab>
+          <v-tab>所有</v-tab>
           <v-tab-item v-for="n in 4" :key="n">
             <v-container fluid>
               <div class="product-list-container">

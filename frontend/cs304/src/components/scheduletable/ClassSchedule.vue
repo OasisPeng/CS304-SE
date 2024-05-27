@@ -218,7 +218,13 @@ export default {
           const response = await this.$axios.post(this.$httpUrl+'/course/queryCurrentCourse', {
             username: this.username,
             password: this.password
-          });
+          }, {
+                  withCredentials: false,
+                  headers: {
+                      'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+                  },
+              }
+          );
           console.log("2",response.data)
           this.courseList = response.data.data
               .map(evo => {

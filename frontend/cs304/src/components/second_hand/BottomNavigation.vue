@@ -15,7 +15,7 @@
       <v-icon class="publish-icon">mdi-plus-circle</v-icon>
     </v-btn>
 
-    <v-btn value="messages" @click="navigateTo('MessagesPage')">
+    <v-btn value="MessagesPage" @click="navigateTo('MessagesPage')">
       <span>消息</span>
       <v-icon>mdi-chat-outline</v-icon>
     </v-btn>
