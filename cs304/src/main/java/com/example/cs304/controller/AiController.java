@@ -20,6 +20,10 @@ public class AiController {
     AiContentService aiContentService;
     @GetMapping("/chat")
     public Result chat(@RequestBody AiContent aiContent) {
+//        id = 1 （如果是新对话，直接将id置为-1，发送请求之后重新根据userid查询一遍，将id最大的置为主对话（等于将页面刷新一下将id跟新为数据库赋给的id，便于后面继续对话））
+//        user_id = 1
+//        content = 你好
+
         try {
             String res = CommandRun(aiContent);
             return Result.suc(res);

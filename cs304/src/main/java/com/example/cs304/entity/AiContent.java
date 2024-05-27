@@ -8,6 +8,7 @@ import lombok.Data;
 @TableName("ai")
 public class AiContent {
     Integer user;
+// "[{'role': 'user', 'content':'xxxxxxx'},{'role':'assistant', 'content':'xxxxxxx'},{'role': 'user', 'content':'xxxxxxx'},{'role':'assistant', 'content':'xxxxxxx'}]"
     String content;
     Integer id;
 }

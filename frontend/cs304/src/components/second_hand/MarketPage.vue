@@ -12,32 +12,27 @@
                 type="text"
             >
               <template v-slot:append>
-                <v-btn icon @click="searchAndNavigateToMarketPage" color="green" text outlined  style="margin-top: -5px">
+                <v-btn icon @click="searchAndNavigateToMarketPage" color="green" text outlined style="margin-top: -5px">
                   <v-icon>mdi-magnify</v-icon>
                 </v-btn>
               </template>
             </v-text-field>
           </v-col>
         </v-row>
-        <v-carousel hide-delimiters style="height: 150px; border-radius: 20px; padding-top: 0">
-          <v-carousel-item
-              v-for="(item, i) in items"
-              :key="i"
-              :src="item.src"
-              cover
-          ></v-carousel-item>
-        </v-carousel>
+
       </v-container>
 
       <v-container>
-        <v-row justify="center" align="center" class="button-row">
-          <v-col v-for="(button, index) in buttons" :key="index" class="button-col">
-            <v-btn icon @click="button.action" color="green" class="button">
-              <v-icon large>{{ button.icon }}</v-icon>
-            </v-btn>
-            <div class="button-label">{{ button.label }}</div>
-          </v-col>
-        </v-row>
+
+        <v-select
+            v-model="selectedItem"
+            :items="items"
+            item-text="state"
+            item-value="state"
+            label="筛选栏"
+            return-object
+            class="select"
+        ></v-select>
       </v-container>
 
       <v-card style="padding-top: 0 !important">
@@ -50,7 +45,7 @@
             <v-container fluid>
               <div class="product-list-container">
                 <v-row>
-                  <v-col cols="12" sm="6" md="4" lg="3" v-for="(product, index) in product" :key="index">
+                  <v-col cols="12" sm="6" md="4" lg="3" v-for="(product, index) in displayedProducts" :key="index">
                     <v-card class="product-card" outlined>
                       <v-img :src="product.image" aspect-ratio="1.5">
                         <template v-slot:placeholder>
@@ -84,131 +79,80 @@
           </v-tab-item>
         </v-tabs>
       </v-card>
+
+      <v-pagination
+          v-model="page"
+          :length="totalPages"
+          color="green"
+          circle
+      ></v-pagination>
       <BottomNavigation :value="selectedPage" />
     </v-form>
   </v-container>
 </template>
 
-<script setup>
-import BottomNavigation from '@/components/second_hand/BottomNavigation.vue';
-import router from "@/router";
-import {ref} from "vue";
-
-const items = [
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg',
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg',
-  },
-];
-const searchText = ref('');
-
-const searchAndNavigateToMarketPage = () => {
-  // Perform search action with searchText value
-  // After search, navigate to MarketPage
-  // Example:
-  // this.$router.push({ name: 'MarketPage', query: { search: searchText.value } });
-  console.log('Searching for:', searchText.value);
-  // Placeholder navigation
-  router.push({ name: 'MarketPage', query: { search: searchText.value } });
-};
-
-
-// const user = {
-//   initials: 'JD',
-//   fullName: 'John Doe',
-//   email: 'john.doe@doe.com',
-// };
-
-// const editAccount = () => {
-//   console.log('Edit Account clicked');
-// };
-//
-// const disconnect = () => {
-//   console.log('Disconnect clicked');
-// };
-
-const toggleFavorite = (product) => {
-  product.isFavorite = !product.isFavorite;
-};
-</script>
-
 <script>
+import BottomNavigation from "@/components/second_hand/BottomNavigation.vue";
+
 export default {
-  components: {
-    BottomNavigation
-  },
+  components: {BottomNavigation},
   data() {
     return {
-      selectedPage: 'home',
+      searchText: '',
+      selectedPage: 'MarketPage',
+      selectedItem: null,
       items: [
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg',
-        },
-      ],
-      buttons: [
-        {
-          icon: 'mdi-book-open-page-variant',
-          label: '购买书籍',
-          action: this.buy_book,
-        },
-        {
-          icon: 'mdi-monitor-screenshot',
-          label: '购买设备',
-          action: this.buy_electric,
-        },
-        {
-          icon: 'mdi-cart-variant',
-          label: '购买其他',
-          action: this.buy_others,
-        },
-        {
-          icon: 'mdi-point-of-sale',
-          label: '出售物品',
-          action: this.sale,
-        },
+        { state: 'Price' },
+        { state: 'Favourite' },
+        { state: 'Unsale' },
       ],
       product: [
         { image: 'https://via.placeholder.com/150', name: '商品1', price: '$10', seller: '卖家1', soldOut: false, isFavorite: false },
         { image: 'https://via.placeholder.com/150', name: '商品2', price: '$20', seller: '卖家2', soldOut: true, isFavorite: true },
         { image: 'https://via.placeholder.com/150', name: '商品3', price: '$15', seller: '卖家3', soldOut: false, isFavorite: false },
         { image: 'https://via.placeholder.com/150', name: '商品4', price: '$25', seller: '卖家4', soldOut: true, isFavorite: true },
-      ]
+        // Add more products as needed
+      ],
+      page: 1, // Current page
+      itemsPerPage: 10, // Number of items per page
+    };
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.product.length / this.itemsPerPage);
+    },
+    displayedProducts() {
+      const startIndex = (this.page - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      return this.product.slice(startIndex, endIndex);
+    },
+  },
+  watch: {
+    $route(to) {
+      if (to.query.search) {
+        this.searchText = to.query.search;
+        // Perform search logic here
+        console.log('Searching for:', this.searchText);
+      }
     }
   },
   methods: {
-    buy_book() {
-      // Handle buy_book action
-    },
-    buy_electric() {
-      // Handle buy_electric action
-    },
-    buy_others() {
-      // Handle buy_others action
-    },
-    sale() {
-      // Handle sale action
+    searchAndNavigateToMarketPage() {
+      this.$router.push({ name: 'MarketPage', query: { search: this.searchText } });
     },
     toggleFavorite(product) {
       product.isFavorite = !product.isFavorite;
     },
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (to.query.search) {
+        vm.searchText = to.query.search;
+        // Perform search logic here
+        console.log('Searching for:', vm.searchText);
+      }
+    });
+  }
 }
 </script>
 
@@ -220,24 +164,26 @@ export default {
 
 .button-col {
   display: inline-block;
-  margin: 0 5px; /* 设置图标之间的间距 */
+  margin: 0 5px;
 }
+
 .button-col {
   text-align: center;
-  margin-bottom: 2px; /* 控制按钮和文字之间的间隔 */
+  margin-bottom: 2px;
 }
 
 .button {
-  margin-bottom: 5px; /* 控制按钮和文字之间的间隔 */
+  margin-bottom: 5px;
 }
+
 .button-label {
   font-size: 14px;
-  font-weight: bold; /* 将文字加粗 */
+  font-weight: bold;
 }
 
 .product-list-container {
-  max-height: 385px; /* 固定窗口高度 */
-  overflow-y: auto; /* 允许垂直滚动 */
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .product-card {
@@ -273,22 +219,27 @@ export default {
   color: red;
   font-weight: bold;
 }
+
 .position {
   position: absolute;
   top: 5px;
   right: 5px;
 }
-
+.select{
+  margin-top:-20px !important;
+}
 </style>
 
 <style lang="scss">
 .custom-container {
-  padding-top: 0 !important; /* 上边距 */
-  padding-bottom: 0 !important; /* 下边距 */
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
+
 .v-bottom-navigation {
   position: fixed;
   bottom: 0;
   width: 100%;
 }
+
 </style>

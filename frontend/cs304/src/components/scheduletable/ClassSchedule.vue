@@ -2,7 +2,7 @@
   <v-row >
     <v-col cols="12">
       <v-sheet >
-        <v-btn icon @click="selectedOpen = false">
+        <v-btn icon @click="selectedOen = false">
           <v-icon>mdi-backspace-outline
           </v-icon>
 
@@ -189,8 +189,8 @@ export default {
 
     value: '',
     ready: false,
-    username: '',
-    password: '',
+    username: '12112323',
+    password: 'yyc.20020418',
     courseList: [], // 存储课程列表的数组
      colors :['blue lighten-3', 'teal accent-2', 'purple accent-2', 'cyan', 'green', 'orange', "red accent-2",'red lighten-3','yellow','pink dark-1','pink lighten-4','blue lighten-2','light-blue lighten-2'],
      events:[]
@@ -390,8 +390,8 @@ export default {
   margin-top: 4px;
 }
 .v-btn--fab.v-size--default {
-  height: 40px;
-  width: 40px;
+  height: 40px !important;
+  width: 40px !important;
 }
 .v-application .primary {
   background-color: #6fa0e9 !important;

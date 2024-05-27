@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-// import HomePage from '@/views/HomePage.vue';
+import HomePage from '@/views/HomePage.vue';
 import ClassSchedule from './components/scheduletable/ClassSchedule.vue';
 import CategorySelection from '@/components/toDoList/CategorySelection.vue'
 import EmotionSelection from '@/components/toDoList/EmotionSelection.vue'
@@ -8,6 +8,15 @@ import LevelSelection from '@/components/toDoList/LevelSelection.vue'
 import TodoEdit from '@/components/toDoList/TodoEdit.vue'
 import DoList from '@/components/toDoList/DoList.vue'
 import FirstPage from "@/components/second_hand/FirstPage.vue";
+import person from "@/components/second_hand/PersonProfile.vue"
+import BuyPage from "@/components/second_hand/BuyPage.vue"
+import FavouritePage from "@/components/second_hand/FavouritePage.vue";
+import SalePage from "@/components/second_hand/SalePage.vue";
+import MarketPage from "@/components/second_hand/MarketPage.vue";
+import ReleasePage from "@/components/second_hand/ReleasePage";
+import MessagesPage from "@/components/second_hand/MessagesPage"
+import ChatPage from "@/components/second_hand/ChatPage";
+import GoodsPage from "@/components/second_hand/GoodsPage";
 Vue.use(Router);
 
 export default new Router({
@@ -15,8 +24,58 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'HomePage',
+      component: HomePage
+    },
+    {
+      path: '/FirstPage',
+      name: 'FirstPage',
       component: FirstPage
+    },
+    {
+      path: '/BuyPage',
+      name: 'BuyPage',
+      component: BuyPage
+    },
+    {
+      path: '/FavouritePage',
+      name: 'FavouritePage',
+      component: FavouritePage
+    },
+    {
+      path: '/SalePage',
+      name: 'SalePage',
+      component: SalePage
+    },
+    {
+      path: '/Person',
+      name: 'Person',
+      component: person
+    },
+    {
+      path: '/ReleasePage',
+      name: 'ReleasePage',
+      component: ReleasePage
+    },
+    {
+      path: '/MessagesPage',
+      name: 'MessagesPage',
+      component: MessagesPage
+    },
+    {
+      path: '/ChatPage',
+      name: 'ChatPage',
+      component: ChatPage
+    },
+    {
+      path: '/MarketPage',
+      name: 'MarketPage',
+      component: MarketPage
+    },
+    {
+      path: '/GoodsPage',
+      name: 'GoodsPage',
+      component: GoodsPage
     },
     {
       path: '/ClassSchedule',
@@ -58,12 +117,12 @@ export default new Router({
       name: 'DoList',
       component: DoList
     },
-    {
-      path: '/login',
-      name: 'Login',
-      
-      component: ()=>import ('./components/CourseHelper.vue')
-    },
+    // {
+    //   path: '/login',
+    //   name: 'Login',
+    //
+    //   component: ()=>import ('./components/CourseHelper.vue')
+    // },
     {
       path: '/Page',
       name: 'Page',

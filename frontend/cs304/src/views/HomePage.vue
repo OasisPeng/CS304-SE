@@ -43,10 +43,10 @@
                   <v-card-title>待办事项</v-card-title>
                 </v-card>
               </v-col>
-              <v-col cols="6" md="3" @click="navigateTo('forum')">
+              <v-col cols="6" md="3" @click="navigateTo('FirstPage')">
                 <v-card class="pa-5" outlined tile>
                   <v-icon large>mdi-forum</v-icon>
-                  <v-card-title>论坛</v-card-title>
+                  <v-card-title>交易市场</v-card-title>
                 </v-card>
               </v-col>
             </v-row>
