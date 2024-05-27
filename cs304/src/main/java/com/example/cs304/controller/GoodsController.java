@@ -59,6 +59,12 @@ public class GoodsController {
         return Result.suc(goodsService.findBySellerId(sellerId));
     }
 
+    @GetMapping("/buyer/{buyerId}")
+    @Operation(description = "查询指定买家学号的所有商品")
+    public Result getGoodsByBuyerId(@PathVariable String buyerId) {
+        return Result.suc(goodsService.findByBuyerId(buyerId));
+    }
+
     @GetMapping("/{id}")
     @Operation(description = "查询单个商品")
     public Result getGoodsById(@PathVariable Long id) {

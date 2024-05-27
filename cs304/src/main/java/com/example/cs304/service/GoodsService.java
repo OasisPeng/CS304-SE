@@ -15,6 +15,9 @@ public interface GoodsService {
     @Cacheable(cacheNames = "goods", key = "'seller:' + #sellerId")
     List<Goods> findBySellerId(String sellerId);
 
+    @Cacheable(cacheNames = "goods", key = "'buyer:' + #buyerId")
+    List<Goods> findByBuyerId(String buyerId);
+
     @Cacheable(cacheNames = "goods", key = "#id")
     Goods findById(Long id);
 
@@ -28,14 +31,16 @@ public interface GoodsService {
 
     @Caching(evict = {
             @CacheEvict(cacheNames = "goods", key = "#goods.id", condition = "#result != null"),
-            @CacheEvict(cacheNames = "goods", key = "'category:' + #goods.category", condition = "#result != null")
+            @CacheEvict(cacheNames = "goods", key = "'category:' + #goods.category", condition = "#result != null"),
+            @CacheEvict(cacheNames = "goods", key = "'buyer:' + #goods.buyerId", condition = "#result != null")
     })
     Goods updateGoods(Goods goods);
 
     @Caching(evict = {
             @CacheEvict(cacheNames = "goods", key = "#goods.id", condition = "#result != null"),
             @CacheEvict(cacheNames = "goods", key = "'seller:' + #goods.sellerId", condition = "#result != null"),
-            @CacheEvict(cacheNames = "goods", key = "'category:' + #goods.category", condition = "#result != null")
+            @CacheEvict(cacheNames = "goods", key = "'category:' + #goods.category", condition = "#result != null"),
+            @CacheEvict(cacheNames = "goods", key = "'buyer:' + #goods.buyerId", condition = "#result != null")
     })
     Goods deleteById(Goods goods);
 }
