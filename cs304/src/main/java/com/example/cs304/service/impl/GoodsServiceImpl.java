@@ -33,6 +33,13 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
+    public List<Goods> findByBuyerId(String buyerId) {
+        LambdaQueryWrapper<Goods> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Goods::getBuyerId, buyerId);
+        return goodsMapper.selectList(lambdaQueryWrapper);
+    }
+
+    @Override
     public Goods findById(Long id) {
         return goodsMapper.selectById(id);
     }
