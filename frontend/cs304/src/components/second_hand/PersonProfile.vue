@@ -203,7 +203,7 @@ export default {
         },
         {
           icon: 'mdi-heart',
-          label: '收藏',
+          label: '想要',
           action: () => { this.$router.push('/FavouritePage'); },
         },
         {

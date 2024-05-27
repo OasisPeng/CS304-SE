@@ -21,15 +21,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     JwtUtil util;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-        response.setContentType("application/json;charset=utf-8");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-        response.setHeader("Access-Control-Allow-Methods", "PUT, GET, DELETE, POST, OPTIONS");
-
         String token = util.extractJWT(request);
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             String username = util.parseJWT(token);
+            System.out.println("parsed from token: "+username);
             // TODO: 判断解析得到的username是否和真实username相同
             // 如果token有效
             if (username != null) {

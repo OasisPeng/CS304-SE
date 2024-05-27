@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.jdom2.output.support.SAXOutputProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +51,7 @@ public class GoodsController {
     @GetMapping("/category/{category}")
     @Operation(description = "查询指定类别的所有商品")
     public Result getGoodsByCategory(@PathVariable String category) {
+        System.out.println("hahahahah");
         return Result.suc(goodsService.findByCategory(category));
     }
 
