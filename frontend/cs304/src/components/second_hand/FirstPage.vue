@@ -12,7 +12,7 @@
                 type="text"
             >
               <template v-slot:append>
-                <v-btn icon @click="searchAndNavigateToMarketPage" color="green" text outlined  style="margin-top: -5px">
+                <v-btn icon @click="searchAndNavigateToMarketPage" color="green" text outlined style="margin-top: -5px">
                   <v-icon>mdi-magnify</v-icon>
                 </v-btn>
               </template>
@@ -23,10 +23,17 @@
           <v-carousel-item
               v-for="(item, i) in items"
               :key="i"
-              :src="item.src"
-              cover
-          ></v-carousel-item>
+          >
+            <v-img :src="item.src" contain>
+              <template v-slot:placeholder>
+                <v-row class="fill-height ma-0" align="center" justify="center">
+                  <v-progress-circular indeterminate color="green"></v-progress-circular>
+                </v-row>
+              </template>
+            </v-img>
+          </v-carousel-item>
         </v-carousel>
+
       </v-container>
 
       <v-container>
@@ -92,52 +99,27 @@
 <script setup>
 import BottomNavigation from '@/components/second_hand/BottomNavigation.vue';
 import router from "@/router";
-import {ref} from "vue";
+import { ref } from "vue";
+import bookImage from "@/assets/book.jpeg";
+import computerImage from "@/assets/computer.jpeg";
+import foodImage from "@/assets/food.jpeg";
 
-const items = [
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg',
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg',
-  },
-];
 const searchText = ref('');
 
 const searchAndNavigateToMarketPage = () => {
-  // Perform search action with searchText value
-  // After search, navigate to MarketPage
-  // Example:
-  // this.$router.push({ name: 'MarketPage', query: { search: searchText.value } });
   console.log('Searching for:', searchText.value);
-  // Placeholder navigation
   router.push({ name: 'MarketPage', query: { search: searchText.value } });
 };
-
-
-// const user = {
-//   initials: 'JD',
-//   fullName: 'John Doe',
-//   email: 'john.doe@doe.com',
-// };
-
-// const editAccount = () => {
-//   console.log('Edit Account clicked');
-// };
-//
-// const disconnect = () => {
-//   console.log('Disconnect clicked');
-// };
 
 const toggleFavorite = (product) => {
   product.isFavorite = !product.isFavorite;
 };
+
+const items = [
+  { src: bookImage },
+  { src: computerImage },
+  { src: foodImage },
+];
 </script>
 
 <script>
@@ -148,20 +130,6 @@ export default {
   data() {
     return {
       selectedPage: 'home',
-      items: [
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg',
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg',
-        },
-      ],
       buttons: [
         {
           icon: 'mdi-book-open-page-variant',
@@ -209,7 +177,22 @@ export default {
       product.isFavorite = !product.isFavorite;
     },
   },
+  created() {
+    this.$axios.get(this.$httpUrl+'/category/book',{withCredentials: true,
+      headers:{
+
+        'Authorization': 'Bearer ${token}'
+      },
+    }).then(res=>{
+      // 假设 res.data 是您从后端获得的数据
+      const data = res.data.data;
+      // 检查 data 是否为数组
+      console.log("fuck",data)
+    });
+
+  }
 }
+
 </script>
 
 <style scoped>
@@ -291,4 +274,5 @@ export default {
   bottom: 0;
   width: 100%;
 }
+
 </style>
