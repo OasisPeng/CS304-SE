@@ -22,7 +22,7 @@ request.interceptors.request.use(
     }
 );
 
-// 响应拦截
+
 request.interceptors.response.use(
     response => {
         const res = response.data;
