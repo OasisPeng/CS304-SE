@@ -2,6 +2,7 @@ module.exports = {
   transpileDependencies: [
     'vuetify'
   ],
+  lintOnSave: false,
   devServer: {
     open: true,
     port: 8080,
