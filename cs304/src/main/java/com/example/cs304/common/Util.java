@@ -86,6 +86,9 @@ public class Util {
                 name.add(rwh);
             }
             String SKSJ = course.getString("SKSJ");
+            if (SKSJ.contains("【考试】")) {
+                continue;
+            }
             String[] details = SKSJ.split("\n");
             courseForTimetable.setTeacher(details[1]);
             String[] keBanYu = details[2].split("-");
