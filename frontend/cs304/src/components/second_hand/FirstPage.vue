@@ -157,7 +157,8 @@ export default {
         { image: 'https://via.placeholder.com/150', name: '商品2', price: '$20', seller: '卖家2', soldOut: true, isFavorite: true },
         { image: 'https://via.placeholder.com/150', name: '商品3', price: '$15', seller: '卖家3', soldOut: false, isFavorite: false },
         { image: 'https://via.placeholder.com/150', name: '商品4', price: '$25', seller: '卖家4', soldOut: true, isFavorite: true },
-      ]
+      ],
+      book:[]
     }
   },
   methods: {
@@ -178,19 +179,33 @@ export default {
     },
   },
   created() {
-    this.$axios.get(this.$httpUrl+'/category/book',{withCredentials: true,
-      headers:{
-
-        'Authorization': 'Bearer ${token}'
+    this.$axios.get(this.$httpUrl + '/category/book', {
+      withCredentials: false,
+      headers: {
+        'Authorization': `Bearer ${token}`
       },
-    }).then(res=>{
+    }).then(res => {
       // 假设 res.data 是您从后端获得的数据
-      const data = res.data.data;
-      // 检查 data 是否为数组
-      console.log("fuck",data)
+      this.book = res.data.data.map(evo => {
+        return {
+          id: evo.id || "",
+          name: evo.name || "",
+          price: evo.price || "",
+          image: evo.image || "",
+          seller: evo.sellerId || "",
+          buyerId: evo.buyerId || "",
+          description: evo.description || "",
+          category: evo.category || "",
+          publishDate: evo.publishDate || "",
+          soldOut: evo.buyerId !== ""
+        };
+      });
+      console.log("Fetched books:", this.book);
+    }).catch(error => {
+      console.error("Error fetching books:", error);
     });
-
   }
+
 }
 
 </script>

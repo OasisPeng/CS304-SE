@@ -21,7 +21,16 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     JwtUtil util;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        response.setHeader("Access-Control-Allow-Credentials", "true");
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setHeader("Access-Control-Allow-Credentials", "false");
+            response.setContentType("application/json;charset=utf-8");
+            response.setHeader("Access-Control-Allow-Credentials", "true");
+            response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+            response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+            response.setHeader("Access-Control-Allow-Methods", "PUT, GET, DELETE, POST, OPTIONS");
+            return;
+        }
+        response.setHeader("Access-Control-Allow-Credentials", "false");
         response.setContentType("application/json;charset=utf-8");
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
