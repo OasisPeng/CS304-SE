@@ -49,15 +49,13 @@
 
       <v-card style="padding-top: 0 !important">
         <v-tabs color="green" centered>
-          <v-tab>电子产品</v-tab>
-          <v-tab>书籍</v-tab>
-          <v-tab>食物</v-tab>
-          <v-tab>其它</v-tab>
-          <v-tab-item v-for="n in 4" :key="n">
+          <v-tab v-for="(category, index) in categories" :key="index">{{ category.label }}</v-tab>
+          <v-tab-item v-for="(category, index) in categories" :key="index">
             <v-container fluid>
               <div class="product-list-container">
                 <v-row>
-                  <v-col cols="12" sm="6" md="4" lg="3" v-for="(product, index) in product" :key="index">
+                  <v-col cols="12" sm="6" md="4" lg="3" v-for="(product, index) in category.products" :key="index">
+                    <!-- 这里放产品信息的显示 -->
                     <v-card class="product-card" outlined>
                       <v-img :src="product.image" aspect-ratio="1.5">
                         <template v-slot:placeholder>
@@ -90,6 +88,7 @@
             </v-container>
           </v-tab-item>
         </v-tabs>
+
       </v-card>
       <BottomNavigation :value="selectedPage" />
     </v-form>
@@ -120,16 +119,18 @@ const items = [
   { src: computerImage },
   { src: foodImage },
 ];
+
 </script>
 
 <script>
+import {ref} from "vue";
 export default {
   components: {
     BottomNavigation
   },
   data() {
     return {
-      selectedPage: 'home',
+      selectedPage: 'FirstPage',
       buttons: [
         {
           icon: 'mdi-book-open-page-variant',
@@ -152,13 +153,13 @@ export default {
           action: this.sale,
         },
       ],
-      product: [
-        { image: 'https://via.placeholder.com/150', name: '商品1', price: '$10', seller: '卖家1', soldOut: false, isFavorite: false },
-        { image: 'https://via.placeholder.com/150', name: '商品2', price: '$20', seller: '卖家2', soldOut: true, isFavorite: true },
-        { image: 'https://via.placeholder.com/150', name: '商品3', price: '$15', seller: '卖家3', soldOut: false, isFavorite: false },
-        { image: 'https://via.placeholder.com/150', name: '商品4', price: '$25', seller: '卖家4', soldOut: true, isFavorite: true },
-      ],
-      book:[]
+
+      categories :[
+        { label: '书籍', products: [] },
+        { label: '电子产品', products: [] },
+        { label: '食物', products: [] },
+        { label: '其他', products: [] }
+      ]
     }
   },
   methods: {
@@ -177,35 +178,126 @@ export default {
     toggleFavorite(product) {
       product.isFavorite = !product.isFavorite;
     },
-  },
-  created() {
-    this.$axios.get(this.$httpUrl + '/category/book', {
-      withCredentials: false,
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-    }).then(res => {
-      // 假设 res.data 是您从后端获得的数据
-      this.book = res.data.data.map(evo => {
-        return {
-          id: evo.id || "",
-          name: evo.name || "",
-          price: evo.price || "",
-          image: evo.image || "",
-          seller: evo.sellerId || "",
-          buyerId: evo.buyerId || "",
-          description: evo.description || "",
-          category: evo.category || "",
-          publishDate: evo.publishDate || "",
-          soldOut: evo.buyerId !== ""
-        };
-      });
-      console.log("Fetched books:", this.book);
-    }).catch(error => {
-      console.error("Error fetching books:", error);
-    });
-  }
 
+    async bookfetch(){
+      try {
+        const response = await this.$axios.get(this.$httpUrl + '/goods/category/book', {
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          },
+        })
+        console.log("fuck",response)
+        this.book = response.data.data.map(evo => {
+          return {
+            id: evo.id || "",
+            name: evo.name || "",
+            price: evo.price || "",
+            image: evo.image || "",
+            seller: evo.sellerId || "",
+            buyerId: evo.buyerId || "",
+            description: evo.description || "",
+            category: evo.category || "",
+            publishDate: evo.publishDate || "",
+            soldOut: evo.buyerId !== ""
+          };
+        });
+        this.categories.value[0].products = this.book;
+
+      }catch (error) {
+        // console.error('Error querying current course:', error);
+      }
+    },
+    async foodfetch(){
+      try {
+        const response = await this.$axios.get(this.$httpUrl + '/goods/category/food', {
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          },
+        })
+        this.food = response.data.data.map(evo => {
+          return {
+            id: evo.id || "",
+            name: evo.name || "",
+            price: evo.price || "",
+            image: evo.image || "",
+            seller: evo.sellerId || "",
+            buyerId: evo.buyerId || "",
+            description: evo.description || "",
+            category: evo.category || "",
+            publishDate: evo.publishDate || "",
+            soldOut: evo.buyerId !== ""
+          };
+        });
+        this.categories.value[2].products = this.food;
+
+      }catch (error) {
+        console.error('Error querying current course:', error);
+      }
+    },
+    async device(){
+      try {
+        const response = await this.$axios.get(this.$httpUrl + '/goods/category/device', {
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          },
+        })
+        this.device = response.data.data.map(evo => {
+          return {
+            id: evo.id || "",
+            name: evo.name || "",
+            price: evo.price || "",
+            image: evo.image || "",
+            seller: evo.sellerId || "",
+            buyerId: evo.buyerId || "",
+            description: evo.description || "",
+            category: evo.category || "",
+            publishDate: evo.publishDate || "",
+            soldOut: evo.buyerId !== ""
+          };
+        });
+        this.categories.value[1].products = this.device;
+
+      }catch (error) {
+        console.error('Error querying current course:', error);
+      }
+    },
+    async otherfetch(){
+      try {
+        const response = await this.$axios.get(this.$httpUrl + '/goods/category/food', {
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          },
+        })
+        this.other = response.data.data.map(evo => {
+          return {
+            id: evo.id || "",
+            name: evo.name || "",
+            price: evo.price || "",
+            image: evo.image || "",
+            seller: evo.sellerId || "",
+            buyerId: evo.buyerId || "",
+            description: evo.description || "",
+            category: evo.category || "",
+            publishDate: evo.publishDate || "",
+            soldOut: evo.buyerId !== ""
+          };
+        });
+        this.categories.value[2].products = this.other;
+
+      }catch (error) {
+        console.error('Error querying current course:', error);
+      }
+    }
+
+  },
+
+mounted (){
+    this.bookfetch()
+}
 }
 
 </script>
@@ -234,7 +326,7 @@ export default {
 }
 
 .product-list-container {
-  max-height: 385px; /* 固定窗口高度 */
+  height: 385px; /* 固定窗口高度 */
   overflow-y: auto; /* 允许垂直滚动 */
 }
 
