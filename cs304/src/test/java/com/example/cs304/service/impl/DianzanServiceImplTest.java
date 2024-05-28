@@ -70,7 +70,7 @@ class DianzanServiceImplTest {
         final com.example.cs304.entity.dianzan entity = new dianzan();
         entity.setCourseId(0);
         entity.setUserId(0);
-        when(mockMapper.deleteById(entity)).thenReturn(0);
+        when(mockMapper.deleteById(entity)).thenReturn(1);
 
         // Run the test
         final com.example.cs304.entity.dianzan result = dianzanServiceImplUnderTest.deleteById(dianzan);
@@ -94,7 +94,7 @@ class DianzanServiceImplTest {
         final com.example.cs304.entity.dianzan entity = new dianzan();
         entity.setCourseId(0);
         entity.setUserId(0);
-        when(mockMapper.updateById(entity)).thenReturn(0);
+        when(mockMapper.updateById(entity)).thenReturn(1);
 
         // Run the test
         final com.example.cs304.entity.dianzan result = dianzanServiceImplUnderTest.updateById(dianzan);

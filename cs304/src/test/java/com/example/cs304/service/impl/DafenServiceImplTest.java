@@ -76,7 +76,7 @@ class DafenServiceImplTest {
         entity.setCourseId(0);
         entity.setScore(0);
         entity.setUserId(0);
-        when(mockMapper.deleteById(entity)).thenReturn(0);
+        when(mockMapper.deleteById(entity)).thenReturn(1);
 
         // Run the test
         final com.example.cs304.entity.dafen result = dafenServiceImplUnderTest.deleteById(dafen);
@@ -103,7 +103,7 @@ class DafenServiceImplTest {
         entity.setCourseId(0);
         entity.setScore(0);
         entity.setUserId(0);
-        when(mockMapper.updateById(entity)).thenReturn(0);
+        when(mockMapper.updateById(entity)).thenReturn(1);
 
         // Run the test
         final com.example.cs304.entity.dafen result = dafenServiceImplUnderTest.updateById(dafen);
