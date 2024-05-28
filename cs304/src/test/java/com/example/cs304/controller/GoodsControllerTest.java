@@ -1,154 +1,388 @@
-/**
- * AI-generated-content
- * tool: ChatGPT
- * version: 3.5
- * usage: I used the prompt "请给出GoodsController类对应的单元测试类", and
- * copy the code after simple modifications from its response
- *
-**/
 package com.example.cs304.controller;
+
 import com.example.cs304.common.AliOssUtil;
-import com.example.cs304.common.Result;
-import com.example.cs304.config.WebSocketConfig;
 import com.example.cs304.entity.Goods;
 import com.example.cs304.service.GoodsService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(GoodsController.class)
 class GoodsControllerTest {
 
-    @MockBean
-    private AliOssUtil util;
-
-    @MockBean
-    private GoodsService goodsService;
-
     @Autowired
-    private GoodsController goodsController;
-
     private MockMvc mockMvc;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.initMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(goodsController).build();
+    @MockBean
+    private AliOssUtil mockUtil;
+    @MockBean
+    private GoodsService mockGoodsService;
+
+    @Test
+    void testUpload() throws Exception {
+        // Setup
+        when(mockUtil.upload(any(byte[].class), eq("objectName"))).thenReturn("result");
+
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(multipart("/goods/upload")
+                        .file(new MockMultipartFile("file", "originalFilename", MediaType.APPLICATION_JSON_VALUE,
+                                "content".getBytes()))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
     }
 
     @Test
-    void uploadTest() {
-        try {
-            byte[] fileBytes = "test file content".getBytes();
-            MultipartFile multipartFile = new MockMultipartFile("file", "test.txt", "text/plain", fileBytes);
-            String expectedFilePath = "http://example.com/test.txt";
-            when(util.upload(fileBytes, "test.txt")).thenReturn(expectedFilePath);
+    void testGetGoodsByCategory() throws Exception {
+        // Setup
+        // Configure GoodsService.findByCategory(...).
+        final Goods goods1 = new Goods();
+        goods1.setId(0L);
+        goods1.setName("name");
+        goods1.setPrice(new BigDecimal("0.00"));
+        goods1.setImage("image");
+        goods1.setSellerId("sellerId");
+        final List<Goods> goods = List.of(goods1);
+        when(mockGoodsService.findByCategory("category")).thenReturn(goods);
 
-            Result result = goodsController.upload(multipartFile);
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(get("/goods/category/{category}", "category")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
 
-            assertEquals(Result.suc(expectedFilePath), result);
-            verify(util, times(1)).upload(fileBytes, "test.txt");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
     }
 
     @Test
-    void getGoodsByCategoryTest() {
-        String category = "test";
-        List<Goods> expectedGoodsList = Collections.singletonList(new Goods());
-        when(goodsService.findByCategory(category)).thenReturn(expectedGoodsList);
+    void testGetGoodsByCategory_GoodsServiceReturnsNoItems() throws Exception {
+        // Setup
+        when(mockGoodsService.findByCategory("category")).thenReturn(Collections.emptyList());
 
-        Result result = goodsController.getGoodsByCategory(category);
-        System.out.println(result);
-        assertEquals(Result.suc(expectedGoodsList), result);
-        verify(goodsService, times(1)).findByCategory(category);
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(get("/goods/category/{category}", "category")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
     }
 
     @Test
-    void getGoodsBySellerIdTest() {
-        String sellerId = "testSellerId";
-        List<Goods> expectedGoodsList = Collections.singletonList(new Goods());
-        when(goodsService.findBySellerId(sellerId)).thenReturn(expectedGoodsList);
+    void testGetGoodsBySellerId() throws Exception {
+        // Setup
+        // Configure GoodsService.findBySellerId(...).
+        final Goods goods1 = new Goods();
+        goods1.setId(0L);
+        goods1.setName("name");
+        goods1.setPrice(new BigDecimal("0.00"));
+        goods1.setImage("image");
+        goods1.setSellerId("sellerId");
+        final List<Goods> goods = List.of(goods1);
+        when(mockGoodsService.findBySellerId("sellerId")).thenReturn(goods);
 
-        Result result = goodsController.getGoodsBySellerId(sellerId);
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(get("/goods/seller/{sellerId}", "sellerId")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
 
-        assertEquals(Result.suc(expectedGoodsList), result);
-        verify(goodsService, times(1)).findBySellerId(sellerId);
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
     }
 
     @Test
-    void getGoodsByIdTest() {
-        Long id = 1L;
-        Goods expectedGoods = new Goods();
-        when(goodsService.findById(id)).thenReturn(expectedGoods);
+    void testGetGoodsBySellerId_GoodsServiceReturnsNoItems() throws Exception {
+        // Setup
+        when(mockGoodsService.findBySellerId("sellerId")).thenReturn(Collections.emptyList());
 
-        Result result = goodsController.getGoodsById(id);
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(get("/goods/seller/{sellerId}", "sellerId")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
 
-        assertEquals(Result.suc(expectedGoods), result);
-        verify(goodsService, times(1)).findById(id);
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
     }
 
     @Test
-    void searchGoodsTest() {
-        String keyword = "testKeyword";
-        List<Goods> expectedGoodsList = Collections.singletonList(new Goods());
-        when(goodsService.searchByKeyword(keyword)).thenReturn(expectedGoodsList);
+    void testGetGoodsByBuyerId() throws Exception {
+        // Setup
+        // Configure GoodsService.findByBuyerId(...).
+        final Goods goods1 = new Goods();
+        goods1.setId(0L);
+        goods1.setName("name");
+        goods1.setPrice(new BigDecimal("0.00"));
+        goods1.setImage("image");
+        goods1.setSellerId("sellerId");
+        final List<Goods> goods = List.of(goods1);
+        when(mockGoodsService.findByBuyerId("buyerId")).thenReturn(goods);
 
-        Result result = goodsController.searchGoods(keyword);
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(get("/goods/buyer/{buyerId}", "buyerId")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
 
-        assertEquals(Result.suc(expectedGoodsList), result);
-        verify(goodsService, times(1)).searchByKeyword(keyword);
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
     }
 
     @Test
-    void addGoodsTest() {
-        Goods goods = new Goods();
-        when(goodsService.insert(goods)).thenReturn(goods);
+    void testGetGoodsByBuyerId_GoodsServiceReturnsNoItems() throws Exception {
+        // Setup
+        when(mockGoodsService.findByBuyerId("buyerId")).thenReturn(Collections.emptyList());
 
-        Result result = goodsController.addGoods(goods);
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(get("/goods/buyer/{buyerId}", "buyerId")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
 
-        assertEquals(Result.suc(goods), result);
-        verify(goodsService, times(1)).insert(goods);
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
     }
 
     @Test
-    void updateGoodsTest() {
-        Goods goods = new Goods();
-        when(goodsService.updateGoods(goods)).thenReturn(goods);
+    void testGetGoodsById() throws Exception {
+        // Setup
+        // Configure GoodsService.findById(...).
+        final Goods goods = new Goods();
+        goods.setId(0L);
+        goods.setName("name");
+        goods.setPrice(new BigDecimal("0.00"));
+        goods.setImage("image");
+        goods.setSellerId("sellerId");
+        when(mockGoodsService.findById(0L)).thenReturn(goods);
 
-        Result result = goodsController.updateGoods(goods);
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(get("/goods/{id}", 0)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
 
-        assertEquals(Result.suc(goods), result);
-        verify(goodsService, times(1)).updateGoods(goods);
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
     }
 
     @Test
-    void deleteGoodsTest() {
-        Goods goods = new Goods();
-        when(goodsService.deleteById(goods)).thenReturn(goods);
+    void testSearchGoods() throws Exception {
+        // Setup
+        // Configure GoodsService.searchByKeyword(...).
+        final Goods goods1 = new Goods();
+        goods1.setId(0L);
+        goods1.setName("name");
+        goods1.setPrice(new BigDecimal("0.00"));
+        goods1.setImage("image");
+        goods1.setSellerId("sellerId");
+        final List<Goods> goods = List.of(goods1);
+        when(mockGoodsService.searchByKeyword("keyword")).thenReturn(goods);
 
-        Result result = goodsController.deleteGoods(goods);
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(get("/goods/search")
+                        .param("keyword", "keyword")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
 
-        assertEquals(Result.suc(goods), result);
-        verify(goodsService, times(1)).deleteById(goods);
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
+    }
+
+    @Test
+    void testSearchGoods_GoodsServiceReturnsNoItems() throws Exception {
+        // Setup
+        when(mockGoodsService.searchByKeyword("keyword")).thenReturn(Collections.emptyList());
+
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(get("/goods/search")
+                        .param("keyword", "keyword")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
+    }
+
+    @Test
+    void testAddGoods() throws Exception {
+        // Setup
+        // Configure GoodsService.insert(...).
+        final Goods goods = new Goods();
+        goods.setId(0L);
+        goods.setName("name");
+        goods.setPrice(new BigDecimal("0.00"));
+        goods.setImage("image");
+        goods.setSellerId("sellerId");
+        final Goods goods1 = new Goods();
+        goods1.setId(0L);
+        goods1.setName("name");
+        goods1.setPrice(new BigDecimal("0.00"));
+        goods1.setImage("image");
+        goods1.setSellerId("sellerId");
+        when(mockGoodsService.insert(goods1)).thenReturn(goods);
+
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(post("/goods/add")
+                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
+    }
+
+    @Test
+    void testAddGoods_GoodsServiceReturnsNull() throws Exception {
+        // Setup
+        // Configure GoodsService.insert(...).
+        final Goods goods = new Goods();
+        goods.setId(0L);
+        goods.setName("name");
+        goods.setPrice(new BigDecimal("0.00"));
+        goods.setImage("image");
+        goods.setSellerId("sellerId");
+        when(mockGoodsService.insert(goods)).thenReturn(null);
+
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(post("/goods/add")
+                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
+    }
+
+    @Test
+    void testUpdateGoods() throws Exception {
+        // Setup
+        // Configure GoodsService.updateGoods(...).
+        final Goods goods = new Goods();
+        goods.setId(0L);
+        goods.setName("name");
+        goods.setPrice(new BigDecimal("0.00"));
+        goods.setImage("image");
+        goods.setSellerId("sellerId");
+        final Goods goods1 = new Goods();
+        goods1.setId(0L);
+        goods1.setName("name");
+        goods1.setPrice(new BigDecimal("0.00"));
+        goods1.setImage("image");
+        goods1.setSellerId("sellerId");
+        when(mockGoodsService.updateGoods(goods1)).thenReturn(goods);
+
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(post("/goods/update")
+                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
+    }
+
+    @Test
+    void testUpdateGoods_GoodsServiceReturnsNull() throws Exception {
+        // Setup
+        // Configure GoodsService.updateGoods(...).
+        final Goods goods = new Goods();
+        goods.setId(0L);
+        goods.setName("name");
+        goods.setPrice(new BigDecimal("0.00"));
+        goods.setImage("image");
+        goods.setSellerId("sellerId");
+        when(mockGoodsService.updateGoods(goods)).thenReturn(null);
+
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(post("/goods/update")
+                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
+    }
+
+    @Test
+    void testDeleteGoods() throws Exception {
+        // Setup
+        // Configure GoodsService.deleteById(...).
+        final Goods goods = new Goods();
+        goods.setId(0L);
+        goods.setName("name");
+        goods.setPrice(new BigDecimal("0.00"));
+        goods.setImage("image");
+        goods.setSellerId("sellerId");
+        final Goods goods1 = new Goods();
+        goods1.setId(0L);
+        goods1.setName("name");
+        goods1.setPrice(new BigDecimal("0.00"));
+        goods1.setImage("image");
+        goods1.setSellerId("sellerId");
+        when(mockGoodsService.deleteById(goods1)).thenReturn(goods);
+
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(post("/goods/del")
+                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
+    }
+
+    @Test
+    void testDeleteGoods_GoodsServiceReturnsNull() throws Exception {
+        // Setup
+        // Configure GoodsService.deleteById(...).
+        final Goods goods = new Goods();
+        goods.setId(0L);
+        goods.setName("name");
+        goods.setPrice(new BigDecimal("0.00"));
+        goods.setImage("image");
+        goods.setSellerId("sellerId");
+        when(mockGoodsService.deleteById(goods)).thenReturn(null);
+
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(post("/goods/del")
+                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
     }
 }

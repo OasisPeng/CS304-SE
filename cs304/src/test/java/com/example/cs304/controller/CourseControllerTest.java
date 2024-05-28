@@ -1,66 +1,89 @@
-//package com.example.cs304.controller;
-//
-//import com.example.cs304.common.Code;
-//import com.example.cs304.common.Result;
-//import com.example.cs304.common.Util;
-//import com.example.cs304.entity.CourseForTimetable;
-//import com.example.cs304.entity.Student;
-//import com.example.cs304.service.ICourseService;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.MockitoAnnotations;
-//
-//import java.io.IOException;
-//import java.net.URISyntaxException;
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.mockito.Mockito.*;
-//
-//class CourseControllerTest {
-//
-//    @Mock
-//    private ICourseService courseService;
-//
-//    @InjectMocks
-//    private CourseController courseController;
-//
-//    public CourseControllerTest() {
-//        MockitoAnnotations.initMocks(this);
-//    }
-//
-//    @Test
-//    void listPageTest() {
-//        HashMap<String, Object> param = new HashMap<>();
-//        when(courseService.listPage(param)).thenReturn(null);
-//
-//        Result result = courseController.listPage(param);
-//
-//        assertEquals(Result.suc(null), result);
-//        verify(courseService, times(1)).listPage(param);
-//    }
-//
-//    @Test
-//    void queryKCBTest() throws IOException, URISyntaxException {
-//        Student student = new Student();
-//        student.setUsername("testUsername");
-//        student.setPassword("testPassword");
-//
-//        ArrayList<CourseForTimetable> expectedCoursesInfo = new ArrayList<>();
-//        // Assuming you have some mock data for courses info
-//
-//        // Mocking the CAS login and course info retrieval
-//        when(Util.casLogin(student.getUsername(), student.getPassword())).thenReturn(new String[]{"cookie1", "cookie2"});
-//        when(Util.getCourInfo("cookie1", "cookie2")).thenReturn("rawCourseInfo");
-//        when(Util.getCourses("rawCourseInfo")).thenReturn(expectedCoursesInfo);
-//
-//        Result result = courseController.queryKCB(student);
-//
-//        assertEquals(new Result(Code.GET_OK, "查询成功", expectedCoursesInfo), result);
-//        verify(Util, times(1)).casLogin(student.getUsername(), student.getPassword());
-//        verify(Util, times(1)).getCourInfo("cookie1", "cookie2");
-//        verify(Util, times(1)).getCourses("rawCourseInfo");
-//    }
-//}
+package com.example.cs304.controller;
+
+import com.example.cs304.service.ICourseService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(CourseController.class)
+class CourseControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private ICourseService mockCourseService;
+
+    @Test
+    void testListPage() throws Exception {
+        // Setup
+        when(mockCourseService.listPage(new HashMap<>(Map.ofEntries()))).thenReturn(null);
+
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(post("/course/listPage")
+                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
+    }
+
+    @Test
+    void testQueryKCB() throws Exception {
+        // Setup
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(post("/course/queryCurrentCourse")
+                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
+    }
+
+    @Test
+    void testQueryKCB_ThrowsIOException() throws Exception {
+        // Setup
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(post("/course/queryCurrentCourse")
+                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
+    }
+
+    @Test
+    void testQueryKCB_ThrowsURISyntaxException() throws Exception {
+        // Setup
+        // Run the test
+        final MockHttpServletResponse response = mockMvc.perform(post("/course/queryCurrentCourse")
+                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Verify the results
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        assertThat(response.getContentAsString()).isEqualTo("expectedResponse");
+    }
+}
