@@ -37,5 +37,5 @@ export const Login = data => {
   return request.post('/login/login',data);
 }
 export const getGpt= data => {
-  return request.get('/ai/chat',data);
+  return request.post('/ai/chat',data);
 }

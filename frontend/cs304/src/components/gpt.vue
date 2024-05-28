@@ -1017,7 +1017,7 @@
       // 计算属性
       commonParams() {
         const {username=''}=this.params
-        return { user:12112217,content:'你好'} ;
+        return { user:12112217,content:'hello'} ;
       },
     },
     watch: {
