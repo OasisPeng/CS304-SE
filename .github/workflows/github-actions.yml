@@ -1,3 +1,6 @@
+#AI-generated-content * tool: ChatGPT
+#version: 3.5
+#usage: I used the prompt "怎么使用github actions实现自动化测试和生成测试覆盖率报告", and use the code from its response after some modification
 name: Test and Coverage
 
 on:
