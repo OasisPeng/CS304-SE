@@ -162,7 +162,7 @@ class EventServiceImplTest {
         final Event result = eventServiceImplUnderTest.removeById(event);
 
         // Verify the results
-        assertThat(result).isEqualTo(null);
+        assertThat(result).isEqualTo(expectedResult);
     }
 
     @Test
