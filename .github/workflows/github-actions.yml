@@ -24,7 +24,7 @@ jobs:
       run: mvn -B clean package --file cs304/pom.xml
 
     - name: Run tests
-      run: mvn test
+      run: mvn test -f cs304/pom.xml
 
     - name: Generate coverage report
       run: mvn jacoco:report
