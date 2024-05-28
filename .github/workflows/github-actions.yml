@@ -28,5 +28,5 @@ jobs:
 
     - name: Generate coverage report
       run: |
-        mvn clean install
+        mvn clean install --file cs304/pom.xml
         mvn jacoco:report
