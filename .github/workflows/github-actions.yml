@@ -3,7 +3,7 @@ name: Test and Coverage
 on:
   push:
     branches:
-      - master
+      - test
 
 jobs:
   build:
@@ -27,4 +27,6 @@ jobs:
       run: mvn test -f cs304/pom.xml
 
     - name: Generate coverage report
-      run: mvn jacoco:report
+      run: |
+        mvn clean install
+        mvn jacoco:report
