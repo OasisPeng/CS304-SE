@@ -21,7 +21,7 @@ public class JwtUtil {
     @Value("${jwt.secret-key}")
     String secretKey;
 
-    private Cache<String, String> jwtCache;
+    Cache<String, String> jwtCache;
     @PostConstruct
     public void init() {
         jwtCache = Caffeine.newBuilder()
