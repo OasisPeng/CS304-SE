@@ -28,6 +28,9 @@ public class CacheConfig {
         cacheList.add(buildCache("pinglun"));
         cacheList.add(buildCache("messages"));
         cacheList.add(buildCache("goods"));
+        cacheList.add(buildCache("favourite"));
+        cacheList.add(buildCache("havebuy"));
+        cacheList.add(buildCache("follow"));
         simpleCacheManager.setCaches(cacheList);
         return simpleCacheManager;
     }

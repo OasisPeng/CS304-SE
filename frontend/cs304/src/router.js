@@ -7,7 +7,7 @@ import EmotionSelection from '@/components/toDoList/EmotionSelection.vue'
 import LevelSelection from '@/components/toDoList/LevelSelection.vue'
 import TodoEdit from '@/components/toDoList/TodoEdit.vue'
 import DoList from '@/components/toDoList/DoList.vue'
-// import FirstPage from "@/components/second_hand/FirstPage.vue";
+import FirstPage from "@/components/second_hand/FirstPage.vue";
 import person from "@/components/second_hand/PersonProfile.vue"
 import BuyPage from "@/components/second_hand/BuyPage.vue"
 import FavouritePage from "@/components/second_hand/FavouritePage.vue";
@@ -24,6 +24,12 @@ export default new Router({
       name: 'home',
       // component: FirstPage,
       component: HomePageVue
+    },
+    {
+      path: '/',
+      name: 'FirstPage',
+      component: FirstPage,
+
     },
     {
       path: '/BuyPage',
