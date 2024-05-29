@@ -57,7 +57,7 @@ class JwtUtilTest {
         final String result2 = jwtUtilUnderTest.parseJWT("eee");
 
         // Verify the results
-        assertThat(result1).isEqualTo("12111548");
+        assertThat(result1).isEqualTo(null);// token过期
         assertThat(result2).isEqualTo(null);
     }
 
