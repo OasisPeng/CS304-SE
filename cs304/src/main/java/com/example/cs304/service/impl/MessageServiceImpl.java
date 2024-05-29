@@ -35,6 +35,18 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public List<Message> SelectByOneUser(Integer id) {
+        LambdaQueryWrapper<Message> lqw = new LambdaQueryWrapper<>();
+        lqw.nested(wrapper -> {
+
+            wrapper.eq(Message::getTo, id);
+
+        }).orderByAsc(Message::getTime);
+
+        return dao.selectList(lqw);
+    }
+
+    @Override
     public Message InsertMessage(Message message) {
         if (message.getOld() == 0) {
             dao.insert(message);

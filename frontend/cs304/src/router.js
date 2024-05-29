@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-// import HomePage from '@/views/HomePage.vue';
+import HomePage from '@/views/HomePage.vue';
 import ClassSchedule from './components/scheduletable/ClassSchedule.vue';
 import CategorySelection from '@/components/toDoList/CategorySelection.vue'
 import EmotionSelection from '@/components/toDoList/EmotionSelection.vue'
@@ -8,12 +8,12 @@ import LevelSelection from '@/components/toDoList/LevelSelection.vue'
 import TodoEdit from '@/components/toDoList/TodoEdit.vue'
 import DoList from '@/components/toDoList/DoList.vue'
 import FirstPage from "@/components/second_hand/FirstPage.vue";
-import person from "@/components/second_hand/PersonProfile.vue"
+import Person from "@/components/second_hand/PersonProfile.vue"
 import BuyPage from "@/components/second_hand/BuyPage.vue"
 import FavouritePage from "@/components/second_hand/FavouritePage.vue";
 import SalePage from "@/components/second_hand/SalePage.vue";
 import MarketPage from "@/components/second_hand/MarketPage.vue";
-import HomePageVue from './views/HomePage.vue';
+import MessagesPage from "@/components/second_hand/MessagesPage";
 Vue.use(Router);
 
 export default new Router({
@@ -22,8 +22,12 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      // component: FirstPage,
-      component: HomePageVue
+      component: HomePage
+    },
+    {
+      path: '/FirstPage',
+      name: 'FirstPage',
+      component: FirstPage
     },
     {
       path: '/',
@@ -49,12 +53,17 @@ export default new Router({
     {
       path: '/Person',
       name: 'Person',
-      component: person
+      component: Person
     },
     {
       path: '/MarketPage',
       name: 'MarketPage',
       component: MarketPage
+    },
+    {
+      path: '/MessagesPage',
+      name: 'MessagesPage',
+      component: MessagesPage
     },
     {
       path: '/ClassSchedule',

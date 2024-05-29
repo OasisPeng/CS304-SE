@@ -44,17 +44,14 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
       chatMessage: this.$route.params.message,
-      chatMessages: [
-        { text: '想聊一下二手鞋，可以吗?', avatarError: false },
-        { text: 'I can\'t wait to talk with you,immediately.', avatarError: false }
-      ],
-      myMessages: [
-        { text: '可以啊，我这儿不少好鞋!', avatarError: false }
-      ],
+      chatMessages: [],
+      myMessages: [],
       newMessage: '',
       myAvatar: 'path/to/my-avatar.jpg' // Replace with your actual avatar path
     };
@@ -63,12 +60,33 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
+    async fetchChatMessages() {
+      try {
+        const response = await axios.get(`/api/messages?from=${this.$route.params.from}&to=${this.$route.params.to}`);
+        const messages = response.data;
+
+        this.chatMessages = messages.filter(msg => msg.from === this.$route.params.to).map(msg => ({
+          text: msg.text,
+          avatarError: false
+        }));
+
+        this.myMessages = messages.filter(msg => msg.from === this.$route.params.from).map(msg => ({
+          text: msg.text,
+          avatarError: false
+        }));
+      } catch (error) {
+        console.error('Error fetching chat messages:', error);
+      }
+    },
     sendMessage() {
       if (this.newMessage.trim() !== '') {
         this.myMessages.push({ text: this.newMessage, avatarError: false });
         this.newMessage = '';
       }
     }
+  },
+  created() {
+    this.fetchChatMessages();
   }
 };
 </script>

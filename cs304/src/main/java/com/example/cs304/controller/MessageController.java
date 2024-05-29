@@ -18,6 +18,11 @@ public class MessageController {
         List<Message> list = service.SelectByTwoUser(id1, id2);
         return Result.suc(list);
     }
+    @GetMapping("/getByOneUser/{id}")
+    public Result getByOneUser(@PathVariable Integer id) {
+        List<Message> list = service.SelectByOneUser(id);
+        return Result.suc(list);
+    }
     @PostMapping("/insertList")
     public Result InsertList(@RequestBody List<Message> list) {
         return Result.suc(service.InsertMessages(list));
