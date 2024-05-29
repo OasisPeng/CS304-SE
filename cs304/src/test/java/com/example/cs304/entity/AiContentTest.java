@@ -1,8 +1,3 @@
-/**
- * AI-generated-content * tool: ChatGPT
- * version: 3.5
- * usage: I used the prompt "怎么给AiContentTest类写单元测试", and use the code from its response after some modification
- */
 package com.example.cs304.entity;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AiContentTest {
     private AiContent aiContent;
+    private AiContent anotherAiContent;
 
     @BeforeEach
     public void setUp() {
@@ -19,6 +15,11 @@ public class AiContentTest {
         aiContent.setUser(1);
         aiContent.setContent("[{'role': 'user', 'content':'Hello'},{'role':'assistant', 'content':'Hi there!'}]");
         aiContent.setId(100);
+
+        anotherAiContent = new AiContent();
+        anotherAiContent.setUser(1);
+        anotherAiContent.setContent("[{'role': 'user', 'content':'Hello'},{'role':'assistant', 'content':'Hi there!'}]");
+        anotherAiContent.setId(100);
     }
 
     @Test
@@ -34,5 +35,22 @@ public class AiContentTest {
         assertThat(toString).contains("user=1");
         assertThat(toString).contains("content=[{'role': 'user', 'content':'Hello'},{'role':'assistant', 'content':'Hi there!'}]");
         assertThat(toString).contains("id=100");
+    }
+
+    @Test
+    public void testAiContentEquals() {
+        assertThat(aiContent).isEqualTo(anotherAiContent);
+        assertThat(aiContent.equals(anotherAiContent)).isTrue();
+
+        anotherAiContent.setId(101);
+        assertThat(aiContent).isNotEqualTo(anotherAiContent);
+    }
+
+    @Test
+    public void testAiContentHashCode() {
+        assertThat(aiContent.hashCode()).isEqualTo(anotherAiContent.hashCode());
+
+        anotherAiContent.setId(101);
+        assertThat(aiContent.hashCode()).isNotEqualTo(anotherAiContent.hashCode());
     }
 }

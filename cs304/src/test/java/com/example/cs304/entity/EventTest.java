@@ -1,8 +1,3 @@
-/**
- * AI-generated-content * tool: ChatGPT
- * version: 3.5
- * usage: I used the prompt "怎么给Event类写单元测试", and use the code from its response after some modification
- */
 package com.example.cs304.entity;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class EventTest {
     private Event event;
+    private Event anotherEvent;
 
     @BeforeEach
     public void setUp() {
@@ -26,6 +22,18 @@ public class EventTest {
         event.setCategory("Work");
         event.setEmotion("Happy");
         event.setText("Discuss project updates.");
+
+        anotherEvent = new Event();
+        anotherEvent.setId(1);
+        anotherEvent.setTitle("Meeting");
+        anotherEvent.setOwner("john_doe");
+        anotherEvent.setWeek(12);
+        anotherEvent.setXq(3);
+        anotherEvent.setLevel("High");
+        anotherEvent.setFinish(0);
+        anotherEvent.setCategory("Work");
+        anotherEvent.setEmotion("Happy");
+        anotherEvent.setText("Discuss project updates.");
     }
 
     @Test
@@ -55,5 +63,22 @@ public class EventTest {
         assertThat(toString).contains("category=Work");
         assertThat(toString).contains("emotion=Happy");
         assertThat(toString).contains("text=Discuss project updates.");
+    }
+
+    @Test
+    public void testEventEquals() {
+        assertThat(event).isEqualTo(anotherEvent);
+        assertThat(event.equals(anotherEvent)).isTrue();
+
+        anotherEvent.setId(2);
+        assertThat(event).isNotEqualTo(anotherEvent);
+    }
+
+    @Test
+    public void testEventHashCode() {
+        assertThat(event.hashCode()).isEqualTo(anotherEvent.hashCode());
+
+        anotherEvent.setId(2);
+        assertThat(event.hashCode()).isNotEqualTo(anotherEvent.hashCode());
     }
 }

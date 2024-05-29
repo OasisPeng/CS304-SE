@@ -1,8 +1,3 @@
-/**
- * AI-generated-content * tool: ChatGPT
- * version: 3.5
- * usage: I used the prompt "怎么给Goods类写单元测试", and use the code from its response after some modification
- */
 package com.example.cs304.entity;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -10,11 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GoodsTest {
 
     private Goods goods;
+    private Goods anotherGoods;
 
     @BeforeEach
     public void setUp() {
@@ -28,6 +25,17 @@ class GoodsTest {
         goods.setDescription("A test product description.");
         goods.setCategory("Test Category");
         goods.setPublishDate(new Date());
+
+        anotherGoods = new Goods();
+        anotherGoods.setId(1L);
+        anotherGoods.setName("Test Product");
+        anotherGoods.setPrice(new BigDecimal("99.99"));
+        anotherGoods.setImage("image.jpg");
+        anotherGoods.setSellerId("seller123");
+        anotherGoods.setBuyerId("buyer456");
+        anotherGoods.setDescription("A test product description.");
+        anotherGoods.setCategory("Test Category");
+        anotherGoods.setPublishDate(goods.getPublishDate());
     }
 
     @Test
@@ -54,5 +62,22 @@ class GoodsTest {
         assertThat(toString).contains("buyerId=buyer456");
         assertThat(toString).contains("description=A test product description.");
         assertThat(toString).contains("category=Test Category");
+    }
+
+    @Test
+    public void testGoodsEquals() {
+        assertThat(goods).isEqualTo(anotherGoods);
+        assertThat(goods.equals(anotherGoods)).isTrue();
+
+        anotherGoods.setId(2L);
+        assertThat(goods).isNotEqualTo(anotherGoods);
+    }
+
+    @Test
+    public void testGoodsHashCode() {
+        assertThat(goods.hashCode()).isEqualTo(anotherGoods.hashCode());
+
+        anotherGoods.setId(2L);
+        assertThat(goods.hashCode()).isNotEqualTo(anotherGoods.hashCode());
     }
 }
