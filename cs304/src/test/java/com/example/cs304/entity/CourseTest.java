@@ -1,8 +1,3 @@
-/**
- * AI-generated-content * tool: ChatGPT
- * version: 3.5
- * usage: I used the prompt "怎么给Course类写单元测试", and use the code from its response after some modification
- */
 package com.example.cs304.entity;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CourseTest {
     private Course course;
+    private Course anotherCourse;
 
     @BeforeEach
     public void setUp() {
@@ -28,6 +24,20 @@ class CourseTest {
         course.setHours(48.0);
         course.setDepartment("Computer Science Department");
         course.setTeacher("Dr. Smith");
+
+        anotherCourse = new Course();
+        anotherCourse.setId(1);
+        anotherCourse.setTrainingType("Technical");
+        anotherCourse.setCourseCode("CS304");
+        anotherCourse.setChineseName("计算机科学");
+        anotherCourse.setEnglishName("Computer Science");
+        anotherCourse.setCourseNature("Required");
+        anotherCourse.setCourseCategory("Major");
+        anotherCourse.setLanguage("English");
+        anotherCourse.setCredits(3.0);
+        anotherCourse.setHours(48.0);
+        anotherCourse.setDepartment("Computer Science Department");
+        anotherCourse.setTeacher("Dr. Smith");
     }
 
     @Test
@@ -61,5 +71,22 @@ class CourseTest {
         assertThat(toString).contains("hours=48.0");
         assertThat(toString).contains("department=Computer Science Department");
         assertThat(toString).contains("teacher=Dr. Smith");
+    }
+
+    @Test
+    public void testCourseEquals() {
+        assertThat(course).isEqualTo(anotherCourse);
+        assertThat(course.equals(anotherCourse)).isTrue();
+
+        anotherCourse.setId(2);
+        assertThat(course).isNotEqualTo(anotherCourse);
+    }
+
+    @Test
+    public void testCourseHashCode() {
+        assertThat(course.hashCode()).isEqualTo(anotherCourse.hashCode());
+
+        anotherCourse.setId(2);
+        assertThat(course.hashCode()).isNotEqualTo(anotherCourse.hashCode());
     }
 }
