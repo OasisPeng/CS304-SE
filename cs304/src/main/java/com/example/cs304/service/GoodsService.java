@@ -4,9 +4,11 @@ import com.example.cs304.entity.Goods;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 public interface GoodsService {
 
     @Cacheable(cacheNames= "goods", key = "'category:' + #category")
