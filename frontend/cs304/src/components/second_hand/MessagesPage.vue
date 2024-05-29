@@ -66,7 +66,9 @@
 </template>
 
 <script>
+// import {getAllMessages} from '../../api/index'
 import BottomNavigation from "@/components/second_hand/BottomNavigation";
+// import request from "@/utils/request";
 
 export default {
   components: {
@@ -74,21 +76,39 @@ export default {
   },
   data() {
     return {
-      selectedPage:'MessagesPage',
+      selectedPage: 'MessagesPage',
       tab: 0,
-      orderMessages: [
-        { name: 'Jun_', text: '你好，电脑还卖吗?', time: '12.14', avatar: 'path/to/avatar1.jpg', avatarError: false },
-        { name: '虎扑体育', text: '想聊一下二手鞋，可以吗?', time: '昨天', avatar: 'path/to/avatar2.jpg', avatarError: false }
-      ],
-      interactionMessages: [
-        { name: 'Alex', text: '你好，新书还有吗?', time: '10:30', avatar: '', avatarError: false }
-      ]
+      orderMessages: [],
+      interactionMessages: []
     };
   },
   methods: {
+    async fetchMessages() {
+      const data=localStorage.getItem('info')
+      const id=JSON.parse(data).username
+      try {
+        const response = await this.$axios.get(this.$httpUrl + `/message/${id}`, {
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          },
+        })
+        console.log(id)
+        console.log(response)
+        this.orderMessages = response.data.map(message => ({
+          ...message,
+          avatarError: false
+        }));
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+    },
     goToChat(message) {
       this.$router.push({ name: 'ChatPage', params: { message } });
     }
+  },
+  created() {
+    this.fetchMessages();
   }
 };
 </script>

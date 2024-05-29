@@ -16,6 +16,12 @@ public interface MessageService {
 
     })
     public List<Message> SelectByTwoUser(Integer id1, Integer id2);
+    @Caching(cacheable = {
+            @Cacheable(cacheNames = "messages", key = "#id"),
+            @Cacheable(cacheNames = "messages", key = "#id")
+
+    })
+    public List<Message> SelectByOneUser(Integer id);
     @Caching(evict = {
             @CacheEvict(cacheNames = "messages", key = "#id1 + ' ' + #id2"),
             @CacheEvict(cacheNames = "messages", key = "#id2 + ' ' + #id1")
