@@ -33,7 +33,6 @@
             </v-img>
           </v-carousel-item>
         </v-carousel>
-
       </v-container>
 
       <v-container>
@@ -55,7 +54,6 @@
               <div class="product-list-container">
                 <v-row>
                   <v-col cols="12" sm="6" md="4" lg="3" v-for="(product, index) in category.products" :key="index">
-                    <!-- 这里放产品信息的显示 -->
                     <v-card class="product-card" outlined>
                       <v-img :src="product.image" aspect-ratio="1.5">
                         <template v-slot:placeholder>
@@ -88,7 +86,6 @@
             </v-container>
           </v-tab-item>
         </v-tabs>
-
       </v-card>
       <BottomNavigation :value="selectedPage" />
     </v-form>
@@ -119,11 +116,9 @@ const items = [
   { src: computerImage },
   { src: foodImage },
 ];
-
 </script>
 
 <script>
-import {ref} from "vue";
 export default {
   components: {
     BottomNavigation
@@ -153,8 +148,7 @@ export default {
           action: this.sale,
         },
       ],
-
-      categories :[
+      categories: [
         { label: '书籍', products: [] },
         { label: '电子产品', products: [] },
         { label: '食物', products: [] },
@@ -178,17 +172,15 @@ export default {
     toggleFavorite(product) {
       product.isFavorite = !product.isFavorite;
     },
-
-    async bookfetch(){
+    async fetchCategory(categoryIndex, endpoint) {
       try {
-        const response = await this.$axios.get(this.$httpUrl + '/goods/category/book', {
+        const response = await this.$axios.get(this.$httpUrl + endpoint, {
           withCredentials: false,
           headers: {
             'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
           },
-        })
-        console.log("fuck",response)
-        this.book = response.data.data.map(evo => {
+        });
+        const products = response.data.data.map(evo => {
           return {
             id: evo.id || "",
             name: evo.name || "",
@@ -202,104 +194,25 @@ export default {
             soldOut: evo.buyerId !== ""
           };
         });
-        this.categories.value[0].products = this.book;
-
-      }catch (error) {
-        // console.error('Error querying current course:', error);
+        this.categories[categoryIndex].products = products;
+      } catch (error) {
+        console.error('Error querying category:', error);
       }
     },
-    async foodfetch(){
-      try {
-        const response = await this.$axios.get(this.$httpUrl + '/goods/category/food', {
-          withCredentials: false,
-          headers: {
-            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-          },
-        })
-        this.food = response.data.data.map(evo => {
-          return {
-            id: evo.id || "",
-            name: evo.name || "",
-            price: evo.price || "",
-            image: evo.image || "",
-            seller: evo.sellerId || "",
-            buyerId: evo.buyerId || "",
-            description: evo.description || "",
-            category: evo.category || "",
-            publishDate: evo.publishDate || "",
-            soldOut: evo.buyerId !== ""
-          };
-        });
-        this.categories.value[2].products = this.food;
-
-      }catch (error) {
-        console.error('Error querying current course:', error);
-      }
-    },
-    async device(){
-      try {
-        const response = await this.$axios.get(this.$httpUrl + '/goods/category/device', {
-          withCredentials: false,
-          headers: {
-            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-          },
-        })
-        this.device = response.data.data.map(evo => {
-          return {
-            id: evo.id || "",
-            name: evo.name || "",
-            price: evo.price || "",
-            image: evo.image || "",
-            seller: evo.sellerId || "",
-            buyerId: evo.buyerId || "",
-            description: evo.description || "",
-            category: evo.category || "",
-            publishDate: evo.publishDate || "",
-            soldOut: evo.buyerId !== ""
-          };
-        });
-        this.categories.value[1].products = this.device;
-
-      }catch (error) {
-        console.error('Error querying current course:', error);
-      }
-    },
-    async otherfetch(){
-      try {
-        const response = await this.$axios.get(this.$httpUrl + '/goods/category/food', {
-          withCredentials: false,
-          headers: {
-            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-          },
-        })
-        this.other = response.data.data.map(evo => {
-          return {
-            id: evo.id || "",
-            name: evo.name || "",
-            price: evo.price || "",
-            image: evo.image || "",
-            seller: evo.sellerId || "",
-            buyerId: evo.buyerId || "",
-            description: evo.description || "",
-            category: evo.category || "",
-            publishDate: evo.publishDate || "",
-            soldOut: evo.buyerId !== ""
-          };
-        });
-        this.categories.value[2].products = this.other;
-
-      }catch (error) {
-        console.error('Error querying current course:', error);
-      }
+    async fetchData() {
+      await Promise.all([
+        this.fetchCategory(0, '/goods/category/book'),
+        this.fetchCategory(1, '/goods/category/device'),
+        this.fetchCategory(2, '/goods/category/food'),
+        this.fetchCategory(3, '/goods/category/other')
+      ]);
+      console.log("Categories:", this.categories);
     }
-
   },
-
-mounted (){
-    this.bookfetch()
+  mounted() {
+    this.fetchData();
+  }
 }
-}
-
 </script>
 
 <style scoped>
@@ -312,6 +225,7 @@ mounted (){
   display: inline-block;
   margin: 0 5px; /* 设置图标之间的间距 */
 }
+
 .button-col {
   text-align: center;
   margin-bottom: 2px; /* 控制按钮和文字之间的间隔 */
@@ -320,6 +234,7 @@ mounted (){
 .button {
   margin-bottom: 5px; /* 控制按钮和文字之间的间隔 */
 }
+
 .button-label {
   font-size: 14px;
   font-weight: bold; /* 将文字加粗 */
@@ -363,12 +278,12 @@ mounted (){
   color: red;
   font-weight: bold;
 }
+
 .position {
   position: absolute;
   top: 5px;
   right: 5px;
 }
-
 </style>
 
 <style lang="scss">
@@ -381,5 +296,4 @@ mounted (){
   bottom: 0;
   width: 100%;
 }
-
 </style>
