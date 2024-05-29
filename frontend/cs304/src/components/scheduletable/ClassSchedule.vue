@@ -219,7 +219,7 @@ export default {
             username: this.username,
             password: this.password
           }, {
-                  withCredentials: false,
+                  withCredentials: true,
                   headers: {
                       'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
                   },

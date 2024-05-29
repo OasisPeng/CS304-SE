@@ -31,6 +31,7 @@ public class LoginController {
             HashMap<String, String> res = new HashMap<>();
             res.put("token", token);
             res.put("username", student.getUsername());
+            res.put("password", student.getPassword());
             return Result.suc(res);
         }
     }
