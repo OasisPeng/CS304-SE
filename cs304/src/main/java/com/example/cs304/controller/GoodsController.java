@@ -51,7 +51,7 @@ public class GoodsController {
     @GetMapping("/category/{category}")
     @Operation(description = "查询指定类别的所有商品")
     public Result getGoodsByCategory(@PathVariable String category) {
-        System.out.println("hahahahah");
+//        System.out.println("hahahahah");
         return Result.suc(goodsService.findByCategory(category));
     }
 
