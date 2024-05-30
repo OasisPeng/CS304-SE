@@ -3,7 +3,7 @@
   <v-row justify="center" >
     <v-col cols="12">
       <v-card
-          max-width="500"
+          max-width="600"
           class="max-height-card"
           style="background-color: palevioletred!important"
 
@@ -437,7 +437,7 @@ export default {
   color: #e9ecef;
 }
 .max-height-card {
-  max-height: 120px !important;
+  max-height: 140px !important;
 }
 .max-height-card1 {
   max-height: 1800px !important;

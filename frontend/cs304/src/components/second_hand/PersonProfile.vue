@@ -8,7 +8,7 @@
           src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
           cover
       >
-        <v-row justify="left" class="touxiang">
+        <v-row justify="start" class="touxiang">
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on">
@@ -58,8 +58,8 @@
     </v-card>
 
     <v-form>
-      <v-container>
-        <v-row justify="center" align="center" class="button-row">
+      <v-container fluid>
+        <v-row  align="center" class="button-row">
           <v-col v-for="(button, index) in buttons" :key="index" class="button-col">
             <v-btn icon @click="button.action" color="green" class="button">
               <v-icon large>{{ button.icon }}</v-icon>
@@ -74,35 +74,45 @@
       <v-tabs color="green" centered>
         <v-tab>我上传的物品</v-tab>
         <v-tab-item>
-          <div class="product-list-container">
-            <v-container fluid>
+          <v-container fluid>
+            <div class="product-list-container">
               <v-row>
-                <v-col cols="12" sm="6" md="4" lg="3" v-for="(product, index) in product" :key="index">
+                <v-col cols="12" v-if="product.length === 0">
+                  <!-- 占位符，保持容器的宽度 -->
+                </v-col>
+                <v-col cols="12" v-for="(item, index) in product" :key="index">
                   <v-card class="product-card" outlined>
-                    <v-img :src="product.image" aspect-ratio="1.5"></v-img>
+                    <v-img :src="item.image" aspect-ratio="1.5">
+                      <template v-slot:placeholder>
+                        <v-row class="fill-height ma-0" align="center" justify="center">
+                          <v-progress-circular indeterminate color="green"></v-progress-circular>
+                        </v-row>
+                      </template>
+                    </v-img>
                     <v-card-text>
                       <div class="product-info">
                         <div>
-                          <div class="product-name">{{ product.name }}</div>
-                          <div class="product-price">{{ product.price }}</div>
+                          <div class="product-name">{{ item.name }}</div>
+                          <div class="product-price">{{ item.price }}</div>
                         </div>
                         <div class="product-seller-info">
-                          <div class="product-seller">{{ product.seller }}</div>
-                          <div v-if="product.soldOut" class="sold-out-label">已售出</div>
+                          <div class="product-seller">{{ item.seller }}</div>
+                          <div v-if="item.soldOut" class="sold-out-label">已售出</div>
                         </div>
                       </div>
                     </v-card-text>
                     <v-card-actions>
-                      <v-btn icon @click="toggleFavorite(product)">
-                        <v-icon :color="product.isFavorite ? 'green' : 'white'">mdi-heart</v-icon>
+                      <v-btn icon @click="toggleFavorite(item)">
+                        <v-icon :color="item.isFavorite ? 'green' : 'white'">mdi-heart</v-icon>
                       </v-btn>
                     </v-card-actions>
                   </v-card>
                 </v-col>
               </v-row>
-            </v-container>
-          </div>
+            </div>
+          </v-container>
         </v-tab-item>
+
       </v-tabs>
     </v-card>
 
@@ -149,9 +159,9 @@ import BottomNavigation from "@/components/second_hand/BottomNavigation.vue";
 import { ref } from 'vue';
 
 const user = ref({
-  initials: 'JD',
-  fullName: 'John Doe',
-  email: 'john.doe@doe.com',
+  initials: 'St',
+  fullName: JSON.parse(localStorage.getItem('info')).username,
+  email: JSON.parse(localStorage.getItem('info')).username+'@sustech.edu.cn',
   bio: '我绝对不是黄牛',
 });
 
@@ -212,14 +222,41 @@ export default {
           action: () => { console.log('聊天 clicked') },
         },
       ],
-      product: [
-        { image: 'https://via.placeholder.com/150', name: '商品1', price: '$10', seller: '卖家1' },
-        { image: 'https://via.placeholder.com/150', name: '商品2', price: '$20', seller: '卖家2' },
-        { image: 'https://via.placeholder.com/150', name: '商品3', price: '$15', seller: '卖家3' },
-        { image: 'https://via.placeholder.com/150', name: '商品4', price: '$25', seller: '卖家4' },
-      ]
+      product: []
     };
   },
+  methods :{
+    async fetchCategory() {
+      try {
+        const response = await this.$axios.get(this.$httpUrl + '/goods/buyer/'+JSON.parse(localStorage.getItem('info')).username, {
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          },
+        });
+        const products = response.data.data.map(evo => {
+          return {
+            id: evo.id || "",
+            name: evo.name || "",
+            price: evo.price || "",
+            image: evo.image || "",
+            seller: evo.sellerId || "",
+            buyerId: evo.buyerId || "",
+            description: evo.description || "",
+            category: evo.category || "",
+            publishDate: evo.publishDate || "",
+            soldOut: evo.buyerId !== ""
+          };
+        });
+        this.product = products;
+      } catch (error) {
+        console.error('Error querying category:', error);
+      }
+    },
+  },
+  mounted() {
+    this.fetchCategory();
+  }
 }
 </script>
 
@@ -282,18 +319,24 @@ export default {
 }
 
 .product-list-container {
-  max-height: 400px; /* 固定窗口高度 */
-  overflow-y: auto; /* 允许垂直滚动 */
+  height: 400px;
+  overflow-y: auto;
+  width: 400px;
 }
+
 
 .product-card {
   margin-bottom: 20px;
+  position: relative;
+
+
 }
 
 .product-info {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between; /* 让内容在行内两端对齐 */
+
 }
 
 .product-name {

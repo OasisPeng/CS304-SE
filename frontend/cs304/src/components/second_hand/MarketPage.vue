@@ -19,11 +19,9 @@
             </v-text-field>
           </v-col>
         </v-row>
-
       </v-container>
 
       <v-container>
-
         <v-select
             v-model="selectedItem"
             :items="items"
@@ -32,20 +30,18 @@
             label="筛选栏"
             return-object
             class="select"
+            @change="applyFilter"
         ></v-select>
       </v-container>
 
       <v-card style="padding-top: 0 !important">
-        <v-tabs color="green" centered>
-          <v-tab>电子产品</v-tab>
-          <v-tab>书籍</v-tab>
-          <v-tab>食物</v-tab>
-          <v-tab>所有</v-tab>
-          <v-tab-item v-for="n in 4" :key="n">
+        <v-tabs v-model="activeCategoryIndex" color="green" centered>
+          <v-tab v-for="(category, index) in categories" :key="index">{{ category.label }}</v-tab>
+          <v-tab-item v-for="(category, index) in categories" :key="index">
             <v-container fluid>
               <div class="product-list-container">
                 <v-row>
-                  <v-col cols="12" sm="6" md="4" lg="3" v-for="(product, index) in displayedProducts" :key="index">
+                  <v-col cols="12" sm="6" md="4" lg="3" v-for="(product, productIndex) in displayedProducts(category.products, index)" :key="productIndex">
                     <v-card class="product-card" outlined>
                       <v-img :src="product.image" aspect-ratio="1.5">
                         <template v-slot:placeholder>
@@ -82,7 +78,7 @@
 
       <v-pagination
           v-model="page"
-          :length="totalPages"
+          :length="totalPages(categories[activeCategoryIndex].products)"
           color="green"
           circle
       ></v-pagination>
@@ -95,7 +91,7 @@
 import BottomNavigation from "@/components/second_hand/BottomNavigation.vue";
 
 export default {
-  components: {BottomNavigation},
+  components: { BottomNavigation },
   data() {
     return {
       searchText: '',
@@ -103,29 +99,41 @@ export default {
       selectedItem: null,
       items: [
         { state: 'Price' },
-        { state: 'Favourite' },
         { state: 'Unsale' },
       ],
-      product: [
-        { image: 'https://via.placeholder.com/150', name: '商品1', price: '$10', seller: '卖家1', soldOut: false, isFavorite: false },
-        { image: 'https://via.placeholder.com/150', name: '商品2', price: '$20', seller: '卖家2', soldOut: true, isFavorite: true },
-        { image: 'https://via.placeholder.com/150', name: '商品3', price: '$15', seller: '卖家3', soldOut: false, isFavorite: false },
-        { image: 'https://via.placeholder.com/150', name: '商品4', price: '$25', seller: '卖家4', soldOut: true, isFavorite: true },
-        // Add more products as needed
+      categories: [
+        { label: '书籍', products: [] },
+        { label: '电子产品', products: [] },
+        { label: '食物', products: [] },
+        { label: '所有', products: [] }
+      ],
+      filter: [
+        { label: '书籍', products: [] },
+        { label: '电子产品', products: [] },
+        { label: '食物', products: [] },
+        { label: '所有', products: [] }
       ],
       page: 1, // Current page
       itemsPerPage: 10, // Number of items per page
+      activeCategoryIndex: 0, // The index of the active category
     };
+
   },
+
   computed: {
     totalPages() {
-      return Math.ceil(this.product.length / this.itemsPerPage);
+      return (products) => Math.ceil(products.length / this.itemsPerPage);
     },
     displayedProducts() {
-      const startIndex = (this.page - 1) * this.itemsPerPage;
-      const endIndex = startIndex + this.itemsPerPage;
-      return this.product.slice(startIndex, endIndex);
-    },
+      return (products, index) => {
+        if (index === this.activeCategoryIndex) {
+          const startIndex = (this.page - 1) * this.itemsPerPage;
+          const endIndex = startIndex + this.itemsPerPage;
+          return products.slice(startIndex, endIndex);
+        }
+        return [];
+      };
+    }
   },
   watch: {
     $route(to) {
@@ -134,14 +142,111 @@ export default {
         // Perform search logic here
         console.log('Searching for:', this.searchText);
       }
+    },
+    activeCategoryIndex() {
+      this.page = 1; // Reset to the first page when the category changes
     }
   },
   methods: {
-    searchAndNavigateToMarketPage() {
-      this.$router.push({ name: 'MarketPage', query: { search: this.searchText } });
+    async searchAndNavigateToMarketPage() {
+      if (this.$route.name !== 'MarketPage' || this.$route.query.search !== this.searchText) {
+        await this.$router.push({name: 'MarketPage', query: {search: this.searchText}});
+      }
+      await this.search_products();
+      this.activeCategoryIndex = 3; // Automatically switch to the "所有" tab
     },
     toggleFavorite(product) {
       product.isFavorite = !product.isFavorite;
+    },
+    async search_products() {
+      try {
+        const response = await this.$axios.get(this.$httpUrl + '/goods/search', {
+          params: {
+            keyword: this.searchText
+          },
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          }
+        });
+
+        const products = response.data.data.map(evo => {
+          return {
+            id: evo.id || "",
+            name: evo.name || "",
+            price: evo.price || "",
+            image: evo.image || "",
+            seller: evo.sellerId || "",
+            buyerId: evo.buyerId || "",
+            description: evo.description || "",
+            category: evo.category || "",
+            publishDate: evo.publishDate || "",
+            soldOut: evo.buyerId !== ""
+          };
+        });
+
+        console.log("sb", products);
+        this.categories[3].products = products;
+      } catch (error) {
+        console.error('Error querying category:', error);
+      }
+    },
+    applyFilter() {
+      // Create a deep copy of this.filter to ensure it doesn't get mutated
+      this.categories = JSON.parse(JSON.stringify(this.filter));
+
+      switch (this.selectedItem.state) {
+        case 'Price':
+          this.categories.forEach(category => {
+            category.products.sort((a, b) => a.price - b.price);
+          });
+          break;
+        case 'Unsale':
+          this.categories.forEach(category => {
+            category.products = category.products.filter(product => !product.soldOut);
+          });
+          break;
+        default:
+          // Do nothing for other filters
+          break;
+      }
+    },
+    async fetchCategory(categoryIndex, endpoint) {
+      try {
+        const response = await this.$axios.get(this.$httpUrl + endpoint, {
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          },
+        });
+        const products = response.data.data.map(evo => {
+          return {
+            id: evo.id || "",
+            name: evo.name || "",
+            price: evo.price || "",
+            image: evo.image || "",
+            seller: evo.sellerId || "",
+            buyerId: evo.buyerId || "",
+            description: evo.description || "",
+            category: evo.category || "",
+            publishDate: evo.publishDate || "",
+            soldOut: evo.buyerId !== ""
+          };
+        });
+        this.categories[categoryIndex].products = products;
+        this.filter[categoryIndex].products = products;
+      } catch (error) {
+        console.error('Error querying category:', error);
+      }
+    },
+    async fetchData() {
+      await Promise.all([
+        this.fetchCategory(0, '/goods/category/book'),
+        this.fetchCategory(1, '/goods/category/device'),
+        this.fetchCategory(2, '/goods/category/food'),
+        this.fetchCategory(3, '/goods/category/other')
+      ]);
+      console.log("Categories:", this.product);
     },
   },
   beforeRouteEnter(to, from, next) {
@@ -152,6 +257,9 @@ export default {
         console.log('Searching for:', vm.searchText);
       }
     });
+  },
+  mounted() {
+    this.fetchData();
   }
 }
 </script>
@@ -182,7 +290,7 @@ export default {
 }
 
 .product-list-container {
-  max-height: 500px;
+  height: 500px;
   overflow-y: auto;
 }
 
@@ -225,8 +333,9 @@ export default {
   top: 5px;
   right: 5px;
 }
-.select{
-  margin-top:-20px !important;
+
+.select {
+  margin-top: -20px !important;
 }
 </style>
 
@@ -241,5 +350,4 @@ export default {
   bottom: 0;
   width: 100%;
 }
-
 </style>
