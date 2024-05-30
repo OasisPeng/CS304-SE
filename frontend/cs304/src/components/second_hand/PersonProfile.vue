@@ -195,6 +195,8 @@ const toggleFavorite = (product) => {
 <script>
 
 
+import router from "@/router";
+
 export default {
   data() {
     return {
@@ -219,7 +221,7 @@ export default {
         {
           icon: 'mdi-message-badge-outline',
           label: '聊天',
-          action: () => { console.log('聊天 clicked') },
+          action: () => { this.$router.push('/MessagesPage'); },
         },
       ],
       product: []

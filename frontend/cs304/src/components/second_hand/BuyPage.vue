@@ -3,15 +3,41 @@ export default {
   data() {
     return {
       selectedPage: 'Person',
-      product: [
-        { image: 'https://via.placeholder.com/150', name: '商品1', price: '$10', seller: '卖家1', soldOut: false, isFavorite: false },
-        { image: 'https://via.placeholder.com/150', name: '商品2', price: '$20', seller: '卖家2', soldOut: true, isFavorite: true },
-        { image: 'https://via.placeholder.com/150', name: '商品3', price: '$15', seller: '卖家3', soldOut: false, isFavorite: false },
-        { image: 'https://via.placeholder.com/150', name: '商品4', price: '$25', seller: '卖家4', soldOut: true, isFavorite: true },
-      ]
+      product: []
     };
   },
-
+  methods :{
+    async fetchCategory() {
+      try {
+        const response = await this.$axios.get(this.$httpUrl + '/goods/buyer/'+JSON.parse(localStorage.getItem('info')).username, {
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          },
+        });
+        const products = response.data.data.map(evo => {
+          return {
+            id: evo.id || "",
+            name: evo.name || "",
+            price: evo.price || "",
+            image: evo.image || "",
+            seller: evo.sellerId || "",
+            buyerId: evo.buyerId || "",
+            description: evo.description || "",
+            category: evo.category || "",
+            publishDate: evo.publishDate || "",
+            soldOut: evo.buyerId !== ""
+          };
+        });
+        this.product = products;
+      } catch (error) {
+        console.error('Error querying category:', error);
+      }
+    },
+  },
+  mounted() {
+    this.fetchCategory();
+  }
 }
 
 </script>
@@ -32,56 +58,60 @@ const goBack = () => {
   <v-container class="custom-tabs-container" style="height: 100vh !important;">
     <v-form>
 
-    <v-row >
-      <v-col cols="12" >
-        <v-btn icon @click="goBack" class="position" x-large >
-          <v-icon color="black">mdi-arrow-left</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+      <v-row >
+        <v-col cols="12" >
+          <v-btn icon @click="goBack" class="position" x-large >
+            <v-icon color="black">mdi-arrow-left</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
 
       <v-card style="padding-top: 0 !important; margin-top: 50px;"> <!-- 添加了 margin-top -->
-    <v-tabs color="green" centered>
-      <v-tab>我购买的物品</v-tab>
-      <v-tab-item>
-        <div class="product-list-container">
-          <v-container fluid>
-            <v-row>
-              <v-col cols="12" sm="6" md="4" lg="3" v-for="(product, index) in product" :key="index">
-                <v-card class="product-card" outlined>
-                  <v-img :src="product.image" aspect-ratio="1.5">
-            <template v-slot:placeholder>
-                      <v-row class="fill-height ma-0" align="center" justify="center">
-                        <v-progress-circular indeterminate color="green"></v-progress-circular>
-                      </v-row>
-                    </template>
-                  </v-img>
-                  <v-card-text>
-                    <div class="product-info">
-                      <div>
-                        <div class="product-name">{{ product.name }}</div>
-                        <div class="product-price">{{ product.price }}</div>
-                      </div>
-                      <div class="product-seller-info">
-                        <div class="product-seller">{{ product.seller }}</div>
-                        <div v-if="product.soldOut" class="sold-out-label">已售出</div>
-                      </div>
-                    </div>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-btn icon @click="toggleFavorite(product)" class="position">
-                      <v-icon :color="product.isFavorite ? 'green' : 'white'">mdi-heart</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-        </div>
-      </v-tab-item>
-    </v-tabs>
-  </v-card>
-    <BottomNavigation v-model="selectedPage" />
+        <v-tabs color="green" centered>
+          <v-tab>我购买的物品</v-tab>
+          <v-tab-item>
+            <v-container fluid>
+              <div class="product-list-container">
+                <v-row>
+                  <v-col cols="12" v-if="product.length === 0">
+                    <!-- 占位符，保持容器的宽度 -->
+                  </v-col>
+                  <v-col cols="12" v-for="(item, index) in product" :key="index">
+                    <v-card class="product-card" outlined>
+                      <v-img :src="item.image" aspect-ratio="1.5">
+                        <template v-slot:placeholder>
+                          <v-row class="fill-height ma-0" align="center" justify="center">
+                            <v-progress-circular indeterminate color="green"></v-progress-circular>
+                          </v-row>
+                        </template>
+                      </v-img>
+                      <v-card-text>
+                        <div class="product-info">
+                          <div>
+                            <div class="product-name">{{ item.name }}</div>
+                            <div class="product-price">{{ item.price }}</div>
+                          </div>
+                          <div class="product-seller-info">
+                            <div class="product-seller">{{ item.seller }}</div>
+                            <div v-if="item.soldOut" class="sold-out-label">已售出</div>
+                          </div>
+                        </div>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-btn icon @click="toggleFavorite(item)">
+                          <v-icon :color="item.isFavorite ? 'green' : 'white'">mdi-heart</v-icon>
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-col>
+                </v-row>
+              </div>
+            </v-container>
+          </v-tab-item>
+
+        </v-tabs>
+      </v-card>
+      <BottomNavigation v-model="selectedPage" />
     </v-form>
   </v-container>
 
@@ -91,8 +121,9 @@ const goBack = () => {
 
 
 .product-list-container {
-  max-height: 650px; /* 固定窗口高度 */
+  height: 650px; /* 固定窗口高度 */
   overflow-y: auto; /* 允许垂直滚动 */
+  width: 400px;
 }
 
 .product-card {
