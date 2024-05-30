@@ -36,6 +36,16 @@ export const getContentList = id => {
 export const Login = data => {
   return request.post('/login/login',data);
 }
-export const getGpt= data => {
-  return request.post('/ai/chat',data);
+export const addGpt= data => {
+  const { user, id,content } = data;
+  return request.post(`/ai/chat`,data);
+}
+export const getGptList= data => {
+  return request.get('/ai/user/'+data.user);
+}
+export const byIDGpt= data => {
+  return request.get('/ai/id/'+data.id);
+}
+export const deleteGpt= data => {
+  return request.delete('/ai/id/'+data.id);
 }

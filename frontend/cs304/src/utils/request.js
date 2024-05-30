@@ -16,6 +16,7 @@ request.interceptors.request.use(
         Object.assign(config.headers, { Authorization:`Bearer ${token}` });
         return config;
     },
+
     err => {
         // uniqueMessage.error('连接服务器失败，请稍后再试');
         return Promise.reject(err);

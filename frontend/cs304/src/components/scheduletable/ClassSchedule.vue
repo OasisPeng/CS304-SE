@@ -186,11 +186,10 @@ export default {
     weekdays: [
       { title: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
     ],
-
+    // username:'12112323',
+    // password:'yyc.20020418',
     value: '',
     ready: false,
-    username: '12112323',
-    password: 'yyc.20020418',
     courseList: [], // 存储课程列表的数组
      colors :['blue lighten-3', 'teal accent-2', 'purple accent-2', 'cyan', 'green', 'orange', "red accent-2",'red lighten-3','yellow','pink dark-1','pink lighten-4','blue lighten-2','light-blue lighten-2'],
      events:[]
@@ -209,42 +208,67 @@ export default {
     this.ready = true
     this.scrollToTime()
     this.updateTime()
-    this.queryCurrentCourse();
+    const cachedCourseList = localStorage.getItem('courseList')
+    if (cachedCourseList) {
+      // 如果存在缓存数据，则直接使用缓存数据
+      this.courseList = JSON.parse(cachedCourseList)
+      this.events = this.courseList.map(event =>
+          this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName, event.color, event.teachingBuilding, event.teacher, event.weeks, event.jc, event.classes, event.language)
+      );
+    } else {
+      // 如果缓存中不存在数据，则从后端请求数据
+      this.queryCurrentCourse()
+    }
   },
 
     methods: {
       async queryCurrentCourse() {
         try {
-          const response = await this.$axios.post(this.$httpUrl+'/course/queryCurrentCourse', {
-            username: this.username,
-            password: this.password
+          const storedInfo = JSON.parse(localStorage.getItem('info'));
+
+          // 检查 storedInfo 是否存在
+          if (!storedInfo) {
+            throw new Error('No user information found in localStorage');
+          }
+
+          // 打印 storedInfo 中的 username
+          console.log("Username:", storedInfo.password);
+
+          // 发送请求
+          const response = await this.$axios.post(this.$httpUrl + '/course/queryCurrentCourse', {
+            username: storedInfo.username,
+            password: storedInfo.password
           }, {
-                  withCredentials: true,
-                  headers: {
-                      'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-                  },
-              }
+            withCredentials: true,
+            headers: {
+              'Authorization': `Bearer ${storedInfo.token}`
+            },
+          });
+
+          console.log("Response data:", response.data);
+
+          // 处理响应数据
+          this.courseList = response.data.data.map(evo => ({
+            teacher: evo.teacher || "",
+            englishName: evo.englishName || "",
+            chineseName: evo.chineseName || "",
+            teachingBuilding: evo.teachingBuilding || "",
+            xq: evo.xq || "",
+            weeks: evo.weeks || "",
+            jc: evo.jc || "",
+            color: evo.color || "",
+            startTime: evo.startTime || "",
+            endTime: evo.endTime || "",
+            classes: evo.classes || "",
+            language: evo.language || ""
+          }));
+
+          // 创建事件对象
+          this.events = this.courseList.map(event =>
+              this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName, event.color, event.teachingBuilding, event.teacher, event.weeks, event.jc, event.classes, event.language)
           );
-          console.log("2",response.data)
-          this.courseList = response.data.data
-              .map(evo => {
-                return {
-                  teacher: evo.teacher || "",
-                  englishName: evo.englishName || "",
-                  chineseName: evo.chineseName || "",
-                  teachingBuilding: evo.teachingBuilding || "",
-                  xq: evo.xq || "",
-                  weeks:evo.weeks || "",
-                  jc: evo.jc || "",
-                  color: evo.color || "",
-                  startTime: evo. startTime || "",
-                  endTime: evo.endTime || "",
-                  classes:evo.classes || "",
-                  language:evo.language || "",
-                };
-              }); // 将响应数据赋值给courseList数组
-          this.events= this.courseList.map(event => this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName,event.color,event.teachingBuilding,event.teacher,event.weeks,event.jc,event.classes,event.language));
-          console.log("kebiao",this.courseList)
+          localStorage.setItem('courseList', JSON.stringify(this.courseList))
+          console.log("Course List:", this.courseList);
         } catch (error) {
           console.error('Error querying current course:', error);
         }
