@@ -475,15 +475,18 @@ export default {
       }
 
       this.convLoading = true;
-      var chatMsg = this.chatMsg;
+      var chatMsg = this.chatMsg,chat2=''
       chatMsg = chatMsg.trim().replace(/\n/g, "")
       this.chatMsg = ""
-
+      const isMsg=chatMsg==='这是我这学期选课，请你根据我的课表，帮我设计一下日程安排'
+      if(isMsg){
+        chat2='这是我这学期的选课，以下是课程的具体信息'+localStorage.getItem('courseList')+'请你根据这些课程，帮我安排课后时间的每日的学习安排，比如说几点到几点学习软件工程这种'
+      }
       var first = this.conversation.length == 0;
 
       this.conversation.push({
         role: "user",
-        content: chatMsg,
+        content: isMsg?'这是我这学期选课，请你根据我的课表，帮我设计一下日程安排':chatMsg,
         loading: true,
         id: 0,
       })
@@ -492,7 +495,7 @@ export default {
       if(!this.oldConv){
         this.oldConv={id:-1}
       }
-      await  addGpt({...this.commonParams,content:chatMsg,id:this.oldConv.id})
+      await  addGpt({...this.commonParams,content:isMsg?chat2:chatMsg,id:this.oldConv.id})
       if(this.oldConv.id==-1){
         await  this.oldConvFilter()
       }
