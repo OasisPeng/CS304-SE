@@ -88,7 +88,7 @@ export default {
 
 .v-card-subtitle {
   font-size: 16px;
-  color: gray;
+  color: rgb(128, 128, 128);
 }
 
 .v-card-text {

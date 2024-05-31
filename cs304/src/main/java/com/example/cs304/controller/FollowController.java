@@ -33,12 +33,12 @@ public class FollowController {
         }
     }
     @GetMapping("/follower/{id}")
-    public Result GetFromFollower(@RequestBody int id) {
+    public Result GetFromFollower(@PathVariable int id) {
         List<Follow> res = service.selectByFollower(id);
         return Result.suc(res);
     }
     @GetMapping("/following/{id}")
-    public Result GetFromFollowing(@RequestBody int id) {
+    public Result GetFromFollowing(@PathVariable int id) {
         List<Follow> res = service.selectByFollowing(id);
         return Result.suc(res);
     }

@@ -89,6 +89,23 @@
       </v-card>
       <BottomNavigation :value="selectedPage" />
     </v-form>
+
+    <!-- Dialog for displaying message -->
+    <v-snackbar
+        v-model="snackbar"
+        vertical
+    >
+      <div class="text-subtitle-1 pb-2">行为准则</div>
+      <p>诚信交易</p>
+      <v-btn
+          color="indigo"
+          text
+          @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+
   </v-container>
 </template>
 
@@ -116,6 +133,12 @@ const items = [
   { src: computerImage },
   { src: foodImage },
 ];
+
+const dialog = ref(false);
+
+const buy_book = () => {
+  dialog.value = true;
+};
 </script>
 
 <script>
@@ -126,20 +149,21 @@ export default {
   data() {
     return {
       selectedPage: 'FirstPage',
+      snackbar: false,
       buttons: [
         {
           icon: 'mdi-book-open-page-variant',
-          label: '购买书籍',
+          label: '交易需知',
           action: this.buy_book,
         },
         {
           icon: 'mdi-monitor-screenshot',
-          label: '购买设备',
+          label: '购买列表',
           action: this.buy_electric,
         },
         {
           icon: 'mdi-cart-variant',
-          label: '购买其他',
+          label: '交易列表',
           action: this.buy_others,
         },
         {
@@ -158,16 +182,16 @@ export default {
   },
   methods: {
     buy_book() {
-      // Handle buy_book action
+      this.snackbar = true; // Show the dialog
     },
     buy_electric() {
-      // Handle buy_electric action
+      this.$router.push('/BuyPage')
     },
     buy_others() {
-      // Handle buy_others action
+      this.$router.push('/MessagesPage')
     },
     sale() {
-      // Handle sale action
+      this.$router.push('/ReleasePage')
     },
     toggleFavorite(product) {
       product.isFavorite = !product.isFavorite;
