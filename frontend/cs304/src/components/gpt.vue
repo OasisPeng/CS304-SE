@@ -18,13 +18,13 @@
               </button>
             </div>
             <h1 class="flex-1 text-center text-base font-normal">{{ chatTitle }}</h1>
-            <button @click.stop="newChat" type="button" class="px-3" v-if="0">
-              <svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round"
-                   stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </button>
+            <v-btn
+                class="px-3"
+                icon
+                @click="$router.go(-1)"
+            >
+              <v-icon color="#ffff">mdi-arrow-left</v-icon>
+            </v-btn>
           </div>
 
           <main class="relative h-full w-full transition-width flex flex-col overflow-hidden items-stretch flex-1">
@@ -126,9 +126,9 @@
                               "Explain
                               quantum computing in simple terms" →
                             </button>
-                            <button @click="inputChat('这是我这学期选课，请你根据我的课表，帮我设计一下日程安排')"
+                            <button @click="inputChat('This is my course schedule for this semester. Could you help me design a daily study plan based on my timetable?')"
                                     class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md hover:bg-gray-200 dark:hover:bg-gray-900">
-                              这是我这学期选课，请你根据我的课表，帮我设计一下日程安排
+                              This is my course schedule for this semester. Could you help me design a daily study plan based on my timetable?
                               →
                             </button>
                             <button @click="inputChat('How do I make an HTTP request in Javascript?')"
@@ -465,8 +465,6 @@ export default {
       await this.loadConversations()
       this.oldConv=this.conversations[this.conversations.length-1]
     },
-
-
     async send() {
       if (this.chatMsg.trim().length == 0) {
         return;
@@ -480,15 +478,33 @@ export default {
       var chatMsg = this.chatMsg,chat2=''
       chatMsg = chatMsg.trim().replace(/\n/g, "")
       this.chatMsg = ""
-      const isMsg=chatMsg==='这是我这学期选课，请你根据我的课表，帮我设计一下日程安排'
+      const isMsg=chatMsg==='This is my course schedule for this semester. Could you help me design a daily study plan based on my timetable?'
+
+      // 从 localStorage 获取并解析 courseList
+      const courseList = JSON.parse(localStorage.getItem('courseList'));
+
       if(isMsg){
-        chat2='这是我这学期的选课，以下是课程的具体信息'+localStorage.getItem('courseList')+'请你根据这些课程，帮我安排课后时间的每日的学习安排，比如说几点到几点学习软件工程这种'
+
+        let courseInfo = 'This is my course schedule for this semester. Here are the details of the courses:\n';
+        courseList.forEach(course => {
+          courseInfo += `Course name: ${course.englishName}, Class Time: ${course.startTime} - ${course.endTime}\n`;
+        });
+
+        chat2=courseInfo + 'Please help me arrange a daily study schedule based on these courses, such as Monday:\n' +
+            '\n' +
+            '9:50 AM - 10:20 AM: Break or prepare for the next class;\n' +
+            '12:10 PM - 2:00 PM: Lunch break;\n' +
+            '3:50 PM - 4:20 PM: Break or prepare for the next class;\n' +
+            '6:10 PM - 7:00 PM: Dinner break;\n' +
+            '8:50 PM - 9:30 PM: Free time.\n+'+
+        'Please give me the schedule for each day of the week';
       }
+
       var first = this.conversation.length == 0;
 
       this.conversation.push({
         role: "user",
-        content: isMsg?'这是我这学期选课，请你根据我的课表，帮我设计一下日程安排':chatMsg,
+        content: isMsg?'This is my course schedule for this semester. Could you help me design a daily study plan based on my timetable?':chatMsg,
         loading: true,
         id: 0,
       })
@@ -524,7 +540,7 @@ export default {
         const content=JSON.parse(item?.content)
         return {
           ...item,
-         content
+          content
         }
       })
       console.log(convs,44,data)

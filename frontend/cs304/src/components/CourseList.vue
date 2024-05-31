@@ -1,5 +1,11 @@
 <template>
   <v-container>
+    <v-btn
+        icon
+        @click="$router.go(-1)"
+    >
+      <v-icon>mdi-arrow-left</v-icon>
+    </v-btn>
     <v-col class="f">
       <div class="search">
         <v-text-field
@@ -51,7 +57,7 @@
               <v-list-item   v-if="false"  >
 
                 <v-btn-toggle
-                     v-if="false"
+                    v-if="false"
                     v-model=" params.sort"
                     tile
                     color="blue"
