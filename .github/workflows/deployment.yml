@@ -32,6 +32,7 @@ jobs:
     - name: Build docker image
       run: |       
         cd ./cs304                  # run：该步骤要执行的命令，| 代表可以有多条命令
+        
         docker build -t back .   # 构建docker镜像，命令最后的点代表Dockerfile所在目录
         docker save -o back.tar back # 保存压缩后的docker镜像，这一步是为了方便后面我们将该镜像上传至指定的服务器
         ls
