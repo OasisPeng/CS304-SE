@@ -20,7 +20,7 @@ export default new Router({
   mode: 'history', // 使用HTML5 History模式
   routes: [
     {
-      path: '/',
+      path: '/HomePage',
       name: 'home',
       component: HomePage
     },
@@ -28,12 +28,6 @@ export default new Router({
       path: '/FirstPage',
       name: 'FirstPage',
       component: FirstPage
-    },
-    {
-      path: '/',
-      name: 'FirstPage',
-      component: FirstPage,
-
     },
     {
       path: '/BuyPage',
@@ -106,7 +100,7 @@ export default new Router({
       component: DoList
     },
     {
-      path: '/login',
+      path: '/',
       name: 'Login',
 
       component: ()=>import ('./components/CourseHelper.vue')
