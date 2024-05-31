@@ -95,10 +95,10 @@ export default {
         })
         console.log(id)
         console.log(response)
-        this.orderMessages = response.data.map(message => ({
-          ...message,
-          avatarError: false
-        }));
+        // this.orderMessages = response.data.map(message => ({
+        //   ...message,
+        //   avatarError: false
+        // }));
       } catch (error) {
         console.error('Error fetching messages:', error);
       }
