@@ -35,14 +35,20 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> SelectByOneUser(Integer id) {
+    public List<Message> SelectByOneUserTo(Integer id) {
         LambdaQueryWrapper<Message> lqw = new LambdaQueryWrapper<>();
         lqw.nested(wrapper -> {
-
             wrapper.eq(Message::getTo, id);
-
         }).orderByAsc(Message::getTime);
+        return dao.selectList(lqw);
+    }
 
+    @Override
+    public List<Message> SelectByOneUserFrom(Integer id) {
+        LambdaQueryWrapper<Message> lqw = new LambdaQueryWrapper<>();
+        lqw.nested(wrapper -> {
+            wrapper.eq(Message::getFrom, id);
+        }).orderByAsc(Message::getTime);
         return dao.selectList(lqw);
     }
 
