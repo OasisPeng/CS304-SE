@@ -39,14 +39,20 @@ jobs:
        # 停止运行中的docker容器、删除该容器、删除镜像
        # docker命令后面的两条竖线 || 代表当前面的docker命令执行失败时，命令可以继续往下执行，这样做的原因是在第一次构建项目的时候肯定不会存在这些容器和镜像，此时删除或停止这些容器就会失败
     - name: delete old docker image
-      run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker stop back || true && docker rm back || true && docker rmi back || true"
+      run: |
+        cd ./cs304
+        sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker stop back || true && docker rm back || true && docker rmi back || true"
 
           # 删除旧的docker镜像压缩包
     - name: delete old docker tar
-      run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "cd ${{secrets.REMOTE_PROJECT_CATALOGUE}} && rm -f back.tar"
+      run: |
+        cd ./cs304
+        sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "cd ${{secrets.REMOTE_PROJECT_CATALOGUE}} && rm -f back.tar"
           # 上传新的docker镜像
     - name: upload new docker image and start-up script
-      run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} scp -r -o StrictHostKeyChecking=no ./back.tar root@${{secrets.REMOTE_SERVER01_IP}}:${{secrets.REMOTE_PROJECT_CATALOGUE}}
+      run: |
+        cd ./cs304
+        sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} scp -r -o StrictHostKeyChecking=no ./back.tar root@${{secrets.REMOTE_SERVER01_IP}}:${{secrets.REMOTE_PROJECT_CATALOGUE}}
           # 加载tar文件，加载docker镜像
     - name: load new docker image
       run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker load -i ${{secrets.REMOTE_PROJECT_CATALOGUE}}/back.tar"
