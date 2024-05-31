@@ -11,7 +11,10 @@ client = OpenAI(
     base_url="https://api.chatanywhere.tech/v1"
 )
 
-
+if pymysql.__version__ >= '1.0.0':
+    from pymysql.converters import escape_string
+else:
+    escape_string = lambda x: pymysql.escape_string(x)
 
 # 非流式响应
 def gpt_35_api(messages: list):
@@ -63,10 +66,12 @@ if __name__ == '__main__':
     ai_message = gpt_35_api(messages)
     messages.append({"role": "assistant", "content": ai_message})
     json = json.dumps(messages, ensure_ascii=False)
+    json = escape_string(json)
     if FLAGS.id == -1:
         sql = f"insert into ai (content, user) VALUES ('{json}', {FLAGS.user})"
     else:
         sql = f"update ai set content = '{json}' where id = {FLAGS.id}"
+
     cur.execute(sql)
     conn.commit()
     cur.close()

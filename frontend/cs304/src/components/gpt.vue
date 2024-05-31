@@ -465,6 +465,8 @@ export default {
       await this.loadConversations()
       this.oldConv=this.conversations[this.conversations.length-1]
     },
+
+
     async send() {
       if (this.chatMsg.trim().length == 0) {
         return;
@@ -522,7 +524,7 @@ export default {
         const content=JSON.parse(item?.content)
         return {
           ...item,
-          content
+         content
         }
       })
       console.log(convs,44,data)
