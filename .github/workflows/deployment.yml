@@ -27,6 +27,7 @@ jobs:
     - name: packge
       run: |
         cd ./cs304
+        mvn clean
         mvn package -DskipTests -Dmaven.compile.skip=true
     - name: Build docker image
       run: |       
