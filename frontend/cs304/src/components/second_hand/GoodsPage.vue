@@ -41,7 +41,8 @@ export default {
         description: '这是一件非常好的商品，功能齐全，品质优良。',
         category: '电子产品',
         publishDate: new Date()
-      }
+      },
+      websocket: null
     };
   },
   methods: {
@@ -51,6 +52,21 @@ export default {
     buyProduct() {
     },
     contactSeller() {
+      const sellerId = this.product.sellerId;
+      this.websocket = new WebSocket(this.$httpUrl + `/chatroom/${sellerId}`);
+      this.websocket.onopen = () => {
+        console.log('WebSocket connection established');
+      };
+      this.websocket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        console.log('Received message:', message);
+      };
+      this.websocket.onclose = () => {
+        console.log('WebSocket connection closed');
+      };
+      this.websocket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
     },
     formatDate(date) {
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
