@@ -232,7 +232,7 @@ class GoodsControllerTest {
         goods.setImage("image");
         goods.setSellerId("sellerId");
         final Goods goods1 = new Goods();
-        goods1.setId(1L);
+        goods1.setId(3L);
         goods1.setName("name");
         goods1.setPrice(new BigDecimal("0.00"));
         goods1.setImage("image");
