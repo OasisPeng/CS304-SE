@@ -18,13 +18,13 @@
               </button>
             </div>
             <h1 class="flex-1 text-center text-base font-normal">{{ chatTitle }}</h1>
-            <button @click.stop="newChat" type="button" class="px-3" v-if="0">
-              <svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round"
-                   stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </button>
+            <v-btn
+                class="px-3"
+                icon
+                @click="$router.go(-1)"
+            >
+              <v-icon color="#ffff">mdi-arrow-left</v-icon>
+            </v-btn>
           </div>
 
           <main class="relative h-full w-full transition-width flex flex-col overflow-hidden items-stretch flex-1">
@@ -465,8 +465,6 @@ export default {
       await this.loadConversations()
       this.oldConv=this.conversations[this.conversations.length-1]
     },
-
-
     async send() {
       if (this.chatMsg.trim().length == 0) {
         return;
@@ -524,7 +522,7 @@ export default {
         const content=JSON.parse(item?.content)
         return {
           ...item,
-         content
+          content
         }
       })
       console.log(convs,44,data)
