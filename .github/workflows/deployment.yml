@@ -14,7 +14,7 @@ jobs:
       uses: actions/checkout@v3 # 使用官方的checkout action，用于将仓库中的最新代码检查并拉取到工作目录中
     - name: Set up the working directory
       run: |
-      working-directory: ./cs304
+        cd ./cs304
     - name: Set up JDK 18
       uses: actions/setup-java@v3 # 安装java环境的action
       with:
