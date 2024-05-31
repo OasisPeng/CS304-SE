@@ -10,12 +10,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/ai")
 public class AiController {
-    static String work = "E:\\team-project-24spring-22\\cs304";
-    static String aiPath = work + "/src/main/java/com/example/cs304/common/ai.py";
+    static String aiPath = "/app/ai.py";
     @Autowired
     AiContentService aiContentService;
     @PostMapping("/chat")
@@ -48,7 +48,7 @@ public class AiController {
             // 设置Python解释器的绝对路径
 
             // 构建处理器
-            ProcessBuilder pb = new ProcessBuilder("python", aiPath, "--content", aiContent.getContent(), "--user", Integer.toString(aiContent.getUser()), "--id", Integer.toString(aiContent.getId()));
+            ProcessBuilder pb = new ProcessBuilder("python3", aiPath, "--content", aiContent.getContent(), "--user", Integer.toString(aiContent.getUser()), "--id", Integer.toString(aiContent.getId()));
             pb.redirectErrorStream(true);
             // 启动Python进程
             Process process = pb.start();
@@ -58,7 +58,6 @@ public class AiController {
             String line;
             StringBuilder stringBuilder = new StringBuilder();
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
                 stringBuilder.append(line);
             }
 
@@ -74,5 +73,14 @@ public class AiController {
             return null;
         }
 
+    }
+
+    public static void main(String[] args) {
+        AiContent aiContent = new AiContent();
+        aiContent.setId(-1);
+        aiContent.setUser(123);
+        aiContent.setContent("你好");
+        String s = CommandRun(aiContent);
+        System.out.println(s);
     }
 }
