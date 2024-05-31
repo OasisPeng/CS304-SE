@@ -2,6 +2,7 @@ package com.example.cs304.config;
 
 import com.example.cs304.filter.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -21,6 +22,8 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    @Value("${cors.domain}")
+    private String allowedOrigins;
     @Autowired
     public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
 
@@ -52,7 +55,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080")); // 指定允许的域
+        configuration.setAllowedOrigins(Arrays.asList("http://"+allowedOrigins+":8080")); // 指定允许的域
         configuration.setAllowCredentials(true);
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");

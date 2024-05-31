@@ -18,3 +18,6 @@ alioss:
   access-key-id: LTAI5tHd81k9sjZ4AtV5RtZq
   access-key-secret: zysTqJGfyjfCTtKHaSAyWL5Da9K8qz
   bucket-name: sky-aliyunitcast
+
+cors:
+  domain: "120.77.79.53"
