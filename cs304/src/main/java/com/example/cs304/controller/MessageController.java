@@ -6,6 +6,7 @@ import com.example.cs304.service.impl.MessageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
 import java.util.List;
 
 @RestController
@@ -18,9 +19,16 @@ public class MessageController {
         List<Message> list = service.SelectByTwoUser(id1, id2);
         return Result.suc(list);
     }
-    @GetMapping("/getByOneUser/{id}")
-    public Result getByOneUser(@PathVariable Integer id) {
-        List<Message> list = service.SelectByOneUser(id);
+    @GetMapping("/getByOneUserTo/{id}")
+    public Result getByOneUserTo(@PathVariable Integer id) {
+        List<Message> list = service.SelectByOneUserTo(id);
+        System.out.println(list);
+        return Result.suc(list);
+    }
+    @GetMapping("/getByOneUserFrom/{id}")
+    public Result getByOneUserFrom(@PathVariable Integer id) {
+        List<Message> list = service.SelectByOneUserFrom(id);
+        System.out.println(list);
         return Result.suc(list);
     }
     @PostMapping("/insertList")
