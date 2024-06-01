@@ -279,6 +279,7 @@ export default {
 }
 .btn-margin {
   margin-right: 10px; /* 调整合适的间距 */
+
 }
 .btn-margin2 {
   margin-right: 0px; /* 调整合适的间距 */

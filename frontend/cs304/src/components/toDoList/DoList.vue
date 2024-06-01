@@ -2,11 +2,14 @@
   <v-row justify="center">
     <v-col cols="12">
       <v-card max-width="600" class="max-height-card" style="background-color: palevioletred!important">
-        <v-img class="max-height-card" height="200" :src="ToDoListBackground" cover :style="{ backgroundColor: 'palevioletred !important'}">
+        <v-img class="max-height-card" height="150" :src="ToDoListBackground" cover :style="{ backgroundColor: 'palevioletred !important'}">
           <v-card-text class="text-center">
             <v-row justify="space-between" align="center">
+              <v-btn icon @click="goBack" class="position">
+                <v-icon color="black">mdi-arrow-left</v-icon>
+              </v-btn>
               <div class="title">{{ currentMonth }}</div>
-              <v-btn variant="text" class="btn-margin" color="rgba(0, 0, 0, 0)" theme="dark">
+              <v-btn variant="text" class="btn-margin" color="rgba(0, 0, 0, 0)" theme="dark" @click="showWeekSelectorDialog = true">
                 <v-icon color="cyan">mdi-magnify</v-icon>
               </v-btn>
               <v-btn variant="text" color="rgba(0, 0, 0, 0)" theme="dark" @click="newEvent()">
@@ -34,7 +37,7 @@
             </v-row>
           </v-card-text>
         </v-img>
-        <v-card max-width="500" class="max-height-card1">
+        <v-card max-width="400" class="max-height-card1">
           <v-img class="max-height-card1" height="800" cover style="background-color: lavender!important">
             <v-list dense>
               <v-list-item v-for="(task, taskIndex) in selectedDateTasks" :key="taskIndex" :class="getTaskRowClass(task.level)" @click="handleTaskClick(task)">
@@ -47,12 +50,16 @@
                       {{ task.title }}
                     </v-list-item-title>
                     <div class="task-buttons">
-                      <v-btn variant="text" class="btn-margin" color="rgba(0, 0, 0, 0)" theme="dark" @click="editEvent(task)">
-                        <v-icon color="blue">mdi-receipt-text-edit-outline</v-icon>
+                      <v-btn icon mid class="btn-margin" @click="editEvent(task)">
+                        <v-icon mid color="blue">mdi-receipt-text-edit-outline</v-icon>
                       </v-btn>
-                      <v-btn variant="text" class="btn-margin2" color="rgba(0, 0, 0, 0)" theme="dark">
-                        <v-icon color="blue" @click="sheet = true">mdi-dots-vertical</v-icon>
+                      <v-btn icon mid class="btn-margin2" @click="sheet = true">
+                        <v-icon mid color="blue">mdi-dots-vertical</v-icon>
                       </v-btn>
+                      <v-btn icon mid class="btn-margin2" @click="deleteEvent(task)">
+                        <v-icon mid color="blue">mdi-trash-can-outline</v-icon>
+                      </v-btn>
+
                       <template>
                         <v-bottom-sheet v-model="sheet">
                           <template>
@@ -86,8 +93,28 @@
         </v-card>
       </v-card>
     </v-col>
+
+    <!-- 周数选择对话框 -->
+    <v-dialog v-model="showWeekSelectorDialog" max-width="300">
+      <v-card>
+        <v-card-title class="headline">选择周数</v-card-title>
+        <v-card-text>
+          <v-select
+              v-model="selectedWeek"
+              :items="weekNumbers"
+              label="选择周数"
+          ></v-select>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="jumpToWeek">确定</v-btn>
+          <v-btn color="grey" @click="showWeekSelectorDialog = false">取消</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
+
 
 <script setup>
 </script>
@@ -95,6 +122,7 @@
 import ToDoListBackground from '@/components/toDoList/toDoListBackground.jpeg';
 import detailBackground from '@/components/toDoList/pexels-photo-9916558.jpeg';
 import Background from '@/assets/pink1.jpeg';
+import router from "@/router";
 
 export default {
   data() {
@@ -108,6 +136,9 @@ export default {
       show: false,
       sheet: false,
       selectedTaskDetails: {},
+      showWeekSelectorDialog: false,
+      selectedWeek: null,
+      weekNumbers: Array.from({ length: 52 }, (_, i) => i + 1),
     };
   },
   mounted() {
@@ -118,10 +149,14 @@ export default {
   computed: {
     selectedDateTasks() {
       const selectedDateDay = this.currentDate.getDay();
-      return this.list.filter(task => task.xq === selectedDateDay);
+      const selectedWeek = this.getWeekNumber(this.currentDate);
+      return this.list.filter(task => task.xq === selectedDateDay && task.week === selectedWeek);
     },
   },
   methods: {
+    goBack () {
+      this.$router.push('/');
+    },
     getTasksByDay(xq) {
       return this.list.filter(task => task.xq === xq);
     },
@@ -233,16 +268,12 @@ export default {
       selectedDate.setMonth(day.month);
       selectedDate.setDate(day.date);
 
-
-
       // 更新当前日期
       this.currentDate = selectedDate;
       this.updateWeek();
       this.updateMonth();
       // 日志输出用于调试
     },
-
-
     async fetchCategory() {
       try {
         const response = await this.$axios.get(this.$httpUrl + '/event/queryByOwner', {
@@ -279,11 +310,7 @@ export default {
       const updatedTask = { ...task, finish: task.finish ? 1 : 0, id: parseInt(task.id, 10) };
       try {
         // 发送更新请求
-        const response = await this.$axios.post(this.$httpUrl + '/event/update', {
-          params: {
-            event:updatedTask
-          },
-        }, {
+        const response = await this.$axios.post(this.$httpUrl + '/event/update', updatedTask, {
           withCredentials: false,
           headers: {
             Authorization: `Bearer ${JSON.parse(localStorage.getItem('info')).token}`,
@@ -296,6 +323,39 @@ export default {
         task.finish = !task.finish;
       }
     },
+    async deleteEvent(task) {
+      console.log("任务", task);
+      const updatedTask = { ...task, finish: task.finish ? 1 : 0, id: parseInt(task.id, 10) };
+      try {
+        // 发送删除请求
+        const response = await this.$axios.post(this.$httpUrl + '/event/del', updatedTask, {
+          withCredentials: false,
+          headers: {
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem('info')).token}`,
+          },
+        });
+        console.log('消息:', response);
+
+        // 从任务列表中移除删除的任务
+        this.list = this.list.filter(t => t.id !== task.id);
+      } catch (error) {
+        console.error('更新任务状态时出错:', error);
+        // 如果发生错误，可以考虑将状态恢复原样
+        task.finish = !task.finish;
+      }
+    },
+
+    jumpToWeek() {
+      if (this.selectedWeek !== null) {
+        const date = new Date(this.currentDate.getFullYear(), 0, 1);
+        const days = (this.selectedWeek - 1) * 7;
+        date.setDate(date.getDate() + days);
+        this.currentDate = date;
+        this.updateWeek();
+        this.updateMonth();
+        this.showWeekSelectorDialog = false;
+      }
+    }
   },
 };
 </script>
@@ -389,6 +449,12 @@ export default {
   max-height: 1800px !important;
 }
 .box {
-  margin-bottom: 45px !important;
+  margin-top: -5px !important;
+}
+.v-list-item {
+  padding: 8px 12px !important;
+}
+.v-list-item-title {
+  font-size: 12px !important;
 }
 </style>
