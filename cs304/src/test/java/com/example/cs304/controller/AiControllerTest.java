@@ -1,5 +1,6 @@
 package com.example.cs304.controller;
 
+import org.mockito.MockitoAnnotations;
 import com.example.cs304.common.Result;
 import com.example.cs304.entity.AiContent;
 import com.example.cs304.entity.dafen;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -50,7 +53,8 @@ class AiControllerTest {
     private static String resultString;
     private static String failResultString;
     private static String listResultString;
-
+    @InjectMocks
+    private AiController aiController;
     private static ObjectMapper objectMapper = new ObjectMapper();
     static {
         AiContent aiContent = new AiContent();
@@ -75,6 +79,7 @@ class AiControllerTest {
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(wac)
                 .build();
+        MockitoAnnotations.openMocks(this);
 
     }
 
@@ -148,5 +153,27 @@ class AiControllerTest {
         // Verify the results
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString(StandardCharsets.UTF_8)).isEqualTo(st);
+    }
+
+    @Test
+    public void testChat() {
+        // 模拟 AiContent 对象
+        AiContent aiContent = new AiContent();
+        aiContent.setContent("你好");
+        aiContent.setUser(1);
+        aiContent.setId(1);
+
+        AiContent aiContent1 = new AiContent();
+        aiContent1.setContent("Some ai content");
+        aiContent1.setUser(1);
+        aiContent1.setId(1);
+        // 模拟 AiContentService 的行为
+        when(mockAiContentService.SelectById(1)).thenReturn(aiContent1);
+
+        // 调用 chat 方法
+        Result result = aiController.chat(aiContent);
+
+        // 验证返回结果是否符合预期
+        assertNotNull(result);
     }
 }

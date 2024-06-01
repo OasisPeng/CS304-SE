@@ -88,7 +88,7 @@ public class EventController {
     @Operation(description = "根据owner和第几周查询一个待办，返回值类型是List<Event>")
     @Parameters({@Parameter(name = "week"),@Parameter(name = "owner")})
     public Result queryByWeek(@RequestParam int week, @RequestParam String owner){
-        if (StringUtils.isBlank(owner) || owner.equals("null")) {
+        if (StringUtils.isBlank(owner)) {
             return Result.fail();
         }
         return Result.suc(eventService.queryByWeekAndOwner(week, owner));
@@ -102,7 +102,7 @@ public class EventController {
     @Operation(description = "根据owner和date(形如YYYY-MM-DD)查询一个待办,date为空则查询当日，返回值类型是List<Event>")
     @Parameters({@Parameter(name = "date"),@Parameter(name = "owner")})
     public Result query(@RequestParam String date, @RequestParam String owner){
-        if (StringUtils.isBlank(owner) || owner.equals("null")) {
+        if (StringUtils.isBlank(owner)) {
             return Result.fail();
         }
         return Result.suc(eventService.queryByDateAndOwner(Util.getCalculateDate(date), owner)); // date形如YYYY-MM-DD
@@ -112,7 +112,7 @@ public class EventController {
     @Operation(description = "根据owner查询一个待办,返回值类型是List<Event>")
     @Parameters(@Parameter(name = "owner"))
     public Result queryByOwner(@RequestParam String owner){
-        if (StringUtils.isBlank(owner) || owner.equals("null")) {
+        if (StringUtils.isBlank(owner)) {
             return Result.fail();
         }
         return Result.suc(eventService.queryByOwner(owner));
