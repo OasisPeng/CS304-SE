@@ -28,6 +28,8 @@ public interface IEventService {
     Event updateById(Event event);
     @CacheEvict(cacheNames = "event", key = "#event.week + #event.owner + #event.xq", condition = "#result != null")
     Event removeById(Event event);
-    @Cacheable(cacheNames = "event", key = "#week + #owner")
+
     List<Event> queryByWeekAndOwner(int week, String owner);
+
+    List<Event> queryByOwner(String owner);
 }

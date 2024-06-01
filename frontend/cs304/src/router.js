@@ -114,19 +114,16 @@ export default new Router({
     {
       path: '/login',
       name: 'Login',
-
       component: ()=>import ('./components/CourseHelper.vue')
     },
     {
       path: '/Page',
       name: 'Page',
-
       component: ()=>import ('./components/CoursePage.vue')
     },
     {
       path: '/Chat',
       name: 'chat',
-
       component: ()=>import ('./components/gpt.vue')
     }
   ]

@@ -107,4 +107,14 @@ public class EventController {
         }
         return Result.suc(eventService.queryByDateAndOwner(Util.getCalculateDate(date), owner)); // date形如YYYY-MM-DD
     }
+
+    @GetMapping("/queryByOwner")
+    @Operation(description = "根据owner查询一个待办,返回值类型是List<Event>")
+    @Parameters(@Parameter(name = "owner"))
+    public Result queryByOwner(@RequestParam String owner){
+        if (StringUtils.isBlank(owner) || owner.equals("null")) {
+            return Result.fail();
+        }
+        return Result.suc(eventService.queryByOwner(owner));
+    }
 }
