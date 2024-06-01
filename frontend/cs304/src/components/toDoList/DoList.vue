@@ -277,13 +277,10 @@ export default {
     async updateTaskFinishStatus(task) {
       console.log("任务",task)
       const updatedTask = { ...task, finish: task.finish ? 1 : 0, id: parseInt(task.id, 10) };
+      console.log("任务",updatedTask)
       try {
         // 发送更新请求
-        const response = await this.$axios.post(this.$httpUrl + '/event/update', {
-          params: {
-            event:updatedTask
-          },
-        }, {
+        const response = await this.$axios.post(this.$httpUrl + '/event/update', updatedTask, {
           withCredentials: false,
           headers: {
             Authorization: `Bearer ${JSON.parse(localStorage.getItem('info')).token}`,
