@@ -29,9 +29,9 @@ using `(Get-ChildItem -Recurse -Include *.java, *.py .\cs304\src).Count` and `(G
 manual count via `package.json` for front-end and `pom.xml` for back-end
 ## 2. Documentation
 ### Documentation for End Users
-**Location:**
+**Location:** [End User Documentation](https://github.com//sustech-cs304/team-project-24spring-22/blob/master/README.md)
 **Snapshot:**
 ### Documentation for Developers
-**Location:**
+**Location:** [Developer API Documentation](https://github.com/your-repo/api-doc.md)
 **Snapshot:**
 ## 3. Tests
