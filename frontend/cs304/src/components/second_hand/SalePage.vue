@@ -99,7 +99,7 @@ const goBack = () => {
                       </v-card-text>
                       <v-card-actions>
                         <v-btn icon @click="toggleFavorite(item)">
-                          <v-icon :color="item.isFavorite ? 'green' : 'white'">mdi-heart</v-icon>
+                          <v-icon color="green">mdi-heart</v-icon>
                         </v-btn>
                       </v-card-actions>
                     </v-card>

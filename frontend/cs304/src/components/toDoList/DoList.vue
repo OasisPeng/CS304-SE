@@ -1,48 +1,26 @@
-
-<template >
-  <v-row justify="center" >
+<template>
+  <v-row justify="center">
     <v-col cols="12">
-      <v-card
-          max-width="600"
-          class="max-height-card"
-          style="background-color: palevioletred!important"
-
-      >
-        <v-img
-            class="max-height-card"
-            height="200"
-            :src="ToDoListBackground"
-            cover
-            :style="{ backgroundColor: 'palevioletred !important'}"
-        >
+      <v-card max-width="600" class="max-height-card" style="background-color: palevioletred!important">
+        <v-img class="max-height-card" height="200" :src="ToDoListBackground" cover :style="{ backgroundColor: 'palevioletred !important'}">
           <v-card-text class="text-center">
             <v-row justify="space-between" align="center">
               <div class="title">{{ currentMonth }}</div>
-              <v-btn  variant="text" class="btn-margin"
-                      color="rgba(0, 0, 0, 0)"
-                      theme="dark"
-              >
+              <v-btn variant="text" class="btn-margin" color="rgba(0, 0, 0, 0)" theme="dark">
                 <v-icon color="cyan">mdi-magnify</v-icon>
               </v-btn>
-              <v-btn  variant="text"
-                      color="rgba(0, 0, 0, 0)"
-                      theme="dark"
-                      @click=newEvent()
-              >
+              <v-btn variant="text" color="rgba(0, 0, 0, 0)" theme="dark" @click="newEvent()">
                 <v-icon color="cyan">mdi-pencil-plus-outline</v-icon>
               </v-btn>
               <div class="week-selector">
                 <v-btn icon @click="prevWeek">
-                  <v-icon
-                      large
-                  >mdi-chevron-left
-                  </v-icon>
+                  <v-icon large>mdi-chevron-left</v-icon>
                 </v-btn>
-                <div class="week-number">Week <span class="week"> {{ currentWeek }}</span></div>
+                <div class="week-number">
+                  Week <span class="week"> {{ currentWeek }}</span>
+                </div>
                 <v-btn icon @click="nextWeek">
-                  <v-icon
-                      large
-                  >mdi-chevron-right</v-icon>
+                  <v-icon large>mdi-chevron-right</v-icon>
                 </v-btn>
               </div>
             </v-row>
@@ -56,123 +34,68 @@
             </v-row>
           </v-card-text>
         </v-img>
-        <!-- 按星期分组的任务列表 -->
-        <v-card
-            max-width="500"
-            class="max-height-card1"
-        >
-          <v-img
-              class="max-height-card1"
-              height="800"
-              cover
-              style="background-color: lavender!important"
-          >
-
-
-          <!-- 星期任务列表 -->
-          <v-list dense>
-            <!-- 每个任务 -->
-            <v-list-item v-for="(task, taskIndex) in selectedDateTasks" :key="taskIndex"
-                         :class="getTaskRowClass(task.level)"
-                         @click="handleTaskClick(task)">
-              <!-- 任务完成状态 -->
-              <v-list-item-icon class="v-size--small">
-                <v-checkbox v-model="task.finish" color="primary"></v-checkbox>
-              </v-list-item-icon>
-
-              <!-- 任务内容 -->
-              <v-list-item-content>
-                <div class="task-container">
-                  <!-- 任务标题 -->
-                  <v-list-item-title :class="{ 'completed': task.finish, 'larger-font': true }">{{ task.title }}</v-list-item-title>
-
-                  <!-- 任务按钮容器 -->
-                  <div class="task-buttons">
-                    <!-- 第一个按钮 -->
-                    <v-btn variant="text" class="btn-margin"
-                           color="rgba(0, 0, 0, 0)"
-                           theme="dark"
-                           @click="editEvent(task)"
-                    >
-                      <v-icon color="blue">mdi-receipt-text-edit-outline</v-icon>
-                    </v-btn>
-                    <!-- 第二个按钮 -->
-
-                    <v-btn variant="text" class="btn-margin2"
-                           color="rgba(0, 0, 0, 0)"
-                           theme="dark"
-                    >
-                      <v-icon color="blue"
-                              @click="sheet = true"
-
-                      >mdi-dots-vertical</v-icon>
-                    </v-btn>
-                    <template>
-                      <!-- 你的其他代码 -->
+        <v-card max-width="500" class="max-height-card1">
+          <v-img class="max-height-card1" height="800" cover style="background-color: lavender!important">
+            <v-list dense>
+              <v-list-item v-for="(task, taskIndex) in selectedDateTasks" :key="taskIndex" :class="getTaskRowClass(task.level)" @click="handleTaskClick(task)">
+                <v-list-item-icon class="box">
+                  <v-checkbox v-model="task.finish" color="primary" @change="updateTaskFinishStatus(task)"></v-checkbox>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <div class="task-container">
+                    <v-list-item-title :class="{ 'completed': task.finish, 'larger-font': true }">
+                      {{ task.title }}
+                    </v-list-item-title>
+                    <div class="task-buttons">
+                      <v-btn variant="text" class="btn-margin" color="rgba(0, 0, 0, 0)" theme="dark" @click="editEvent(task)">
+                        <v-icon color="blue">mdi-receipt-text-edit-outline</v-icon>
+                      </v-btn>
+                      <v-btn variant="text" class="btn-margin2" color="rgba(0, 0, 0, 0)" theme="dark">
+                        <v-icon color="blue" @click="sheet = true">mdi-dots-vertical</v-icon>
+                      </v-btn>
                       <template>
                         <v-bottom-sheet v-model="sheet">
                           <template>
-                            <v-card
-                                class="mx-auto"
-                                max-width="344"
-                            >
-                              <v-img
-                                  height="200px"
-                                  :src="detailBackground"
-                                  cover
-                              >
-                              </v-img>
-
+                            <v-card class="mx-auto" max-width="344">
+                              <v-img height="200px" :src="detailBackground" cover></v-img>
                               <v-card-title>
                                 {{ selectedTaskDetails.title }}
-                                <div class="emotion-indicator">
-                                  {{ selectedTaskDetails.emotion }}
-                                </div>
+                                <div class="emotion-indicator">{{ selectedTaskDetails.emotion }}</div>
                               </v-card-title>
-                              <v-card-subtitle>
-                                {{ selectedTaskDetails.category }}
-                              </v-card-subtitle>
-
+                              <v-card-subtitle>{{ selectedTaskDetails.category }}</v-card-subtitle>
                               <v-card-actions>
                                 <v-spacer></v-spacer>
                               </v-card-actions>
                               <v-expand-transition>
-                                <div >
+                                <div>
                                   <v-divider></v-divider>
-                                  <v-card-text>
-                                    {{ selectedTaskDetails.text }}
-                                  </v-card-text>
+                                  <v-card-text>{{ selectedTaskDetails.text }}</v-card-text>
                                 </div>
                               </v-expand-transition>
                             </v-card>
                           </template>
                         </v-bottom-sheet>
                       </template>
-                    </template>
-
+                    </div>
                   </div>
-                </div>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-
-          <v-divider></v-divider>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
           </v-img>
         </v-card>
-</v-card>
+      </v-card>
     </v-col>
-
   </v-row>
-
 </template>
 
 <script setup>
-
 </script>
 <script>
 import ToDoListBackground from '@/components/toDoList/toDoListBackground.jpeg';
 import detailBackground from '@/components/toDoList/pexels-photo-9916558.jpeg';
 import Background from '@/assets/pink1.jpeg';
+
 export default {
   data() {
     return {
@@ -181,74 +104,25 @@ export default {
       currentMonth: '',
       currentWeek: '',
       Background: Background,
-      list:[
-        {
-          // id:"1",
-          title:"Play LOL",
-          owner:"yangyu" ,
-          week:"1",
-          data:"4/15/2024",
-          level:"important",
-          finish:"no",
-          category:"life",
-          emotion:"😀",
-          text:"I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape."
-        },
-        {
-          title:"Play Valorant",
-          owner:"yangyu" ,
-          data:"4/16/2024",
-          level:"important",
-          finish:"no",
-          category:"",
-          emotion:"",
-          text:""
-        },
-        {
-          title:"Watch Movie",
-          owner:"yangyu" ,
-          data:"4/16/2024",
-          level:"normal",
-          finish:"no",
-          category:"",
-          emotion:"",
-          text:""
-        },
-        {
-          title:"Sleep all the day",
-          owner:"yangyu" ,
-          data:"4/17/2024",
-          level:"unimportant",
-          finish:"no",
-          category:"",
-          emotion:"",
-          text:""
-        },
-
-      ],
+      list: [],
       show: false,
-      sheet:false,
+      sheet: false,
       selectedTaskDetails: {},
-    }
-
+    };
   },
   mounted() {
     this.updateWeek();
     this.updateMonth();
+    this.fetchCategory();
   },
   computed: {
-    selectedDate() {
-      return this.currentDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-    },
     selectedDateTasks() {
-      const selectedDateString = this.currentDate.toLocaleDateString('en-US');
-      return this.list.filter(task => task.data === selectedDateString);
-    }
-
-
+      const selectedDateDay = this.currentDate.getDay();
+      return this.list.filter(task => task.xq === selectedDateDay);
+    },
   },
   methods: {
-    getTasksByDay (xq) {
+    getTasksByDay(xq) {
       return this.list.filter(task => task.xq === xq);
     },
     getTaskRowClass(level) {
@@ -259,43 +133,40 @@ export default {
       };
     },
     handleTaskClick(task) {
-      // 更新 selectedTaskDetails
       this.selectedTaskDetails = task;
-
+      this.show = !this.show;
     },
-    newEvent(){
-      this.$router.push("/CategorySelection");
+    newEvent() {
+      this.$router.push('/ToDoCreate');
     },
     editEvent(task) {
-      localStorage.setItem("category", task.category);
-      localStorage.setItem("emotion", task.emotion);
-      localStorage.setItem("level", task.level);
-      localStorage.setItem("title", task.title);
-      localStorage.setItem("text", task.text);
-      if(task.finish=='no')
-        task.finish=0;
-      else
-        task.finish=1;
-      localStorage.setItem("finish", task.finish);
-      localStorage.setItem("owner", task.owner);
+      localStorage.setItem('id', task.id);
+      localStorage.setItem('category', task.category);
+      localStorage.setItem('emotion', task.emotion);
+      localStorage.setItem('level', task.level);
+      localStorage.setItem('title', task.title);
+      localStorage.setItem('text', task.text);
+      if (task.finish === 'no') task.finish = 0;
+      else task.finish = 1;
+      localStorage.setItem('finish', task.finish);
+      localStorage.setItem('owner', task.owner);
 
       const taskDate = new Date(task.data);
-      const getWeekNumber = (date) => {
+      const getWeekNumber = date => {
         const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
         const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
         return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
       };
-      const getDayOfWeek = (date) => {
-        return date.getDay();
-      };
+      const getDayOfWeek = date => date.getDay();
       task.week = getWeekNumber(taskDate);
       task.xq = getDayOfWeek(taskDate);
 
-      localStorage.setItem("week",task.week);
-      localStorage.setItem("xq", task.xq);
-      this.$router.push("/ToDoEdit");
+      localStorage.setItem('week', task.week);
+      localStorage.setItem('xq', task.xq);
+      this.$router.push('/ToDoEdit');
     },
     updateWeek() {
+      // 确保更新周的逻辑正确
       const startOfWeek = new Date(this.currentDate);
       startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
 
@@ -304,17 +175,20 @@ export default {
         date.setDate(date.getDate() + index);
         return {
           date: date.getDate(),
-          weekday: this.getWeekdayName(date.getDay())
+          month: date.getMonth(),
+          year: date.getFullYear(),
+          weekday: this.getWeekdayName(date.getDay()),
+          xq: date.getDay(),
         };
       });
 
-      // Update current week number
       this.currentWeek = this.getWeekNumber(startOfWeek);
     },
     updateMonth() {
+      // 确保更新月的逻辑正确
       const monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June', 'July',
-        'August', 'September', 'October', 'November', 'December'
+        'August', 'September', 'October', 'November', 'December',
       ];
       const monthIndex = this.currentDate.getMonth();
       this.currentMonth = monthNames[monthIndex] + ' ' + this.currentDate.getFullYear();
@@ -340,18 +214,91 @@ export default {
     },
     isCurrentDate(day) {
       const currentDay = this.currentDate.getDate();
-      return currentDay === day;
+      const currentMonth = this.currentDate.getMonth();
+      const currentYear = this.currentDate.getFullYear();
+      const dayDate = new Date(this.currentDate);
+      dayDate.setDate(day);
+
+      return (
+          dayDate.getDate() === currentDay &&
+          dayDate.getMonth() === currentMonth &&
+          dayDate.getFullYear() === currentYear
+      );
     },
     selectDate(day) {
-      const selectedDate = new Date(this.currentDate);
+      // 设置选择的日期
+
+      const selectedDate = new Date();
+      selectedDate.setFullYear(day.year);
+      selectedDate.setMonth(day.month);
       selectedDate.setDate(day.date);
+
+
+
+      // 更新当前日期
       this.currentDate = selectedDate;
       this.updateWeek();
-    }
-  }
+      this.updateMonth();
+      // 日志输出用于调试
+    },
+
+
+    async fetchCategory() {
+      try {
+        const response = await this.$axios.get(this.$httpUrl + '/event/queryByOwner', {
+          params: {
+            owner: JSON.parse(localStorage.getItem('info')).username,
+          },
+          withCredentials: false,
+          headers: {
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem('info')).token}`,
+          },
+        });
+        const products = response.data.data.map(evo => {
+          return {
+            id: evo.id || '',
+            title: evo.title || '',
+            owner: evo.owner || '',
+            week: evo.week || '',
+            xq: evo.xq || '',
+            level: evo.level || '',
+            finish: evo.finish || '',
+            category: evo.category || '',
+            emotion: evo.emotion || '',
+            text: evo.text !== '',
+          };
+        });
+        this.list = products;
+        console.log('fetchCategory:', this.daysInWeek);
+      } catch (error) {
+        console.error('Error querying category:', error);
+      }
+    },
+    async updateTaskFinishStatus(task) {
+      console.log("任务",task)
+      const updatedTask = { ...task, finish: task.finish ? 1 : 0, id: parseInt(task.id, 10) };
+      try {
+        // 发送更新请求
+        const response = await this.$axios.post(this.$httpUrl + '/event/update', {
+          params: {
+            event:updatedTask
+          },
+        }, {
+          withCredentials: false,
+          headers: {
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem('info')).token}`,
+          },
+        });
+        console.log('消息:', response);
+      } catch (error) {
+        console.error('更新任务状态时出错:', error);
+        // 如果发生错误，可以考虑将状态恢复原样
+        task.finish = !task.finish;
+      }
+    },
+  },
 };
 </script>
-
 
 <style scoped>
 .v-input--selection-controls__input {
@@ -368,19 +315,19 @@ export default {
   user-select: none;
 }
 .normal-row {
-  background-color: transparent; /* 正常级别的背景颜色 */
+  background-color: transparent;
 }
 
 .important-row {
-  background-color: lightcoral; /* 重要级别的背景颜色 */
+  background-color: lightcoral;
 }
 
 .unimportant-row {
-  background-color: #b6f7e8; /* 不重要级别的背景颜色 */
+  background-color: #b6f7e8;
 }
 .task-container {
   display: flex;
-  justify-content: space-between!important;
+  justify-content: space-between;
 }
 
 .task-buttons {
@@ -388,20 +335,19 @@ export default {
 }
 
 .btn-margin2 {
-  margin-left: 2px; /* 调整第二个按钮的间距 */
+  margin-left: 2px;
 }
 .emotion-indicator {
-  margin-left: auto; /* 将情感指示器放置到右侧 */
+  margin-left: auto;
 }
 .title {
-  margin-right: 30px !important; /* 调整标题向右移动的距离 */
+  margin-right: 30px !important;
   color: #e9ecef;
 }
 
 .week-selector {
   display: flex;
   align-items: center;
-
 }
 
 .week-number {
@@ -412,8 +358,8 @@ export default {
 
 .day-item {
   text-align: center;
-  width: 30px; /* 固定日期元素的宽度 */
-  height: 50px; /* 固定日期元素的高度 */
+  width: 30px;
+  height: 50px;
 }
 
 .day {
@@ -422,14 +368,14 @@ export default {
 }
 .selected1 {
   color: palevioletred;
-  box-shadow: 0 0 3px 6px palevioletred; /* 增加阴影宽度 */
-  border-radius: 40%; /* 使阴影成圆形 */
+  box-shadow: 0 0 3px 6px palevioletred;
+  border-radius: 40%;
 }
 .selected {
-  color: palevioletred !important; /* 当日期被选中时改变颜色 */
+  color: palevioletred !important;
 }
 .week {
-  color: black; /* week 字体颜色为黑色 */
+  color: black;
   font-size: 20px;
 }
 .weekday {
@@ -441,5 +387,8 @@ export default {
 }
 .max-height-card1 {
   max-height: 1800px !important;
+}
+.box {
+  margin-bottom: 45px !important;
 }
 </style>
