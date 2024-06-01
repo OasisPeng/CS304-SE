@@ -54,7 +54,7 @@
               <div class="product-list-container">
                 <v-row>
                   <v-col cols="12" sm="6" md="4" lg="3" v-for="(product, index) in category.products" :key="index">
-                    <v-card class="product-card" outlined>
+                    <v-card class="product-card" outlined @click="goToProductDetail(product.id)">
                       <v-img :src="product.image" aspect-ratio="1.5">
                         <template v-slot:placeholder>
                           <v-row class="fill-height ma-0" align="center" justify="center">
@@ -76,7 +76,8 @@
                       </v-card-text>
                       <v-card-actions>
                         <v-btn icon @click="toggleFavorite(product)" class="position">
-                          <v-icon :color="product.isFavorite ? 'green' : 'white'">mdi-heart</v-icon>
+<!--                          <v-icon :color="product.isFavorite ? 'green' : 'white'">mdi-heart</v-icon>-->
+                          <v-icon :color="green">mdi-heart</v-icon>
                         </v-btn>
                       </v-card-actions>
                     </v-card>
@@ -181,6 +182,9 @@ export default {
     }
   },
   methods: {
+    goToProductDetail(productId) {
+      this.$router.push({ name: 'GoodsPage', params: { id: productId } });
+    },
     buy_book() {
       this.snackbar = true; // Show the dialog
     },

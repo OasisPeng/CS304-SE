@@ -57,5 +57,11 @@ public class EventServiceImpl implements IEventService {
         return res;
     }
 
-
+    @Override
+    public List<Event> queryByOwner(String owner) {
+        LambdaQueryWrapper<Event> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Event::getOwner,owner);
+        List<Event> res = eventMapper.selectList(lambdaQueryWrapper);
+        return res;
+    }
 }
