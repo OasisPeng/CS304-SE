@@ -16,12 +16,18 @@ export const saveZan = data => {
 export const deleteZan = data => {
   return request.delete('/dianzan',{data});
 }
+export const getDian = data => {
+  return request.get('/dianzan/course/'+data.id);
+}
 //打分
 export const saveFen = data => {
   return request.post('/dafen',data);
 }
 export const deleteFen = data => {
   return request.delete('/dafen',{data});
+}
+export const getFen = data => {
+  return request.get('/dianzan/user/'+data.userId);
 }
 // 评论
 export const saveContent = data => {

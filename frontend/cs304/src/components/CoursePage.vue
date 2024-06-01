@@ -150,6 +150,7 @@
             mdi-heart
           </v-icon>
           点赞
+          {{ dianZanNum}}
         </v-btn>
         <v-btn
             v-if="false"
@@ -199,7 +200,7 @@
             class="v-btn__content "
             style="color:indigo;font-size:18px;margin:0"
         ></span>
-        <span>({{ pageInfo.rating || pageInfo.credits}}分)</span>
+        <span>({{fanNum}}分)</span>
       </div>
     </v-col>
     <v-col v-if="false">
@@ -383,7 +384,9 @@ import {
   deleteFen,
   saveContent,
   getContentList,
-  deleteContent
+  deleteContent,
+  getDian,
+  getFen
 } from "../api/index";
 export default {
   data: () => ({
@@ -408,6 +411,8 @@ export default {
     delItem:null,
     loading: false,
     content: "",
+    dianZanNum: 0,
+    fanNum:0,
     ContentList:[],
     box:false,
     params:null,
@@ -433,14 +438,16 @@ export default {
   },
   computed: {
     // 计算属性
-   commonParams() {
+    commonParams() {
       const {username=''}=this.params
       return { userId:username} ;
     },
-   
+
   },
   mounted() {
-     this.params=JSON.parse(localStorage.getItem("info"))
+    this.params=JSON.parse(localStorage.getItem("info"))
+    this.getDian()
+    this.getFen()
   },
   methods: {
     async dianZan() {
@@ -451,11 +458,23 @@ export default {
         // "id": id,
         courseId: id,
         // "zan": 1,
-       ...this.commonParams
+        ...this.commonParams
       };
 
       const res = await api(params);
+      this.getDian()
       console.log("44", api, res, deleteFen);
+    },
+    async  getDian(){
+      const {data}= await getDian(this.pageInfo)
+      this.dianZanNum=data.length
+      console.log(data)
+    },
+    async getFen(){
+      const {data}= await getFen(this.commonParams)
+      const arr=data.filter(item=>item.courseId==this.pageInfo.id)
+      this.fanNum=arr.length
+      console.log(data,'fen')
     },
     async handleRatingChange() {
       const api = saveFen;
@@ -466,6 +485,7 @@ export default {
         ...this.commonParams
       };
       const res = await api(params);
+      this.getFen()
       console.log(this.pageInfo.rating,res);
     },
     openDialog() {

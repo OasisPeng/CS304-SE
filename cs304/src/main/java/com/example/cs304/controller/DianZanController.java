@@ -23,8 +23,8 @@ public class DianZanController {
         }
     }
     @DeleteMapping
-    public Result delete(@RequestBody dianzan dianzan) {
-        dianzan res = service.deleteById(dianzan);
+    public Result delete(@RequestBody dianzan Dianzan) {
+        dianzan res = service.deleteById(Dianzan);
         if (res == null) {
             return Result.fail();
         } else {
