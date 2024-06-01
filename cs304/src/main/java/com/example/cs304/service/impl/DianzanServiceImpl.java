@@ -16,15 +16,24 @@ public class DianzanServiceImpl implements DianzanService {
     @Autowired
     DianzanMapper mapper;
     @Override
-    public dianzan insert(dianzan dianzan) {
-        mapper.insert(dianzan);
-        return dianzan;
+    public dianzan insert(dianzan Dianzan) {
+        LambdaQueryWrapper<dianzan> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(dianzan::getCourseId, Dianzan.getCourseId()).eq(dianzan::getUserId, Dianzan.getUserId());
+        List<dianzan> r = mapper.selectList(lqw);
+        if (r.isEmpty()) {
+        mapper.insert(Dianzan);
+        return Dianzan;} else {
+            return null;
+        }
     }
 
     @Override
-    public dianzan deleteById(dianzan dianzan) {
-        int i = mapper.deleteById(dianzan);
-        return (i == 1) ? dianzan:null;
+    public dianzan deleteById(dianzan Dianzan) {
+        LambdaQueryWrapper<dianzan> lqw = new LambdaQueryWrapper<>();
+        System.out.println(Dianzan);
+        lqw.eq(dianzan::getCourseId, Dianzan.getCourseId()).eq(dianzan::getUserId, Dianzan.getUserId());
+        int i = mapper.delete(lqw);
+        return (i >= 1) ? Dianzan:null;
     }
 
     @Override

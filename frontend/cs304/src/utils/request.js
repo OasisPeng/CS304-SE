@@ -1,5 +1,7 @@
 import axios from 'axios';
 const baseURL = '/api' ;//代理路径，vue.config.js
+// const baseURL = '120.77.79.53:8090' ;//代理路径，vue.config.js
+
 // 默认带上cookie
 axios.defaults.withCredentials = true;
 const request = axios.create({
