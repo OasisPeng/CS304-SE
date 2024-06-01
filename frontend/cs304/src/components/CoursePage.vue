@@ -38,6 +38,7 @@
             background-color="indigo lighten-3"
             color="indigo"
             length="5"
+            :class="{'v-rat':pageInfo.rating}"
             size="15"
         ></v-rating>
         <span
@@ -188,12 +189,13 @@
         </div>
 
         <v-rating
-            v-model=" pageInfo.rating"
+            v-model="pageInfo.rating"
             background-color="indigo lighten-3"
             color="indigo"
             length="5"
             size="15"
             clearable
+            :class="{'v-rat':pageInfo.rating}"
             @click.native="handleRatingChange"
         ></v-rating>
         <span
@@ -463,7 +465,7 @@ export default {
 
       const res = await api(params);
       this.getDian()
-      console.log("44", api, res, deleteFen);
+
     },
     async  getDian(){
       const {data}= await getDian(this.pageInfo)
@@ -471,10 +473,10 @@ export default {
       console.log(data)
     },
     async getFen(){
-      const {data}= await getFen(this.commonParams)
-      const arr=data.filter(item=>item.courseId==this.pageInfo.id)
-      this.fanNum=arr.length
-      console.log(data,'fen')
+      const {data}= await getFen(this.pageInfo)
+      const arr=data.find(item=>item.courseId==this.pageInfo.id && item.userId==this.commonParams.userId)
+      this.fanNum=arr?.score?? 0
+      this.pageInfo.rating=arr?.score??0
     },
     async handleRatingChange() {
       const api = saveFen;
@@ -484,6 +486,7 @@ export default {
         score: this.pageInfo.rating,
         ...this.commonParams
       };
+
       const res = await api(params);
       this.getFen()
       console.log(this.pageInfo.rating,res);
@@ -544,6 +547,9 @@ export default {
 };
 </script>
 <style scoped>
+.v-rat{
+  pointer-events: none !important;
+}
 .flex {
   display: flex;
 }

@@ -37,6 +37,7 @@ public class LoginController {
     }
     @GetMapping("/logout/{username}")
     public Result logout(@PathVariable String username) {
+//        System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         if (!SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals(username)){
             return Result.fail();
         } else {

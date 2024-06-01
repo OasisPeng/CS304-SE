@@ -295,11 +295,46 @@ class EventControllerTest {
                         .param("date", "date")
                         .param("owner", "")
                         .accept(MediaType.APPLICATION_JSON))
-                .andReturn().getResponse();
-        mockMvc.perform(get("/event/queryByWeek")
-                        .param("week", "0")
+                .andExpect(jsonPath("$.code").value(400));
+    }
+
+    @Test
+    @WithMockUser
+    void testQueryByOwner() throws Exception {
+        // Setup
+        final Event event = new Event();
+        event.setId(0);
+        event.setTitle("title");
+        event.setOwner("owner");
+        event.setWeek(1);
+        event.setXq(0);
+        event.setCategory("");
+        event.setLevel("");
+        event.setFinish(0);
+        event.setEmotion("");
+        event.setText("");
+        final List<Event> events = List.of(event);
+        when(mockEventService.queryByOwner(eq("owner"))).thenReturn(events);
+
+        // Run the test
+        mockMvc.perform(get("/event/queryByOwner")
+                        .param("owner", "owner")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.code").value(200));
+
+        // Verify the results
+    }
+
+    @Test
+    @WithMockUser
+    void testQueryByOwner_OwnerIsNull() throws Exception {
+        // Setup
+
+        // Run the test
+        mockMvc.perform(get("/event/queryByOwner")
                         .param("owner", "")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.code").value(400));
     }
+
 }
