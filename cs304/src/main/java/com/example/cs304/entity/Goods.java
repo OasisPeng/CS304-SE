@@ -1,7 +1,5 @@
 package com.example.cs304.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -10,8 +8,7 @@ import java.util.Date;
 @Schema
 @Data
 public class Goods {
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    private Long id;
     private String name;
     private BigDecimal price;
     private String image;
