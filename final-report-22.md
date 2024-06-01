@@ -64,15 +64,17 @@ JUnit + Spring Test + GitHub Actions
 
 **Effectiveness of Tests:**
 
-- **test coverage report:** ![test coverage report](./snapshots/test_coverage.png)
-![](./snapshots/serviceImpl.png)
+- **test coverage report:** 
+[test result]()
 ![](./snapshots/img_1.png)
-- **Test Coverage:** 80%
-- **Explanation:** The test coverage report indicates that 80% of the codebase is covered by tests, ensuring that key functionalities are verified. The detailed breakdown shows:
-    - **Instructions Coverage:** 80% of all instructions are tested.
-    - **Branch Coverage:** 50% of all branches are tested.
+![](./snapshots/img_2.png)
+![](./snapshots/img_3.png)
+- **Test Coverage:** 83%
+- **Explanation:** The test coverage report indicates that 83% of the codebase is covered by tests, ensuring that key functionalities are verified. The detailed breakdown shows:
+    - **Instructions Coverage:** 83% of all instructions are tested.
+    - **Branch Coverage:** 51% of all branches are tested.
   
-    The report demonstrates good coverage of the main components of the application, particularly in the entity, common, and service.impl packages, which have coverage rates of 82%, 81%, and 88%, respectively. However, there is room for improvement in the controller and filter packages, with coverage rates of 71% and 35%, respectively.
+    The report demonstrates good coverage of the main components of the application, particularly in the entity, common, controller and service.impl packages, which have coverage rates of 82%, 81%, 90% and 93%, respectively. 
 ### Manual Testing (if applicable)
 **Reasons for Manual Testing:** N/A 
 
