@@ -7,75 +7,105 @@
       <v-toolbar-title>发布</v-toolbar-title>
     </v-app-bar>
 
-    <v-row>
-      <v-col cols="12">
-        <v-text-field
-            label="添加宝贝标题"
-            outlined
-            class="title-input"
-            color="green"
-        ></v-text-field>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-textarea
-            label="描述型号，入手渠道，转手原因..."
-            outlined
-            rows="3"
-            no-resize
-            class="description-input"
-            color="green"
-        ></v-textarea>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" class="d-flex align-start">
-        <div class="image-upload-section">
-          <v-btn
+    <v-form ref="form" v-model="valid" lazy-validation>
+      <v-row>
+        <v-col cols="12">
+          <v-text-field
+              v-model="title"
+              label="添加宝贝标题"
               outlined
-              class="image-upload-btn"
-              @click="uploadImage"
-          >
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-          <div class="image-upload-text">添加图片</div>
-        </div>
-        <div class="image-grid">
-          <v-img
-              v-for="(image, index) in images"
-              :key="index"
-              :src="image"
-              class="image-thumbnail"
-          ></v-img>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-expansion-panels>
-          <v-expansion-panel>
-            <v-expansion-panel-header>物品状况</v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-radio-group class="custom-radio-group" color="green">
-                <v-radio label="全新" value="new"></v-radio>
-                <v-radio label="二手" value="used"></v-radio>
-              </v-radio-group>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-text-field label="价格" outlined color="green"></v-text-field>
-      </v-col>
-    </v-row>
-    <v-row class="fixed-bottom">
-      <v-col cols="12" class="text-center">
-        <v-btn color="green" large>确认发布</v-btn>
-      </v-col>
-    </v-row>
+              class="title-input"
+              color="green"
+              :rules="[rules.required]"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-textarea
+              v-model="description"
+              label="描述型号，入手渠道，转手原因..."
+              outlined
+              rows="3"
+              no-resize
+              class="description-input"
+              color="green"
+              :rules="[rules.required]"
+          ></v-textarea>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" class="d-flex align-start">
+          <div class="image-upload-section">
+            <v-btn
+                outlined
+                class="image-upload-btn"
+                @click="triggerFileInput"
+            >
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+            <div class="image-upload-text">添加图片</div>
+            <input
+                ref="fileInput"
+                type="file"
+                @change="uploadImage"
+                style="display: none"
+            />
+          </div>
+          <div class="image-grid">
+            <v-img
+                v-for="(image, index) in images"
+                :key="index"
+                :src="image"
+                class="image-thumbnail"
+            ></v-img>
+          </div>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-expansion-panels>
+            <v-expansion-panel>
+              <v-expansion-panel-header>物品状况</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-radio-group
+                    v-model="condition"
+                    class="custom-radio-group"
+                    color="green"
+                    :rules="[rules.required]"
+                >
+                  <v-radio label="书籍" value="book"></v-radio>
+                  <v-radio label="电子产品" value="device"></v-radio>
+                  <v-radio label="食物" value="food"></v-radio>
+                  <v-radio label="其他" value="other"></v-radio>
+                </v-radio-group>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-text-field
+              v-model="price"
+              label="价格"
+              outlined
+              color="green"
+              :rules="[rules.required, rules.isNumber]"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row class="fixed-bottom">
+        <v-col cols="12" class="text-center">
+          <v-btn
+              color="green"
+              large
+              @click="submit"
+              :disabled="!valid"
+          >确认发布</v-btn>
+        </v-col>
+      </v-row>
+    </v-form>
   </v-container>
 </template>
 
@@ -84,18 +114,74 @@ export default {
   name: 'ReleasePage',
   data() {
     return {
-      images: []
+      valid: false,
+      title: '',
+      description: '',
+      condition: '',
+      price: '',
+      images: [],
+      rules: {
+        required: value => !!value || '此项为必填项',
+        isNumber: value => !isNaN(value) || '请输入一个有效的数字'
+      }
     };
   },
   methods: {
     goBack() {
       this.$router.go(-1);
     },
-    uploadImage() {
-      // 这里添加你的图片上传逻辑
-      // 假设图片上传成功后，添加图片到 images 数组
-      const newImage = 'path/to/new/image.jpg';
-      this.images.push(newImage);
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
+    async uploadImage(event) {
+      const file = event.target.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        const response = await this.$axios.post(this.$httpUrl + '/goods/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          }
+        });
+        console.log(response.data.data)
+        if (response.data.msg=='成功') {
+          this.images.push(response.data.data);
+        } else {
+          console.error('图片上传失败');
+        }
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
+    },
+    async submit() {
+      if (this.$refs.form.validate()) {
+        const product = {
+          name: this.title,
+          description: this.description,
+          category: this.condition === 'other' ? this.condition : this.condition,
+          // category: this.condition === 'new' ? '全新' : '二手',
+          price: this.price,
+          image: this.images.join(','),
+          sellerId: JSON.parse(localStorage.getItem('info')).username,
+          publishDate: new Date()
+        };
+        try {
+          console.log(product)
+          const response = await this.$axios.post(this.$httpUrl + '/goods/add', product, {
+            headers: {
+              'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+            }
+          });
+          if (response.data.msg=='成功') {
+            this.$router.push('/FirstPage');
+          } else {
+            console.error('商品发布失败');
+          }
+        } catch (error) {
+          console.error('Error submitting product:', error);
+        }
+      }
     }
   }
 };
@@ -104,7 +190,7 @@ export default {
 <style scoped>
 .title-input .v-input__control {
   font-weight: bold;
-  font-size: 20px; /* 调整字体大小 */
+  font-size: 20px;
 }
 
 .description-input .v-input__control {
@@ -150,7 +236,6 @@ export default {
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* 确保所有选中状态颜色为绿色 */
 .custom-radio-group .v-radio .v-input--selection-controls__ripple--active {
   background-color: green !important;
 }

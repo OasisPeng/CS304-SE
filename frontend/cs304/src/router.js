@@ -14,6 +14,8 @@ import FavouritePage from "@/components/second_hand/FavouritePage.vue";
 import SalePage from "@/components/second_hand/SalePage.vue";
 import MarketPage from "@/components/second_hand/MarketPage.vue";
 import MessagesPage from "@/components/second_hand/MessagesPage";
+import GoodsPage from "@/components/second_hand/GoodsPage";
+import ReleasePage from "@/components/second_hand/ReleasePage";
 Vue.use(Router);
 
 export default new Router({
@@ -28,6 +30,16 @@ export default new Router({
       path: '/FirstPage',
       name: 'FirstPage',
       component: FirstPage
+    },
+    {
+      path: '/GoodsPage',
+      name: 'GoodsPage',
+      component: GoodsPage
+    },
+    {
+      path: '/ReleasePage',
+      name: 'ReleasePage',
+      component: ReleasePage
     },
     {
       path: '/BuyPage',
@@ -102,19 +114,16 @@ export default new Router({
     {
       path: '/login',
       name: 'Login',
-
       component: ()=>import ('./components/CourseHelper.vue')
     },
     {
       path: '/Page',
       name: 'Page',
-
       component: ()=>import ('./components/CoursePage.vue')
     },
     {
       path: '/Chat',
       name: 'chat',
-
       component: ()=>import ('./components/gpt.vue')
     }
   ]

@@ -35,21 +35,49 @@ export default {
         id: 1,
         name: '示例商品',
         price: 299.99,
-        image: 'https://via.placeholder.com/600',
-        sellerId: 'seller123',
-        buyerId: 'buyer456',
-        description: '这是一件非常好的商品，功能齐全，品质优良。',
-        category: '电子产品',
+        image: '',
+        sellerId: 'Aaa',
+        buyerId: 'Bbb',
+        description: '好东西',
+        category: 'book',
         publishDate: new Date()
       },
       websocket: null
     };
+  },
+  async created() {
+    const productId = this.$route.params.id;
+    console.log(productId);
+    try {
+      const response = await this.$axios.get(this.$httpUrl + `/goods/${productId}`, {
+        withCredentials: false,
+        headers: {
+          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+        },
+      });
+      const productData = response.data.data;
+      this.product = {
+        id: productData.id,
+        name: productData.name,
+        price: productData.price,
+        image: productData.image,
+        sellerId: productData.sellerId,
+        buyerId: productData.buyerId,
+        description: productData.description,
+        category: productData.category,
+        publishDate: productData.publishDate
+      };
+      console.log(this.product);
+    } catch (error) {
+      console.error('Error fetching product details:', error);
+    }
   },
   methods: {
     goBack() {
       this.$router.go(-1);
     },
     buyProduct() {
+
     },
     contactSeller() {
       const sellerId = this.product.sellerId;

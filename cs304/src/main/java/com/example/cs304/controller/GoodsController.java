@@ -82,6 +82,8 @@ public class GoodsController {
     @PostMapping("/add")
     @Operation(description = "新增商品")
     public Result addGoods(@RequestBody Goods goods) {
+        log.info("Received goods: {}", goods);
+        System.out.println(goods.getImage());
         return (goodsService.insert(goods) != null) ? Result.suc(goods):Result.fail();
     }
 
