@@ -208,17 +208,18 @@ export default {
     this.ready = true
     this.scrollToTime()
     this.updateTime()
-    const cachedCourseList = localStorage.getItem('courseList')
-    if (cachedCourseList) {
-      // 如果存在缓存数据，则直接使用缓存数据
-      this.courseList = JSON.parse(cachedCourseList)
-      this.events = this.courseList.map(event =>
-          this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName, event.color, event.teachingBuilding, event.teacher, event.weeks, event.jc, event.classes, event.language)
-      );
-    } else {
-      // 如果缓存中不存在数据，则从后端请求数据
-      this.queryCurrentCourse()
-    }
+    this.queryCurrentCourse()
+    // const cachedCourseList = localStorage.getItem('courseList')
+    // if (cachedCourseList) {
+    //   // 如果存在缓存数据，则直接使用缓存数据
+    //   this.courseList = JSON.parse(cachedCourseList)
+    //   this.events = this.courseList.map(event =>
+    //       this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName, event.color, event.teachingBuilding, event.teacher, event.weeks, event.jc, event.classes, event.language)
+    //   );
+    // } else {
+    //   // 如果缓存中不存在数据，则从后端请求数据
+    //   this.queryCurrentCourse()
+    // }
   },
 
     methods: {
@@ -257,7 +258,7 @@ export default {
           this.events = this.courseList.map(event =>
               this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName, event.color, event.teachingBuilding, event.teacher, event.weeks, event.jc, event.classes, event.language)
           );
-
+console.log("kebiao",this.events)
           localStorage.setItem('courseList', JSON.stringify(this.courseList));
         } catch (error) {
           console.error('Error querying current course:', error);
