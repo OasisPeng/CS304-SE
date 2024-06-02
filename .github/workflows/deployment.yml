@@ -3,8 +3,12 @@ name: Java CI with Maven
 on:
   push:
     branches: [ "master" ] # 当向master分支进行git push时触发该工作流
+    paths:
+      - 'cs304/**'
   pull_request:
     branches: [ "master" ] # 当向master分支合并分支时触发该工作流
+    paths:
+      - 'cs304/**'
 # 工作流具体执行的任务
 jobs:
   build:
