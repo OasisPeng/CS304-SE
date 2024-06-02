@@ -9,7 +9,7 @@ export default {
   methods :{
     async fetchCategory() {
       try {
-        const response = await this.$axios.get(this.$httpUrl + '/user/'+JSON.parse(localStorage.getItem('info')).username, {
+        const response = await this.$axios.get(this.$httpUrl + '/favourite/user/'+JSON.parse(localStorage.getItem('info')).username, {
           withCredentials: false,
           headers: {
             'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
@@ -99,7 +99,8 @@ const goBack = () => {
                       </v-card-text>
                       <v-card-actions>
                         <v-btn icon @click="toggleFavorite(item)">
-                          <v-icon :color="item.isFavorite ? 'green' : 'white'">mdi-heart</v-icon>
+                          <v-icon color="green">mdi-heart</v-icon>
+
                         </v-btn>
                       </v-card-actions>
                     </v-card>
