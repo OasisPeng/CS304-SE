@@ -16,7 +16,7 @@ class GoodsTest {
     @BeforeEach
     public void setUp() {
         goods = new Goods();
-        goods.setId(1L);
+        goods.setId(1);
         goods.setName("Test Product");
         goods.setPrice(new BigDecimal("99.99"));
         goods.setImage("image.jpg");
@@ -27,7 +27,7 @@ class GoodsTest {
         goods.setPublishDate(new Date());
 
         anotherGoods = new Goods();
-        anotherGoods.setId(1L);
+        anotherGoods.setId(1);
         anotherGoods.setName("Test Product");
         anotherGoods.setPrice(new BigDecimal("99.99"));
         anotherGoods.setImage("image.jpg");
@@ -69,7 +69,7 @@ class GoodsTest {
         assertThat(goods).isEqualTo(anotherGoods);
         assertThat(goods.equals(anotherGoods)).isTrue();
 
-        anotherGoods.setId(2L);
+        anotherGoods.setId(2);
         assertThat(goods).isNotEqualTo(anotherGoods);
     }
 
@@ -77,7 +77,7 @@ class GoodsTest {
     public void testGoodsHashCode() {
         assertThat(goods.hashCode()).isEqualTo(anotherGoods.hashCode());
 
-        anotherGoods.setId(2L);
+        anotherGoods.setId(2);
         assertThat(goods.hashCode()).isNotEqualTo(anotherGoods.hashCode());
     }
 }
