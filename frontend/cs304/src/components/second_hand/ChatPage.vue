@@ -1,138 +1,138 @@
 <template>
   <v-container>
     <v-app-bar app color="white" flat>
-      <v-btn icon @click="goBack">
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
-      <v-toolbar-title>{{ chatMessage.name }}</v-toolbar-title>
+      <v-toolbar-title>消息中心</v-toolbar-title>
     </v-app-bar>
-    <v-row class="chat-container">
-      <v-col cols="12">
-        <div class="chat-bubble left" v-for="(msg, index) in chatMessages" :key="index">
-          <v-avatar left size="32">
-            <v-img
-                v-if="chatMessage.avatar && !msg.avatarError"
-                :src="chatMessage.avatar"
-                @error="msg.avatarError = true"
-            ></v-img>
-            <v-icon v-else>mdi-account-circle</v-icon>
-          </v-avatar>
-          <div class="chat-text">{{ msg.text }}</div>
-        </div>
-        <div class="chat-bubble right" v-for="(msg, index) in myMessages" :key="index">
-          <div class="chat-text">{{ msg.text }}</div>
-          <v-avatar right size="32">
-            <v-img
-                v-if="myAvatar && !msg.avatarError"
-                :src="myAvatar"
-                @error="msg.avatarError = true"
-            ></v-img>
-            <v-icon v-else>mdi-account-circle-outline</v-icon>
-          </v-avatar>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row class="message-input-container">
-      <v-col cols="12" class="d-flex align-center">
-        <v-text-field v-model="newMessage" placeholder="输入消息..." hide-details></v-text-field>
-        <v-btn icon @click="sendMessage">
-          <v-icon>mdi-send</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+    <v-tabs v-model="tab" background-color="white" grow color="teal">
+      <v-tab>互动消息</v-tab>
+      <v-tab>我想要的</v-tab>
+    </v-tabs>
+    <v-tabs-items v-model="tab">
+      <v-tab-item>
+        <v-list>
+          <v-list-item
+              v-for="(message, index) in interactionMessages"
+              :key="index"
+              @click="goToChat(message)"
+          >
+            <v-list-item-avatar>
+              <v-img
+                  v-if="message.avatar && !message.avatarError"
+                  :src="message.avatar"
+                  @error="message.avatarError = true"
+              ></v-img>
+              <v-icon v-else>mdi-account-circle</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>{{ message.from }}</v-list-item-title>
+              <v-list-item-subtitle>{{ message.text }}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-list-item-action-text>{{ message.time }}</v-list-item-action-text>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+      </v-tab-item>
+      <v-tab-item>
+        <v-list>
+          <v-list-item
+              v-for="(message, index) in orderMessages"
+              :key="index"
+              @click="goToChat(message)"
+          >
+            <v-list-item-avatar>
+              <v-img
+                  v-if="message.avatar && !message.avatarError"
+                  :src="message.avatar"
+                  @error="message.avatarError = true"
+              ></v-img>
+              <v-icon v-else>mdi-account-circle</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>{{ message.to }}</v-list-item-title>
+              <v-list-item-subtitle>{{ message.text }}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-list-item-action-text>{{ message.time }}</v-list-item-action-text>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+      </v-tab-item>
+    </v-tabs-items>
+    <div class="fixed-bottom">
+      <BottomNavigation :value="selectedPage" />
+    </div>
   </v-container>
 </template>
 
 <script>
-import axios from 'axios';
+import BottomNavigation from "@/components/second_hand/BottomNavigation";
 
 export default {
+  components: {
+    BottomNavigation
+  },
   data() {
     return {
-      chatMessage: this.$route.params.message,
-      chatMessages: [],
-      myMessages: [],
-      newMessage: '',
-      myAvatar: 'path/to/my-avatar.jpg' // Replace with your actual avatar path
+      selectedPage: 'MessagesPage',
+      tab: 0,
+      interactionMessages: [],
+      orderMessages: []
     };
   },
   methods: {
-    goBack() {
-      this.$router.go(-1);
-    },
-    async fetchChatMessages() {
+    async fetchMessages() {
+      const data = localStorage.getItem('info');
+      const userInfo = JSON.parse(data);
+      const id = userInfo.username;
+
       try {
-        const response = await axios.get(`/api/messages?from=${this.$route.params.from}&to=${this.$route.params.to}`);
-        const messages = response.data;
+        const responseTo = await this.$axios.get(this.$httpUrl + `/message/getByOneUserTo/` + id, {
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          },
+        });
 
-        this.chatMessages = messages.filter(msg => msg.from === this.$route.params.to).map(msg => ({
-          text: msg.text,
-          avatarError: false
-        }));
+        const responseFrom = await this.$axios.get(this.$httpUrl + `/message/getByOneUserFrom/${id}`, {
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          },
+        });
 
-        this.myMessages = messages.filter(msg => msg.from === this.$route.params.from).map(msg => ({
-          text: msg.text,
-          avatarError: false
-        }));
+        console.log("Response to:", responseTo.data.data);
+        console.log("Response from:", responseFrom.data.data);
+
+        this.interactionMessages = responseTo.data.data;
+        this.orderMessages = responseFrom.data.data;
+
       } catch (error) {
-        console.error('Error fetching chat messages:', error);
+        console.error('Error fetching messages:', error);
       }
     },
-    sendMessage() {
-      if (this.newMessage.trim() !== '') {
-        this.myMessages.push({ text: this.newMessage, avatarError: false });
-        this.newMessage = '';
-      }
+    goToChat(message) {
+      this.$router.push({ name: 'ChatPage', params: { message } });
     }
   },
   created() {
-    this.fetchChatMessages();
+    this.fetchMessages();
   }
 };
 </script>
 
 <style scoped>
 .v-app-bar {
-  justify-content: space-between;
+  justify-content: center;
 }
 
-.chat-container {
-  padding-top: 16px;
-  padding-bottom: 60px;
-}
-
-.chat-bubble {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.chat-bubble.left .chat-text {
-  background-color: #f1f1f1;
-  border-radius: 10px;
-  padding: 10px;
-  margin-left: 10px;
-}
-
-.chat-bubble.right {
-  justify-content: flex-end;
-}
-
-.chat-bubble.right .chat-text {
-  background-color: #4caf50;
-  color: white;
-  border-radius: 10px;
-  padding: 10px;
-  margin-right: 10px;
-}
-
-.message-input-container {
+.fixed-bottom {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   background: white;
-  padding: 10px;
+  padding: 10px 0;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 </style>

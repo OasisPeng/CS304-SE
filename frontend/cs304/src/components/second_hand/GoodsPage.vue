@@ -95,7 +95,24 @@ export default {
     },
     contactSeller() {
       const sellerId = this.product.sellerId;
-      this.websocket = new WebSocket(this.$httpUrl + `/chatroom/${sellerId}`);
+      const buyerId = this.currentUser;
+      const greetingMessage = {
+        from: buyerId,
+        to: sellerId,
+        text: "你好，想了解下这个商品~",
+        time: new Date()
+      };
+
+      this.$axios.post(this.$httpUrl + '/message/sendMessage', greetingMessage, {
+        headers: {
+          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+        }
+      });
+
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${wsProtocol}//${window.location.host}/chatroom/${buyerId}`;
+
+      this.websocket = new WebSocket(wsUrl);
       this.websocket.onopen = () => {
         console.log('WebSocket connection established');
       };
@@ -112,7 +129,7 @@ export default {
     },
     async removeProduct() {
       try {
-        console.log(this.product)
+        console.log(this.product);
         const response = await this.$axios.post(this.$httpUrl + '/goods/del', this.product, {
           headers: {
             'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
@@ -134,6 +151,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .v-container {
@@ -173,5 +191,4 @@ export default {
   color: red;
   text-align: center;
 }
-
 </style>
