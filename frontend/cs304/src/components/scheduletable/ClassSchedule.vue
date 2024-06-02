@@ -2,7 +2,7 @@
   <v-row >
     <v-col cols="12">
       <v-sheet >
-        <v-btn icon @click="selectedOen = false">
+        <v-btn icon @click="goback">
           <v-icon>mdi-backspace-outline
           </v-icon>
 
@@ -208,33 +208,27 @@ export default {
     this.ready = true
     this.scrollToTime()
     this.updateTime()
-    const cachedCourseList = localStorage.getItem('courseList')
-    if (cachedCourseList) {
-      // 如果存在缓存数据，则直接使用缓存数据
-      this.courseList = JSON.parse(cachedCourseList)
-      this.events = this.courseList.map(event =>
-          this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName, event.color, event.teachingBuilding, event.teacher, event.weeks, event.jc, event.classes, event.language)
-      );
-    } else {
-      // 如果缓存中不存在数据，则从后端请求数据
-      this.queryCurrentCourse()
-    }
+    this.queryCurrentCourse()
+    // const cachedCourseList = localStorage.getItem('courseList')
+    // if (cachedCourseList) {
+    //   // 如果存在缓存数据，则直接使用缓存数据
+    //   this.courseList = JSON.parse(cachedCourseList)
+    //   this.events = this.courseList.map(event =>
+    //       this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName, event.color, event.teachingBuilding, event.teacher, event.weeks, event.jc, event.classes, event.language)
+    //   );
+    // } else {
+    //   // 如果缓存中不存在数据，则从后端请求数据
+    //   this.queryCurrentCourse()
+    // }
   },
 
     methods: {
       async queryCurrentCourse() {
         try {
           const storedInfo = JSON.parse(localStorage.getItem('info'));
-
-          // 检查 storedInfo 是否存在
           if (!storedInfo) {
             throw new Error('No user information found in localStorage');
           }
-
-          // 打印 storedInfo 中的 username
-          console.log("Username:", storedInfo.username);
-
-          // 发送请求
           const response = await this.$axios.post(this.$httpUrl + '/course/queryCurrentCourse', {
             username: storedInfo.username,
             password: storedInfo.password
@@ -245,9 +239,6 @@ export default {
             },
           });
 
-          console.log("Response data:", response.data);
-
-          // 处理响应数据
           this.courseList = response.data.data.map(evo => ({
             teacher: evo.teacher || "",
             englishName: evo.englishName || "",
@@ -267,8 +258,8 @@ export default {
           this.events = this.courseList.map(event =>
               this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName, event.color, event.teachingBuilding, event.teacher, event.weeks, event.jc, event.classes, event.language)
           );
-          localStorage.setItem('courseList', JSON.stringify(this.courseList))
-          console.log("Course List:", this.courseList);
+console.log("kebiao",this.events)
+          localStorage.setItem('courseList', JSON.stringify(this.courseList));
         } catch (error) {
           console.error('Error querying current course:', error);
         }
@@ -329,6 +320,9 @@ export default {
       },
       updateTime () {
         setInterval(() => this.cal.updateTimes(), 60 * 1000)
+      },
+      goback(){
+        this.$router.push('/');
       },
     },
 }

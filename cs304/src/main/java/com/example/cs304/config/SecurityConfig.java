@@ -56,8 +56,12 @@ public class SecurityConfig {
     }
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        String[] origins = allowedOrigins.split(",");
+        for (int i = 0; i < origins.length; i++) {
+            origins[i] = "http://" + origins[i] + ":8080";
+        }
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://"+allowedOrigins+":8080")); // 指定允许的域
+        configuration.setAllowedOrigins(Arrays.asList(origins)); // 指定允许的域
         configuration.setAllowCredentials(true);
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
