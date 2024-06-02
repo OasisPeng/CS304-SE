@@ -67,7 +67,7 @@ class GoodsControllerTest {
     void testGetGoodsByCategory() throws Exception {
         // Configure GoodsService.findByCategory(...).
         final Goods goods1 = new Goods();
-        goods1.setId(0L);
+        goods1.setId(0);
         goods1.setName("name");
         goods1.setPrice(new BigDecimal("0.00"));
         goods1.setImage("image");
@@ -86,7 +86,7 @@ class GoodsControllerTest {
     void testGetGoodsBySellerId() throws Exception {
         // Configure GoodsService.findBySellerId(...).
         final Goods goods1 = new Goods();
-        goods1.setId(0L);
+        goods1.setId(0);
         goods1.setName("name");
         goods1.setPrice(new BigDecimal("0.00"));
         goods1.setImage("image");
@@ -105,7 +105,7 @@ class GoodsControllerTest {
     void testGetGoodsByBuyerId() throws Exception {
         // Configure GoodsService.findByBuyerId(...).
         final Goods goods1 = new Goods();
-        goods1.setId(0L);
+        goods1.setId(0);
         goods1.setName("name");
         goods1.setPrice(new BigDecimal("0.00"));
         goods1.setImage("image");
@@ -125,7 +125,7 @@ class GoodsControllerTest {
         // Setup
         // Configure GoodsService.findById(...).
         final Goods goods = new Goods();
-        goods.setId(0L);
+        goods.setId(0);
         goods.setName("name");
         goods.setPrice(new BigDecimal("0.00"));
         goods.setImage("image");
@@ -144,7 +144,7 @@ class GoodsControllerTest {
         // Setup
         // Configure GoodsService.searchByKeyword(...).
         final Goods goods1 = new Goods();
-        goods1.setId(0L);
+        goods1.setId(0);
         goods1.setName("name");
         goods1.setPrice(new BigDecimal("0.00"));
         goods1.setImage("image");
@@ -165,13 +165,13 @@ class GoodsControllerTest {
         // Setup
         // Configure GoodsService.insert(...).
         final Goods goods = new Goods();
-        goods.setId(0L);
+        goods.setId(0);
         goods.setName("name");
         goods.setPrice(new BigDecimal("0.00"));
         goods.setImage("image");
         goods.setSellerId("sellerId");
         final Goods goods1 = new Goods();
-        goods1.setId(1L);
+        goods1.setId(1);
         goods1.setName("name");
         goods1.setPrice(new BigDecimal("0.00"));
         goods1.setImage("image");
@@ -195,13 +195,13 @@ class GoodsControllerTest {
         // Setup
         // Configure GoodsService.updateGoods(...).
         final Goods goods = new Goods();
-        goods.setId(0L);
+        goods.setId(0);
         goods.setName("name");
         goods.setPrice(new BigDecimal("0.00"));
         goods.setImage("image");
         goods.setSellerId("sellerId");
         final Goods goods1 = new Goods();
-        goods1.setId(1L);
+        goods1.setId(1);
         goods1.setName("name");
         goods1.setPrice(new BigDecimal("0.00"));
         goods1.setImage("image");
@@ -226,13 +226,13 @@ class GoodsControllerTest {
         // Setup
         // Configure GoodsService.deleteById(...).
         final Goods goods = new Goods();
-        goods.setId(0L);
+        goods.setId(0);
         goods.setName("name");
         goods.setPrice(new BigDecimal("0.00"));
         goods.setImage("image");
         goods.setSellerId("sellerId");
         final Goods goods1 = new Goods();
-        goods1.setId(3L);
+        goods1.setId(3);
         goods1.setName("name");
         goods1.setPrice(new BigDecimal("0.00"));
         goods1.setImage("image");
