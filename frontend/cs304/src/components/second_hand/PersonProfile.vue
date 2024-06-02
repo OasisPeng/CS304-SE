@@ -184,9 +184,7 @@ const saveEdit = () => {
   editDialog.value = false;
 };
 
-const disconnect = () => {
-  console.log('Disconnect clicked');
-};
+
 
 const toggleFavorite = (product) => {
   product.isFavorite = !product.isFavorite;
@@ -229,6 +227,9 @@ export default {
     };
   },
   methods :{
+    disconnect() {
+      this.$router.push('/');
+    },
     async fetchCategory() {
       try {
         const response = await this.$axios.get(this.$httpUrl + '/goods/buyer/'+JSON.parse(localStorage.getItem('info')).username, {
