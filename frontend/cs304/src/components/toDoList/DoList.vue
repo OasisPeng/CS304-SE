@@ -172,7 +172,7 @@ export default {
       this.show = !this.show;
     },
     newEvent() {
-      this.$router.push('/ToDoCreate');
+      this.$router.push('/CategorySelection');
     },
     editEvent(task) {
       localStorage.setItem('id', task.id);

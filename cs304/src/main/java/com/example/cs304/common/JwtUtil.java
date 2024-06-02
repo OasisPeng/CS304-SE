@@ -69,6 +69,7 @@ public class JwtUtil {
      */
     public String parseJWT(String token) {
         if (jwtCache.getIfPresent(token) == null) { // token失效
+            System.out.println("Token 失效");
             return null;
         }
         try {
