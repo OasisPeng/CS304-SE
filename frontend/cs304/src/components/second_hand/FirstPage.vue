@@ -77,7 +77,7 @@
                       <v-card-actions>
                         <v-btn icon @click="toggleFavorite(product)" class="position">
 <!--                          <v-icon :color="product.isFavorite ? 'green' : 'white'">mdi-heart</v-icon>-->
-                          <v-icon :color="green">mdi-heart</v-icon>
+                          <v-icon >mdi-heart</v-icon>
                         </v-btn>
                       </v-card-actions>
                     </v-card>
