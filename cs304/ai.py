@@ -48,10 +48,10 @@ if __name__ == '__main__':
     parser.add_argument('--content', type=str, default="你好")
     FLAGS, unparsed = parser.parse_known_args()
     conn = pymysql.connect(
-        host='120.77.79.53',
+        host='120.78.7.40',
         port=3306,
         user='hailong',
-        password='fnv7ZFe26h69r7VCwMj9',
+        password='sustechcs304',
         database='cs304')
     cur = conn.cursor()
     if FLAGS.id == -1:
