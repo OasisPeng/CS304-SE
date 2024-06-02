@@ -123,7 +123,7 @@ export default new Router({
     },
     {
       path: '/Chat',
-      name: 'chat',
+      name: 'Chat',
       component: ()=>import ('./components/gpt.vue')
     }
   ]

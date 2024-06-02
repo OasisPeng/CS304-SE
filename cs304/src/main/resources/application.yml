@@ -20,4 +20,4 @@ alioss:
   bucket-name: sky-aliyunitcast
 
 cors:
-  domain: "120.78.7.40"
+  domain: "localhost,120.78.7.40"

@@ -12,9 +12,13 @@ public class CorsConfig implements WebMvcConfigurer {
     private String allowedOrigins;
     @Override
     public void addCorsMappings(CorsRegistry registry){
+        String[] origins = allowedOrigins.split(",");
+        for (int i = 0; i < origins.length; i++) {
+            origins[i] = "http://" + origins[i] + ":8080";
+        }
         registry.addMapping("/**")
                 .allowCredentials(true)
-                .allowedOrigins("http://"+allowedOrigins+":8080")
+                .allowedOrigins(origins)
                 .allowedMethods("GET","POST","PUT","DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .exposedHeaders("*");
