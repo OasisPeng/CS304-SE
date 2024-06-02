@@ -3,10 +3,10 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://120.77.79.53:3306/cs304?useUnicode=true&characterEncoding=utf-8&useSSL=false&severTimezone=GM%2B8
+    url: jdbc:mysql://120.78.7.40:3306/cs304?useUnicode=true&characterEncoding=utf-8&useSSL=false&severTimezone=GM%2B8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: hailong
-    password: "fnv7ZFe26h69r7VCwMj9"
+    password: "sustechcs304"
 logging:
   level:
     com.example.wms.mapper: debug
@@ -18,3 +18,6 @@ alioss:
   access-key-id: LTAI5tHd81k9sjZ4AtV5RtZq
   access-key-secret: zysTqJGfyjfCTtKHaSAyWL5Da9K8qz
   bucket-name: sky-aliyunitcast
+
+cors:
+  domain: "120.78.7.40"
