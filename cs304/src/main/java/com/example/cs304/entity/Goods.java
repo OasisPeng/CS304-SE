@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 public class Goods {
     @TableId(value = "id", type = IdType.AUTO)
-    private int id;
+    private Integer id;
     private String name;
     private BigDecimal price;
     private String image;
