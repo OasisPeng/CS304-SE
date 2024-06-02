@@ -49,13 +49,17 @@ export default {
     const productId = this.$route.params.id;
     console.log(productId);
     try {
-      const response = await this.$axios.get(this.$httpUrl + `/goods/${productId}`, {
+      console.log(this.$httpUrl + '/goods/'+productId)
+      const response = await this.$axios.get(this.$httpUrl+'/goods/'+productId, {
         withCredentials: false,
         headers: {
           'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
         },
       });
+      console.log('aaa')
       const productData = response.data.data;
+      console.log(productData)
+      console.log('fxxk')
       this.product = {
         id: productData.id,
         name: productData.name,
