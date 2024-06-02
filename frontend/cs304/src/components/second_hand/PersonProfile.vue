@@ -185,7 +185,7 @@ const saveEdit = () => {
 };
 
 const disconnect = () => {
-  console.log('Disconnect clicked');
+  this.$router.push('/');
 };
 
 const toggleFavorite = (product) => {
