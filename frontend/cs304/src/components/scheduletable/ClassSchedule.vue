@@ -232,7 +232,7 @@ export default {
           }
 
           // 打印 storedInfo 中的 username
-          console.log("Username:", storedInfo.password);
+          console.log("Username:", storedInfo.username);
 
           // 发送请求
           const response = await this.$axios.post(this.$httpUrl + '/course/queryCurrentCourse', {
