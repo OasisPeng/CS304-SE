@@ -334,7 +334,8 @@ export default {
           return 'unimportant';
         default:
           return 'normal'; // 默认级别
-      },
+      }
+    },
     async deleteEvent(task) {
       console.log("任务", task);
       const updatedTask = { ...task, finish: task.finish ? 1 : 0, id: parseInt(task.id, 10) };
