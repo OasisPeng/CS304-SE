@@ -15,7 +15,11 @@
       <jdbc-url>jdbc:mysql://localhost:3306</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="@120.78.7.40" uuid="5d15f146-38dc-42f8-b5fb-63b120881416">
+<!--<<<<<<< HEAD-->
+<!--    <data-source source="LOCAL" name="@120.78.7.40" uuid="5d15f146-38dc-42f8-b5fb-63b120881416">-->
+<!--=======-->
+    <data-source source="LOCAL" name="@120.78.7.40" uuid="7951a4c9-33fe-428c-8df2-a3888c830a89">
+<!--&gt;>>>>>> refs/remotes/MyOrigin/master-->
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>

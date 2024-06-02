@@ -32,9 +32,9 @@ public class CourseImporter {
     }
 
     private static void importCourseInfoToDatabase(List<Map<String, String>> courseInfos) throws SQLException {
-        String url = "jdbc:mysql://120.77.79.53:3306/cs304";
+        String url = "jdbc:mysql://120.78.7.40:3306/cs304";
         String username = "hailong";
-        String password = "fnv7ZFe26h69r7VCwMj9";
+        String password = "sustechcs304";
 
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
             String insertQuery = "INSERT INTO course (trainingType, courseCode, chineseName, EnglishName, courseNature, courseCategory, language, credits, hours, department, teacher) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";

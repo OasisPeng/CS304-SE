@@ -204,4 +204,44 @@ class EventServiceImplTest {
         // Verify the results
         assertThat(result).isEqualTo(Collections.emptyList());
     }
+    @Test
+    void testQueryByOwner() {
+        // Setup
+        final Event event = new Event();
+        event.setId(0);
+        event.setTitle("title");
+        event.setOwner("owner");
+        event.setWeek(1);
+        event.setXq(0);
+        final List<Event> expectedResult = List.of(event);
+
+        // Configure EventMapper.selectList(...).
+        final Event event1 = new Event();
+        event1.setId(0);
+        event1.setTitle("title");
+        event1.setOwner("owner");
+        event1.setWeek(1);
+        event1.setXq(0);
+        final List<Event> events = List.of(event1);
+        when(mockEventMapper.selectList(any(LambdaQueryWrapper.class))).thenReturn(events);
+
+        // Run the test
+        final List<Event> result = eventServiceImplUnderTest.queryByOwner("owner");
+
+        // Verify the results
+        assertThat(result).isEqualTo(expectedResult);
+    }
+
+    @Test
+    void testQueryByOwner_EventMapperReturnsNoItems() {
+        // Setup
+        when(mockEventMapper.selectList(any(LambdaQueryWrapper.class))).thenReturn(Collections.emptyList());
+
+        // Run the test
+        final List<Event> result = eventServiceImplUnderTest.queryByOwner("owner");
+
+        // Verify the results
+        assertThat(result).isEqualTo(Collections.emptyList());
+    }
+
 }

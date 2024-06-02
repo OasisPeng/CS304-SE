@@ -27,7 +27,7 @@ export const deleteFen = data => {
   return request.delete('/dafen',{data});
 }
 export const getFen = data => {
-  return request.get('/dianzan/user/'+data.userId);
+  return request.get('/dafen/course/'+data.id);
 }
 // 评论
 export const saveContent = data => {
