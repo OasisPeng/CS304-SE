@@ -292,7 +292,7 @@ export default {
             owner: evo.owner || '',
             week: evo.week || '',
             xq: evo.xq || '',
-            level: evo.level || '',
+            level: this.convertLevel(evo.level)|| '', // 使用转换函数
             finish: evo.finish || '',
             category: evo.category || '',
             emotion: evo.emotion || '',
@@ -300,7 +300,7 @@ export default {
           };
         });
         this.list = products;
-        console.log('fetchCategory:', this.daysInWeek);
+        console.log('fetchCategory:', this.list);
       } catch (error) {
         console.error('Error querying category:', error);
       }
@@ -324,6 +324,17 @@ export default {
         task.finish = !task.finish;
       }
     },
+    convertLevel(level) {
+      switch (level) {
+        case '重要紧急':
+          return 'important';
+        case '重要不紧急':
+          return 'normal';
+        case '不重要不紧急':
+          return 'unimportant';
+        default:
+          return 'normal'; // 默认级别
+      },
     async deleteEvent(task) {
       console.log("任务", task);
       const updatedTask = { ...task, finish: task.finish ? 1 : 0, id: parseInt(task.id, 10) };

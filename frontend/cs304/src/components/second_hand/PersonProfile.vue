@@ -260,7 +260,14 @@ export default {
   },
   mounted() {
     this.fetchCategory();
-  }
+    this.interval = setInterval(() => {
+      this.fetchCategory();
+    }, 10000); // 调用fetchCategory方法每10秒更新一次
+  },
+  beforeDestroy() {
+    clearInterval(this.interval); // 清除定时器
+  },
+
 }
 </script>
 
