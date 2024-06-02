@@ -84,9 +84,38 @@ JUnit + Spring Test + GitHub Actions
 ## 4.Build
 ### Build Process
 
-**Tools/Frameworks Used:**
+#### **Tools/Frameworks Used:**
 
-**Tasks Executed in Build:**
+- **GitHub Action**
+
+#### **Tasks Executed in Build:**
+
+We have integrated automated building and deployment, with front-end and back-end building and deployment divided into two parts.
+
+##### FrontEnd Steps
+
+1. Checkout repository
+2. Set up Node.js
+3. Install dependencies
+4. Build
+5. Build docker image
+6. delete old docker image
+7. delete old docker tar
+8.  upload new docker image and start-up script
+9. load new docker image
+10. run project
+
+##### BackEnd Steps
+
+1. Set up the working directory
+2. Set up JDK 18
+3. packge
+4. Build docker image
+5. delete old docker image
+6. delete old docker tar
+7.  upload new docker image and start-up script
+8. load new docker image
+9. run project
 
 ### Final Artifacts
 
