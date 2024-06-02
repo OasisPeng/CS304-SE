@@ -232,7 +232,7 @@ export default {
     },
     async fetchCategory() {
       try {
-        const response = await this.$axios.get(this.$httpUrl + '/goods/buyer/'+JSON.parse(localStorage.getItem('info')).username, {
+        const response = await this.$axios.get(this.$httpUrl + '/goods/seller/'+JSON.parse(localStorage.getItem('info')).username, {
           withCredentials: false,
           headers: {
             'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
