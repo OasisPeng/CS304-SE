@@ -42,7 +42,7 @@
               <div class="product-list-container">
                 <v-row>
                   <v-col cols="12" sm="6" md="4" lg="3" v-for="(product, productIndex) in displayedProducts(category.products, index)" :key="productIndex">
-                    <v-card class="product-card" outlined>
+                    <v-card class="product-card" outlined @click="goToProductDetail(product.id)">
                       <v-img :src="product.image" aspect-ratio="1.5">
                         <template v-slot:placeholder>
                           <v-row class="fill-height ma-0" align="center" justify="center">
@@ -149,6 +149,9 @@ export default {
     }
   },
   methods: {
+    goToProductDetail(productId) {
+      this.$router.push({ name: 'GoodsPage', params: { id: productId } });
+    },
     async searchAndNavigateToMarketPage() {
       if (this.$route.name !== 'MarketPage' || this.$route.query.search !== this.searchText) {
         await this.$router.push({name: 'MarketPage', query: {search: this.searchText}});

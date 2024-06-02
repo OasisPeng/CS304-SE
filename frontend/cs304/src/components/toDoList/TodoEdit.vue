@@ -153,8 +153,6 @@ export default {
         finish: this.finish,
       };
       console.log("Saving todo:", todoData);
-      // saveEvent(todoData);
-      console.log(JSON.parse(localStorage.getItem('info')).token)
       const response = await this.$axios.post(this.$httpUrl + '/event/save', todoData, {
         withCredentials: false,
         headers: {

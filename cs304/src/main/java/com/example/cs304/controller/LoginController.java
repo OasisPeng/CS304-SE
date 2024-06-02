@@ -22,6 +22,7 @@ public class LoginController {
     JwtUtil util;
     @PostMapping("/login")
     public Result login(@RequestBody Student student) {
+        System.out.println(student);
         if (!Util.loginVerify(student.getUsername(), student.getPassword())) {
             return Result.fail();
         } else {

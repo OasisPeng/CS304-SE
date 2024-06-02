@@ -54,6 +54,7 @@ public class EventController {
 //        int[] date = Util.calculateWeek(LocalDate.now());
 //        event.setWeek(date[0]);
 //        event.setXq(date[1]);
+        System.out.println(event);
         return (eventService.save(event) != null) ? Result.suc(event):Result.fail();
     }
 
