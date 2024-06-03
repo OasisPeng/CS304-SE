@@ -81,7 +81,7 @@ export default {
     };
   },
   methods: {
-    async fetchMessages() {
+    async fetchInteractionMessages() {
       const data = localStorage.getItem('info');
       const userInfo = JSON.parse(data);
       const id = userInfo.username;
@@ -94,6 +94,19 @@ export default {
           },
         });
 
+        console.log("Response to:", responseTo.data.data);
+        this.interactionMessages = responseTo.data.data;
+
+      } catch (error) {
+        console.error('Error fetching interaction messages:', error);
+      }
+    },
+    async fetchOrderMessages() {
+      const data = localStorage.getItem('info');
+      const userInfo = JSON.parse(data);
+      const id = userInfo.username;
+
+      try {
         const responseFrom = await this.$axios.get(this.$httpUrl + `/message/getByOneUserFrom/${id}`, {
           withCredentials: false,
           headers: {
@@ -101,22 +114,28 @@ export default {
           },
         });
 
-        console.log("Response to:", responseTo.data.data);
         console.log("Response from:", responseFrom.data.data);
-
-        this.interactionMessages = responseTo.data.data;
         this.orderMessages = responseFrom.data.data;
 
       } catch (error) {
-        console.error('Error fetching messages:', error);
+        console.error('Error fetching order messages:', error);
       }
     },
     goToChat(message) {
       this.$router.push({ name: 'ChatPage', params: { message } });
     }
   },
+  watch: {
+    tab(newVal) {
+      if (newVal === 0) {
+        this.fetchInteractionMessages();
+      } else if (newVal === 1) {
+        this.fetchOrderMessages();
+      }
+    }
+  },
   created() {
-    this.fetchMessages();
+    this.fetchInteractionMessages(); // 默认加载互动消息
   }
 };
 </script>

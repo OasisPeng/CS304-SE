@@ -28,9 +28,9 @@ public class MessageController {
     }
     @GetMapping("/getByOneUserFrom/{id}")
     public Result getByOneUserFrom(@PathVariable Integer id) {
-        List<Message> list = service.SelectByOneUserFrom(id);
-        System.out.println(list);
-        return Result.suc(list);
+        List<Message> list2 = service.SelectByOneUserFrom(id);
+        System.out.println(list2);
+        return Result.suc(list2);
     }
     @PostMapping("/insertList")
     public Result InsertList(@RequestBody List<Message> list) {

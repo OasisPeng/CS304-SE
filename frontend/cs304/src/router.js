@@ -14,6 +14,7 @@ import FavouritePage from "@/components/second_hand/FavouritePage.vue";
 import SalePage from "@/components/second_hand/SalePage.vue";
 import MarketPage from "@/components/second_hand/MarketPage.vue";
 import MessagesPage from "@/components/second_hand/MessagesPage";
+import ChatPage from "@/components/second_hand/ChatPage";
 import GoodsPage from "@/components/second_hand/GoodsPage";
 import ReleasePage from "@/components/second_hand/ReleasePage";
 Vue.use(Router);
@@ -70,6 +71,11 @@ export default new Router({
       path: '/MessagesPage',
       name: 'MessagesPage',
       component: MessagesPage
+    },
+    {
+      path: '/ChatPage',
+      name: 'ChatPage',
+      component: ChatPage
     },
     {
       path: '/ClassSchedule',
