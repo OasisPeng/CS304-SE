@@ -90,6 +90,7 @@ public class GoodsController {
     @PostMapping("/update")
     @Operation(description = "修改商品属性，如买家id")
     public Result updateGoods(@RequestBody Goods goods) {
+        System.out.println("Received goods: "+ goods);
         return (goodsService.updateGoods(goods) != null) ? Result.suc(goods):Result.fail();
     }
 

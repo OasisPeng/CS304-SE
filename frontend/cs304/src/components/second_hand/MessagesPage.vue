@@ -179,7 +179,7 @@ export default {
       }
     },
     goToChat(message) {
-      this.$router.push({ name: 'ChatPage', params: { message } });
+      this.$router.push({ name: 'ChatPage', params: { message, tab} });
     },
     formatTime(time) {
       return moment(time).format('YYYY-MM-DD HH:mm');

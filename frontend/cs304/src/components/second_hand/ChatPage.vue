@@ -10,9 +10,16 @@
       <v-col cols="12" class="d-flex align-center">
         <v-img :src="product.image" class="goods-image"></v-img>
         <div class="product-info">
-          <div class="product-title">{{ product.name}}</div>
-          <div class="product-price">{{ product.price}}</div>
+          <div class="product-title">{{ product.name }}</div>
+          <div class="product-price">{{ product.price }}</div>
         </div>
+<!--        v-if="this.to === chatPartner"-->
+        <v-btn
+            color="green"
+            @click="confirmPurchase"
+        >
+          确认购买
+        </v-btn>
       </v-col>
     </v-row>
     <v-row class="chat-container">
@@ -58,7 +65,9 @@ export default {
       currentUser: JSON.parse(localStorage.getItem('info')).username,
       chatPartner: '', // 保存聊天对象的ID
       goodsId: null,
-      product: {}
+      product: {},
+      from: '',
+      to: ''
     };
   },
   methods: {
@@ -68,6 +77,8 @@ export default {
     async fetchChatMessages() {
       const from = this.currentUser;
       const to = this.chatPartner;
+      this.from=from;
+      this.to=to;
       this.goodsId = this.$route.params.message.goodsId;
 
       try {
@@ -90,6 +101,8 @@ export default {
     },
     async fetchProductDetails() {
       try {
+        console.log(this.$route.params.message)
+        console.log(this.to)
         const response = await axios.get(`${this.$httpUrl}/goods/${this.goodsId}`, {
           headers: {
             'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
@@ -104,8 +117,6 @@ export default {
       this.filteredMessages = this.chatMessages
           .filter(msg => msg.goodsId === this.goodsId)
           .sort((a, b) => new Date(a.time) - new Date(b.time));
-
-      console.log(this.filteredMessages)
     },
     async sendMessage() {
       if (this.newMessage.trim() !== '') {
@@ -133,6 +144,30 @@ export default {
           console.error('Error sending message:', error);
         }
       }
+    },
+    async confirmPurchase() {
+      // try {
+        const updatedProduct = {
+          ...this.product,
+          buyerId: this.chatPartner
+        };
+
+        console.log("确认信息",updatedProduct)
+        const response = await axios.post(`${this.$httpUrl}/goods/update`, updatedProduct, {
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          }
+        });
+
+        if (response.data.success) {
+          console.log('购买确认成功');
+        } else {
+          console.log('购买确认失败');
+        }
+      // } catch (error) {
+      //   console.log('Error confirming purchase:', error);
+      //   console.log('购买确认失败');
+      // }
     }
   },
   created() {

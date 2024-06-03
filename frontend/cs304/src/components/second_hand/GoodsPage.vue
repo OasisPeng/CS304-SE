@@ -91,6 +91,7 @@ export default {
       this.$router.go(-1);
     },
     buyProduct() {
+      this.$router.push({ name: 'ChatPage', params: { message, tab:0} });
     },
     contactSeller() {
       const sellerId = this.product.sellerId;
