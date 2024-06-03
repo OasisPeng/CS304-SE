@@ -8,7 +8,7 @@
     </v-app-bar>
 
     <v-card class="mx-auto my-5" max-width="600">
-      <v-img :src="product.image" aspect-ratio="1.7"></v-img>
+      <v-img :src="product.image"></v-img>
       <v-card-title>{{ product.name }}</v-card-title>
       <v-card-subtitle class="pb-0">分类: {{ product.category }}</v-card-subtitle>
       <v-card-subtitle>发布时间: {{ formatDate(product.publishDate) }}</v-card-subtitle>
@@ -23,6 +23,18 @@
         <v-btn color="green" @click="buyProduct">购买</v-btn>
         <v-btn text @click="contactSeller">联系卖家</v-btn>
       </v-card-actions>
+      <v-btn
+          v-if="isSeller"
+          color="red"
+          fab
+          bottom
+          right
+          @click="removeProduct"
+          class="fixed-bottom-right"
+      >
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+      <div v-if="isSeller" class="remove-text">下架该商品</div>
     </v-card>
   </v-container>
 </template>
@@ -42,24 +54,21 @@ export default {
         category: 'book',
         publishDate: new Date()
       },
-      websocket: null
+      websocket: null,
+      currentUser: JSON.parse(localStorage.getItem('info')).username,
+      isSeller: false
     };
   },
   async created() {
     const productId = this.$route.params.id;
-    console.log(productId);
     try {
-      console.log(this.$httpUrl + '/goods/'+productId)
-      const response = await this.$axios.get(this.$httpUrl+'/goods/'+productId, {
+      const response = await this.$axios.get(this.$httpUrl + '/goods/' + productId, {
         withCredentials: false,
         headers: {
           'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
         },
       });
-      console.log('aaa')
       const productData = response.data.data;
-      console.log(productData)
-      console.log('fxxk')
       this.product = {
         id: productData.id,
         name: productData.name,
@@ -71,7 +80,8 @@ export default {
         category: productData.category,
         publishDate: productData.publishDate
       };
-      console.log(this.product);
+      // 检查当前用户是否是卖家
+      this.isSeller = this.product.sellerId === this.currentUser;
     } catch (error) {
       console.error('Error fetching product details:', error);
     }
@@ -81,11 +91,28 @@ export default {
       this.$router.go(-1);
     },
     buyProduct() {
-
+      // 购买逻辑
     },
     contactSeller() {
       const sellerId = this.product.sellerId;
-      this.websocket = new WebSocket(this.$httpUrl + `/chatroom/${sellerId}`);
+      const buyerId = this.currentUser;
+      const greetingMessage = {
+        from: buyerId,
+        to: sellerId,
+        text: "你好，想了解下这个商品~",
+        time: new Date()
+      };
+
+      this.$axios.post(this.$httpUrl + '/message/sendMessage', greetingMessage, {
+        headers: {
+          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+        }
+      });
+
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${wsProtocol}//${window.location.host}/chatroom/${buyerId}`;
+
+      this.websocket = new WebSocket(wsUrl);
       this.websocket.onopen = () => {
         console.log('WebSocket connection established');
       };
@@ -100,6 +127,23 @@ export default {
         console.error('WebSocket error:', error);
       };
     },
+    async removeProduct() {
+      try {
+        console.log(this.product);
+        const response = await this.$axios.post(this.$httpUrl + '/goods/del', this.product, {
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          }
+        });
+        if (response.data.msg === '成功') {
+          this.$router.push('/FirstPage');
+        } else {
+          console.error('商品下架失败');
+        }
+      } catch (error) {
+        console.error('Error removing product:', error);
+      }
+    },
     formatDate(date) {
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Date(date).toLocaleDateString(undefined, options);
@@ -107,6 +151,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .v-container {
@@ -129,5 +174,21 @@ export default {
 
 .v-btn {
   margin-right: 10px;
+}
+
+.fixed-bottom-right {
+  position: fixed;
+  bottom: 35px;
+  right: 20px;
+  z-index: 10;
+}
+
+.remove-text {
+  position: fixed;
+  bottom: 15px; /* Adjust the position as needed */
+  right: 20px; /* Adjust the position as needed */
+  font-size: 12px;
+  color: red;
+  text-align: center;
 }
 </style>

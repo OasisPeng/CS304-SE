@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Array;
+import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
@@ -39,5 +40,12 @@ public class MessageController {
     @PostMapping("/insertOne")
     public Result InsertOne(@RequestBody Message message) {
         return Result.suc(service.InsertMessage(message));
+    }
+
+    @PostMapping("/sendMessage")
+    public Result sendMessage(@RequestBody Message message) {
+        message.setTime(new Timestamp(System.currentTimeMillis()));
+        service.InsertMessage(message);
+        return Result.suc(200);
     }
 }

@@ -38,13 +38,14 @@
         <v-col cols="12" class="d-flex align-start">
           <div class="image-upload-section">
             <v-btn
+                v-if="!image"
                 outlined
                 class="image-upload-btn"
                 @click="triggerFileInput"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
-            <div class="image-upload-text">添加图片</div>
+            <div class="image-upload-text" v-if="!image">添加图片</div>
             <input
                 ref="fileInput"
                 type="file"
@@ -52,13 +53,20 @@
                 style="display: none"
             />
           </div>
-          <div class="image-grid">
+          <div v-if="image" class="image-container">
             <v-img
-                v-for="(image, index) in images"
-                :key="index"
                 :src="image"
                 class="image-thumbnail"
-            ></v-img>
+            >
+              <template v-slot:placeholder>
+                <v-row class="fill-height ma-0" align="center" justify="center">
+                  <v-progress-circular indeterminate color="green"></v-progress-circular>
+                </v-row>
+              </template>
+            </v-img>
+            <v-btn icon small class="remove-image-btn" @click="removeImage">
+              <v-icon color="red">mdi-close</v-icon>
+            </v-btn>
           </div>
         </v-col>
       </v-row>
@@ -66,7 +74,7 @@
         <v-col cols="12">
           <v-expansion-panels>
             <v-expansion-panel>
-              <v-expansion-panel-header>物品状况</v-expansion-panel-header>
+              <v-expansion-panel-header>物品种类</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-radio-group
                     v-model="condition"
@@ -119,7 +127,7 @@ export default {
       description: '',
       condition: '',
       price: '',
-      images: [],
+      image: null,
       rules: {
         required: value => !!value || '此项为必填项',
         isNumber: value => !isNaN(value) || '请输入一个有效的数字'
@@ -144,9 +152,8 @@ export default {
             'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
           }
         });
-        console.log(response.data.data)
-        if (response.data.msg=='成功') {
-          this.images.push(response.data.data);
+        if (response.data.msg === '成功') {
+          this.image = response.data.data;
         } else {
           console.error('图片上传失败');
         }
@@ -154,26 +161,27 @@ export default {
         console.error('Error uploading image:', error);
       }
     },
+    removeImage() {
+      this.image = null;
+    },
     async submit() {
       if (this.$refs.form.validate()) {
         const product = {
           name: this.title,
           description: this.description,
           category: this.condition === 'other' ? this.condition : this.condition,
-          // category: this.condition === 'new' ? '全新' : '二手',
           price: this.price,
-          image: this.images.join(','),
+          image: this.image,
           sellerId: JSON.parse(localStorage.getItem('info')).username,
           publishDate: new Date()
         };
         try {
-          console.log(product)
           const response = await this.$axios.post(this.$httpUrl + '/goods/add', product, {
             headers: {
               'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
             }
           });
-          if (response.data.msg=='成功') {
+          if (response.data.msg === '成功') {
             this.$router.push('/FirstPage');
           } else {
             console.error('商品发布失败');
@@ -213,17 +221,25 @@ export default {
   color: gray;
 }
 
-.image-grid {
+.image-container {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .image-thumbnail {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
   border: 1px solid #ccc;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
 .fixed-bottom {

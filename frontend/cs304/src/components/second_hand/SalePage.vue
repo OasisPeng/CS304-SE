@@ -7,6 +7,9 @@ export default {
     };
   },
   methods :{
+    goToProductDetail(productId) {
+      this.$router.push({ name: 'GoodsPage', params: { id: productId } });
+    },
     async fetchCategory() {
       try {
         const response = await this.$axios.get(this.$httpUrl + '/goods/seller/'+JSON.parse(localStorage.getItem('info')).username, {
@@ -77,7 +80,7 @@ const goBack = () => {
                     <!-- 占位符，保持容器的宽度 -->
                   </v-col>
                   <v-col cols="12" v-for="(item, index) in product" :key="index">
-                    <v-card class="product-card" outlined>
+                    <v-card class="product-card" outlined @click="goToProductDetail(product.id)">
                       <v-img :src="item.image" aspect-ratio="1.5">
                         <template v-slot:placeholder>
                           <v-row class="fill-height ma-0" align="center" justify="center">
