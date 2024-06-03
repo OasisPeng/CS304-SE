@@ -137,6 +137,7 @@ export default {
     this.category = localStorage.getItem("category") || '学习';
     this.emotion = localStorage.getItem("emotion") || '开心😀';
     this.level = localStorage.getItem("level") || '不重要不紧急';
+    console.log("正文",this.week)
   },
   methods: {
 

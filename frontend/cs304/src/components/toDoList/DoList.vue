@@ -174,32 +174,6 @@ export default {
     newEvent() {
       this.$router.push('/CategorySelection');
     },
-    editEvent(task) {
-      localStorage.setItem('id', task.id);
-      localStorage.setItem('category', task.category);
-      localStorage.setItem('emotion', task.emotion);
-      localStorage.setItem('level', task.level);
-      localStorage.setItem('title', task.title);
-      localStorage.setItem('text', task.text);
-      if (task.finish === 'no') task.finish = 0;
-      else task.finish = 1;
-      localStorage.setItem('finish', task.finish);
-      localStorage.setItem('owner', task.owner);
-
-      const taskDate = new Date(task.data);
-      const getWeekNumber = date => {
-        const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-        const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
-        return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-      };
-      const getDayOfWeek = date => date.getDay();
-      task.week = getWeekNumber(taskDate);
-      task.xq = getDayOfWeek(taskDate);
-
-      localStorage.setItem('week', task.week);
-      localStorage.setItem('xq', task.xq);
-      this.$router.push('/ToDoEdit');
-    },
     updateWeek() {
       // 确保更新周的逻辑正确
       const startOfWeek = new Date(this.currentDate);
@@ -296,7 +270,7 @@ export default {
             finish: evo.finish || '',
             category: evo.category || '',
             emotion: evo.emotion || '',
-            text: evo.text !== '',
+            text: evo.text || '',
           };
         });
         this.list = products;
@@ -357,6 +331,34 @@ export default {
         task.finish = !task.finish;
       }
     },
+    async editEvent(task) {
+      console.log("任务", task);
+      localStorage.setItem('id', task.id);
+      localStorage.setItem('category', task.category);
+      localStorage.setItem('emotion', task.emotion);
+      localStorage.setItem('level', task.level);
+      localStorage.setItem('title', task.title);
+      localStorage.setItem('text', task.text);
+      if (task.finish === 'no') task.finish = 0;
+      else task.finish = 1;
+      localStorage.setItem('finish', task.finish);
+      localStorage.setItem('owner', task.owner);
+      //
+      // const taskDate = new Date(task.data);
+      // const getWeekNumber = date => {
+      //   const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+      //   const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+      //   return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+      // };
+      // const getDayOfWeek = date => date.getDay();
+      // task.week = getWeekNumber(taskDate);
+      // task.xq = getDayOfWeek(taskDate);
+      // // console.log("正文1",task)
+      localStorage.setItem('week', task.week);
+      localStorage.setItem('xq', task.xq);
+      await this.$router.push('/ToDoEdit');
+    },
+
 
     jumpToWeek() {
       if (this.selectedWeek !== null) {
