@@ -27,6 +27,11 @@ public class HaveBuyController {
     }
 
 
+
+
+
+
+
     @GetMapping("/user/{id}")
     public Result getByUserId(@PathVariable Integer id) {
         return Result.suc(service.selectByUserId(id));
