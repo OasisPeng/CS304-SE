@@ -5,7 +5,7 @@
     </v-app-bar>
     <v-tabs v-model="tab" background-color="white" grow color="teal">
       <v-tab>互动消息</v-tab>
-      <v-tab>我发出的</v-tab>
+      <v-tab>我想要的</v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item>
@@ -30,6 +30,11 @@
             <v-list-item-action>
               <v-list-item-action-text>{{ formatTime(message.time) }}</v-list-item-action-text>
             </v-list-item-action>
+            <v-img
+                v-if="message.goodsImage"
+                :src="message.goodsImage"
+                class="goods-image"
+            ></v-img>
             <v-icon
                 v-if="message.old !== 0"
                 color="red"
@@ -60,6 +65,11 @@
             <v-list-item-action>
               <v-list-item-action-text>{{ formatTime(message.time) }}</v-list-item-action-text>
             </v-list-item-action>
+            <v-img
+                v-if="message.goodsImage"
+                :src="message.goodsImage"
+                class="goods-image"
+            ></v-img>
             <v-icon
                 v-if="message.old !== 0"
                 color="red"
@@ -74,7 +84,6 @@
     </div>
   </v-container>
 </template>
-
 <script>
 import BottomNavigation from "@/components/second_hand/BottomNavigation";
 import moment from "moment";
@@ -108,12 +117,20 @@ export default {
         const messages = response.data.data;
         const uniqueMessages = {};
 
-        messages.forEach(message => {
+        for (let message of messages) {
           const key = `${message.from}-${message.goodsId}`;
           if (!uniqueMessages[key] || new Date(uniqueMessages[key].time) < new Date(message.time)) {
+            // Fetch product info
+            const productResponse = await this.$axios.get(this.$httpUrl + `/goods/${message.goodsId}`, {
+              withCredentials: false,
+              headers: {
+                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+              }
+            });
+            message.goodsImage = productResponse.data.data.image;
             uniqueMessages[key] = message;
           }
-        });
+        }
 
         this.interactionMessages = Object.values(uniqueMessages);
 
@@ -137,12 +154,20 @@ export default {
         const messages = response.data.data;
         const uniqueMessages = {};
 
-        messages.forEach(message => {
+        for (let message of messages) {
           const key = `${message.to}-${message.goodsId}`;
           if (!uniqueMessages[key] || new Date(uniqueMessages[key].time) < new Date(message.time)) {
+            // Fetch product info
+            const productResponse = await this.$axios.get(this.$httpUrl + `/goods/${message.goodsId}`, {
+              withCredentials: false,
+              headers: {
+                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+              }
+            });
+            message.goodsImage = productResponse.data.data.image;
             uniqueMessages[key] = message;
           }
-        });
+        }
 
         this.orderMessages = Object.values(uniqueMessages);
 
@@ -171,7 +196,6 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .v-app-bar {
   justify-content: center;
@@ -192,5 +216,13 @@ export default {
   top: 10px;
   left: 10px;
   font-size: 5px;
+}
+
+.goods-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-left: 10px;
 }
 </style>
