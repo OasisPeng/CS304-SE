@@ -18,6 +18,7 @@ public class MessageController {
     @GetMapping("/getByTwoUser/{id1}/{id2}")
     public Result getByTwoUser(@PathVariable Integer id1, @PathVariable Integer id2) {
         List<Message> list = service.SelectByTwoUser(id1, id2);
+        System.out.println(list);
         return Result.suc(list);
     }
     @GetMapping("/getByOneUserTo/{id}")
@@ -28,9 +29,9 @@ public class MessageController {
     }
     @GetMapping("/getByOneUserFrom/{id}")
     public Result getByOneUserFrom(@PathVariable Integer id) {
-        List<Message> list = service.SelectByOneUserFrom(id);
-        System.out.println(list);
-        return Result.suc(list);
+        List<Message> list2 = service.SelectByOneUserFrom(id);
+        System.out.println(list2);
+        return Result.suc(list2);
     }
     @PostMapping("/insertList")
     public Result InsertList(@RequestBody List<Message> list) {
@@ -45,6 +46,7 @@ public class MessageController {
     @PostMapping("/sendMessage")
     public Result sendMessage(@RequestBody Message message) {
         message.setTime(new Timestamp(System.currentTimeMillis()));
+        System.out.println(message);
         service.InsertMessage(message);
         return Result.suc(200);
     }

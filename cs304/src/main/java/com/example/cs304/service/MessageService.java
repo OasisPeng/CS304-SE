@@ -10,35 +10,35 @@ import java.util.List;
 
 @Transactional
 public interface MessageService {
-    @Caching(cacheable = {
-            @Cacheable(cacheNames = "messages", key = "#id1 + ' ' + #id2"),
-            @Cacheable(cacheNames = "messages", key = "#id2 + ' ' + #id1")
-    })
+//    @Caching(cacheable = {
+//            @Cacheable(cacheNames = "messages", key = "#id1 + ' ' + #id2"),
+//            @Cacheable(cacheNames = "messages", key = "#id2 + ' ' + #id1")
+//    })
     public List<Message> SelectByTwoUser(Integer id1, Integer id2);
 
-    @Caching(cacheable = {
-            @Cacheable(cacheNames = "messages", key = "#id"),
-            @Cacheable(cacheNames = "messages", key = "#id")
-    })
+//    @Caching(cacheable = {
+//            @Cacheable(cacheNames = "messages", key = "#id"),
+//            @Cacheable(cacheNames = "messages", key = "#id")
+//    })
     public List<Message> SelectByOneUserTo(Integer id);
 
-    @Caching(cacheable = {
-            @Cacheable(cacheNames = "messages", key = "#id"),
-            @Cacheable(cacheNames = "messages", key = "#id")
-    })
+//    @Caching(cacheable = {
+//            @Cacheable(cacheNames = "messages", key = "#id"),
+//            @Cacheable(cacheNames = "messages", key = "#id")
+//    })
     public List<Message> SelectByOneUserFrom(Integer id);
 
-    @Caching(evict = {
-            @CacheEvict(cacheNames = "messages", key = "#id1 + ' ' + #id2"),
-            @CacheEvict(cacheNames = "messages", key = "#id2 + ' ' + #id1")
-
-    })
+//    @Caching(evict = {
+//            @CacheEvict(cacheNames = "messages", key = "#id1 + ' ' + #id2"),
+//            @CacheEvict(cacheNames = "messages", key = "#id2 + ' ' + #id1")
+//
+//    })
     public Message InsertMessage(Message message);
 
-    @Caching(evict = {
-            @CacheEvict(cacheNames = "messages", key = "#id1 + ' ' + #id2"),
-            @CacheEvict(cacheNames = "messages", key = "#id2 + ' ' + #id1")
-
-    })
+//    @Caching(evict = {
+//            @CacheEvict(cacheNames = "messages", key = "#id1 + ' ' + #id2"),
+//            @CacheEvict(cacheNames = "messages", key = "#id2 + ' ' + #id1")
+//
+//    })
     public Boolean InsertMessages(List<Message> messages);
 }

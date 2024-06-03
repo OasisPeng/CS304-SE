@@ -172,6 +172,7 @@ export default {
       this.show = !this.show;
     },
     newEvent() {
+      localStorage.setItem('state', "0");
       this.$router.push('/CategorySelection');
     },
     updateWeek() {
@@ -345,6 +346,7 @@ export default {
     },
     async editEvent(task) {
       console.log("任务", task);
+      localStorage.setItem('state', "1");
       localStorage.setItem('id', task.id);
       localStorage.setItem('category', task.category);
       localStorage.setItem('emotion', task.emotion);
