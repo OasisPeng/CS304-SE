@@ -13,7 +13,6 @@
           <div class="product-title">{{ product.name }}</div>
           <div class="product-price">{{ product.price }}</div>
         </div>
-<!--        v-if="this.to === chatPartner"-->
         <v-btn
             color="green"
             @click="confirmPurchase"
@@ -51,7 +50,6 @@
     </v-row>
   </v-container>
 </template>
-
 <script>
 import axios from 'axios';
 
@@ -67,7 +65,8 @@ export default {
       goodsId: null,
       product: {},
       from: '',
-      to: ''
+      to: '',
+      tab: null
     };
   },
   methods: {
@@ -77,8 +76,8 @@ export default {
     async fetchChatMessages() {
       const from = this.currentUser;
       const to = this.chatPartner;
-      this.from=from;
-      this.to=to;
+      this.from = from;
+      this.to = to;
       this.goodsId = this.$route.params.message.goodsId;
 
       try {
@@ -101,8 +100,6 @@ export default {
     },
     async fetchProductDetails() {
       try {
-        console.log(this.$route.params.message)
-        console.log(this.to)
         const response = await axios.get(`${this.$httpUrl}/goods/${this.goodsId}`, {
           headers: {
             'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
@@ -146,40 +143,59 @@ export default {
       }
     },
     async confirmPurchase() {
-      // try {
-        const updatedProduct = {
-          ...this.product,
-          buyerId: this.chatPartner
-        };
+      let buyerId;
+      if (this.tab === 0) {
+        buyerId = this.chatPartner;
+      } else if (this.tab === 1) {
+        buyerId = this.currentUser;
+      }
 
-        console.log("确认信息",updatedProduct)
+      const updatedProduct = {
+        ...this.product,
+        buyerId
+      };
+      console.log("buyerId: ",buyerId);
+
+      // try {
         const response = await axios.post(`${this.$httpUrl}/goods/update`, updatedProduct, {
           headers: {
             'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
           }
         });
 
-        if (response.data.success) {
+        if (response.data.msg=='成功') {
           console.log('购买确认成功');
         } else {
           console.log('购买确认失败');
         }
       // } catch (error) {
-      //   console.log('Error confirming purchase:', error);
+      //   console.error('Error confirming purchase:', error);
       //   console.log('购买确认失败');
       // }
     }
   },
   created() {
-    const from = this.$route.params.message.from;
-    const to = this.$route.params.message.to;
+    // const { from, to, tab } = this.$route.params.message;
+
+    const from=this.$route.params.message.from
+    const to=this.$route.params.message.to
+    const tab=this.$route.params.tab
+
+    console.log("this.$route.params.message:", this.$route.params.message);
+    console.log("from:", from, "type:", typeof from);
+    console.log("this.currentUser:", this.currentUser, "type:", typeof this.currentUser);
+
+    console.log("tab: ", tab)
+    this.tab = tab;
 
     // 确定聊天对象
-    if (from === this.currentUser) {
+    if (String(from) === String(this.currentUser)) {
       this.chatPartner = to;
     } else {
       this.chatPartner = from;
     }
+    console.log("currentUser:", this.currentUser);
+    console.log("chatPartner:", this.chatPartner);
 
     // 设置聊天对象的名称
     this.chatPartnerName = this.chatPartner;
@@ -189,7 +205,6 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .v-app-bar {
   justify-content: space-between;

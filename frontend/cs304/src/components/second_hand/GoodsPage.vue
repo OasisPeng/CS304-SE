@@ -91,6 +91,16 @@ export default {
       this.$router.go(-1);
     },
     buyProduct() {
+      const sellerId = this.product.sellerId;
+      const buyerId = this.currentUser;
+      const goodsId = this.product.id
+      const message = {
+        from: buyerId,
+        to: sellerId,
+        text: "你好，想买下这个商品。",
+        time: new Date(),
+        goodsId
+      }
       this.$router.push({ name: 'ChatPage', params: { message, tab:0} });
     },
     contactSeller() {
