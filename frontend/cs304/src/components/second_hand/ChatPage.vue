@@ -13,6 +13,12 @@
           <div class="product-title">{{ product.name }}</div>
           <div class="product-price">{{ product.price }}</div>
         </div>
+        <v-btn
+            color="green"
+            @click="confirmPurchase"
+        >
+          确认购买
+        </v-btn>
       </v-col>
     </v-row>
     <v-row class="chat-container">
@@ -20,14 +26,28 @@
         <div
             v-for="(msg, index) in filteredMessages"
             :key="index"
-            :class="['chat-bubble', isCurrentUser(msg.from) ? 'right' : 'left']"
+            :class="['chat-bubble', String(msg.from) === String(currentUser) ? 'right' : 'left']"
         >
-          <div :class="isCurrentUser(msg.from) ? 'right-avatar' : 'left-avatar'">
-            <v-avatar size="32">
-              <v-icon>{{ getIconType(msg.from) }}</v-icon>
+          <template v-if="String(msg.from) === String(currentUser)">
+            <div class="chat-text">{{ msg.text }}</div>
+            <v-avatar
+                :left="false"
+                :right="true"
+                size="32"
+            >
+              <v-icon>mdi-account-circle-outline</v-icon>
             </v-avatar>
-          </div>
-          <div class="chat-text">{{ msg.text }}</div>
+          </template>
+          <template v-else>
+            <v-avatar
+                :left="true"
+                :right="false"
+                size="32"
+            >
+              <v-icon>mdi-account-circle</v-icon>
+            </v-avatar>
+            <div class="chat-text">{{ msg.text }}</div>
+          </template>
         </div>
       </v-col>
     </v-row>
@@ -41,22 +61,23 @@
     </v-row>
   </v-container>
 </template>
-
 <script>
 import axios from 'axios';
 
 export default {
   data() {
-    const storedInfo = JSON.parse(localStorage.getItem('info')) || {};
     return {
       chatPartnerName: '',
       chatMessages: [],
       filteredMessages: [],
       newMessage: '',
-      currentUser: storedInfo.username || '',
-      chatPartner: '',
+      currentUser: JSON.parse(localStorage.getItem('info')).username,
+      chatPartner: '', // 保存聊天对象的ID
       goodsId: null,
-      product: {}
+      product: {},
+      from: '',
+      to: '',
+      tab: null
     };
   },
   methods: {
@@ -66,6 +87,8 @@ export default {
     async fetchChatMessages() {
       const from = this.currentUser;
       const to = this.chatPartner;
+      this.from = from;
+      this.to = to;
       this.goodsId = this.$route.params.message.goodsId;
 
       try {
@@ -102,8 +125,6 @@ export default {
       this.filteredMessages = this.chatMessages
           .filter(msg => msg.goodsId === this.goodsId)
           .sort((a, b) => new Date(a.time) - new Date(b.time));
-
-      console.log(this.filteredMessages);
     },
     async sendMessage() {
       if (this.newMessage.trim() !== '') {
@@ -132,90 +153,67 @@ export default {
         }
       }
     },
-    async prepare() {
-      const storedInfoRaw = localStorage.getItem('info');
-      if (!storedInfoRaw) {
-        console.error('No user info found in localStorage');
-        return;
+    async confirmPurchase() {
+      let buyerId;
+      if (this.tab === 0) {
+        buyerId = this.chatPartner;
+      } else if (this.tab === 1) {
+        buyerId = this.currentUser;
       }
 
-      let storedInfo;
-      try {
-        storedInfo = JSON.parse(storedInfoRaw);
-      } catch (error) {
-        console.error('Error parsing user info from localStorage', error);
-        return;
-      }
+      const updatedProduct = {
+        ...this.product,
+        buyerId
+      };
+      console.log("buyerId: ",buyerId);
 
-      if (!storedInfo || !storedInfo.username) {
-        console.error('Invalid user info in localStorage');
-        return;
-      }
+      // try {
+      const response = await axios.post(`${this.$httpUrl}/goods/update`, updatedProduct, {
+        headers: {
+          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+        }
+      });
 
-      this.currentUser = storedInfo.username;
-
-      const from = this.$route.params.message.from || "";
-      const to = this.$route.params.message.to || "";
-
-      console.log("from", from);
-      console.log("to", to);
-
-      if (from === this.currentUser) {
-        this.chatPartner = to;
+      if (response.data.msg=='成功') {
+        console.log('购买确认成功');
       } else {
-        this.chatPartner = from;
+        console.log('购买确认失败');
       }
-      this.chatPartnerName = this.chatPartner;
-    },
-    isCurrentUser(user) {
-      console.log("当前用户:", this.currentUser, "类型:", typeof this.currentUser);
-      console.log("消息发送者:", user, "类型:", typeof user);
-
-      if (this.currentUser === null || this.currentUser === undefined || this.currentUser === '') {
-        console.error("当前用户未定义或为空");
-        return false;
-      }
-
-      if (user === null || user === undefined || user === '') {
-        console.error("消息发送者未定义或为空");
-        return false;
-      }
-
-      // 将两者都转换为字符串进行比较
-      const result = String(user) === String(this.currentUser);
-      console.log("比较结果:", result);
-      return result;
-    },
-
-    getIconType(user) {
-      console.log("当前用户:", this.currentUser, "类型:", typeof this.currentUser);
-      console.log("消息发送者:", user, "类型:", typeof user);
-
-      if (this.currentUser === null || this.currentUser === undefined || this.currentUser === '') {
-        console.error("当前用户未定义或为空");
-        return 'mdi-account-circle'; // 返回默认值
-      }
-
-      if (user === null || user === undefined || user === '') {
-        console.error("消息发送者未定义或为空");
-        return 'mdi-account-circle'; // 返回默认值
-      }
-
-      // 将两者都转换为字符串进行比较
-      const result = String(user) !== String(this.currentUser) ? 'mdi-account-circle' : 'mdi-account-circle-outline';
-      console.log("图标类型:", result);
-      return result;
-    },
+      // } catch (error) {
+      //   console.error('Error confirming purchase:', error);
+      //   console.log('购买确认失败');
+      // }
+    }
   },
-  mounted() {
-    this.prepare();
+  created() {
+    const from=this.$route.params.message.from;
+    const to=this.$route.params.message.to;
+    const tab=this.$route.params.tab;
+
+    console.log("this.$route.params.message:", this.$route.params.message);
+    console.log("from:", from, "type:", typeof from);
+    console.log("this.currentUser:", this.currentUser, "type:", typeof this.currentUser);
+
+    console.log("tab: ", tab);
+    this.tab = tab;
+
+    // 确定聊天对象
+    if (String(from) === String(this.currentUser)) {
+      this.chatPartner = to;
+    } else {
+      this.chatPartner = from;
+    }
+    console.log("currentUser:", this.currentUser);
+    console.log("chatPartner:", this.chatPartner);
+
+    // 设置聊天对象的名称
+    this.chatPartnerName = this.chatPartner;
+
     this.fetchChatMessages();
-    this.fetchProductDetails();
-    console.log("当前是谁", this.currentUser)
+    this.fetchProductDetails(); // Fetch product details when the component is created
   }
 };
 </script>
-
 <style scoped>
 .v-app-bar {
   justify-content: space-between;
@@ -272,7 +270,6 @@ export default {
 
 .chat-bubble.right {
   justify-content: flex-end;
-  flex-direction: row-reverse;
 }
 
 .chat-bubble.right .chat-text {
@@ -281,14 +278,6 @@ export default {
   border-radius: 10px;
   padding: 10px;
   margin-right: 10px;
-}
-
-.left-avatar {
-  margin-right: 10px;
-}
-
-.right-avatar {
-  margin-left: 10px;
 }
 
 .message-input-container {
