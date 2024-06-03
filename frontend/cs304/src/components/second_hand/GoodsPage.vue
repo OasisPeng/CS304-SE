@@ -91,17 +91,20 @@ export default {
       this.$router.go(-1);
     },
     buyProduct() {
-      // 购买逻辑
     },
     contactSeller() {
       const sellerId = this.product.sellerId;
       const buyerId = this.currentUser;
+      const goodsId = this.product.id
       const greetingMessage = {
         from: buyerId,
         to: sellerId,
         text: "你好，想了解下这个商品~",
-        time: new Date()
+        time: new Date(),
+        goodsId
       };
+
+      console.log(greetingMessage)
 
       this.$axios.post(this.$httpUrl + '/message/sendMessage', greetingMessage, {
         headers: {
@@ -109,23 +112,26 @@ export default {
         }
       });
 
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${wsProtocol}//${window.location.host}/chatroom/${buyerId}`;
+      // const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      // const wsUrl = `${wsProtocol}//${window.location.host}/chatroom/${buyerId}`;
+      //
+      // this.websocket = new WebSocket(wsUrl);
+      // this.websocket.onopen = () => {
+      //   console.log('WebSocket connection established');
+      // };
+      // this.websocket.onmessage = (event) => {
+      //   const message = JSON.parse(event.data);
+      //   console.log('Received message:', message);
+      // };
+      // this.websocket.onclose = () => {
+      //   console.log('WebSocket connection closed');
+      // };
+      // this.websocket.onerror = (error) => {
+      //   console.error('WebSocket error:', error);
+      // };
 
-      this.websocket = new WebSocket(wsUrl);
-      this.websocket.onopen = () => {
-        console.log('WebSocket connection established');
-      };
-      this.websocket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        console.log('Received message:', message);
-      };
-      this.websocket.onclose = () => {
-        console.log('WebSocket connection closed');
-      };
-      this.websocket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
+
+      this.$router.push('/FirstPage');
     },
     async removeProduct() {
       try {
@@ -136,7 +142,7 @@ export default {
           }
         });
         if (response.data.msg === '成功') {
-          this.$router.push('/FirstPage');
+          await this.$router.push('/FirstPage');
         } else {
           console.error('商品下架失败');
         }
