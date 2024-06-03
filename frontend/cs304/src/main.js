@@ -9,7 +9,7 @@ Vue.prototype.$axios=axios;
 Vue.prototype.$httpUrl='http://120.78.7.40:8090'
 // 120.78.7.40
 Vue.config.productionTip = false
-
+localStorage.clear()
 new Vue({
   router,
   vuetify,

@@ -70,4 +70,9 @@ public class Event implements Serializable {
      */
     private String text;
 
+
+
+
+
+
 }

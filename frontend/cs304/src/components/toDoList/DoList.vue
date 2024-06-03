@@ -281,8 +281,8 @@ export default {
       }
     },
     async updateTaskFinishStatus(task) {
-      console.log("任务",task)
-      const updatedTask = { ...task, finish: task.finish ? 1 : 0, id: parseInt(task.id, 10) };
+      console.log("任务1",task)
+      const updatedTask = { ...task, finish: task.finish ? 1 : 0, id: parseInt(task.id, 10) , level: this.reverseConvertLevel(task.level)};
       console.log("任务",updatedTask)
       try {
         // 发送更新请求
