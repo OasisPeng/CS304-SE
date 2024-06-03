@@ -66,7 +66,6 @@ JUnit + Spring Test + GitHub Actions
 **Effectiveness of Tests:**
 
 - **test coverage report:** 
-[test result]()
 ![](./snapshots/img_1.png)
 ![](./snapshots/img_2.png)
 ![](./snapshots/img_3.png)
