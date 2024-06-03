@@ -122,21 +122,19 @@ We have integrated automated building and deployment, with front-end and back-en
 **Description:** 
 
 - FrontEnd: run `npm run build` we will get directory called **dist** which will contains all of the resource that we need to deploy
-- BackEnd: We use `mvn packge` to build springboot files and we will get executable jar file in the **target** directory called `cs304-0.0.1-SNAPSHOT.jar`
+- BackEnd: We use `mvn package` to build springboot files and we will get executable jar file in the **target** directory called `cs304-0.0.1-SNAPSHOT.jar`
 
 ### Buildfile/Script
+
+[Front-end Buildfile](./frontend/cs304/package.json)
+
+[Back-end Buildfile](./cs304/pom.xml)
 
 We use **github action** to do the automatically build and deploy job, the github action script is shown below .
 
 [FrontEnd script](./.github/workflows/vue.yml) 
 
 [BackEnd script](./.github/workflows/deployment.yml)
-
-**Location**:
-
-[Back-end Buildfile (pom.xml)]()
-
-[Front-end Build Script (webpack.config.js)]()
 
 ## 5. Deployment (2 points)
 
