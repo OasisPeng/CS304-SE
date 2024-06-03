@@ -117,6 +117,7 @@ export default {
         const messages = response.data.data;
         const uniqueMessages = {};
 
+        console.log(messages)
         for (let message of messages) {
           const key = `${message.from}-${message.goodsId}`;
           if (!uniqueMessages[key] || new Date(uniqueMessages[key].time) < new Date(message.time)) {
@@ -154,6 +155,8 @@ export default {
         const messages = response.data.data;
         const uniqueMessages = {};
 
+
+        console.log(messages)
         for (let message of messages) {
           const key = `${message.to}-${message.goodsId}`;
           if (!uniqueMessages[key] || new Date(uniqueMessages[key].time) < new Date(message.time)) {
