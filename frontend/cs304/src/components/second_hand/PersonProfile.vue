@@ -81,7 +81,7 @@
                   <!-- 占位符，保持容器的宽度 -->
                 </v-col>
                 <v-col cols="12" v-for="(item, index) in product" :key="index">
-                  <v-card class="product-card" outlined>
+                  <v-card class="product-card" outlined @click="goToProductDetail(product.id)">
                     <v-img :src="item.image" aspect-ratio="1.5">
                       <template v-slot:placeholder>
                         <v-row class="fill-height ma-0" align="center" justify="center">
@@ -184,9 +184,7 @@ const saveEdit = () => {
   editDialog.value = false;
 };
 
-const disconnect = () => {
-  console.log('Disconnect clicked');
-};
+
 
 const toggleFavorite = (product) => {
   product.isFavorite = !product.isFavorite;
@@ -229,9 +227,15 @@ export default {
     };
   },
   methods :{
+    goToProductDetail(productId) {
+      this.$router.push({ name: 'GoodsPage', params: { id: productId } });
+    },
+    disconnect() {
+      this.$router.push('/');
+    },
     async fetchCategory() {
       try {
-        const response = await this.$axios.get(this.$httpUrl + '/goods/buyer/'+JSON.parse(localStorage.getItem('info')).username, {
+        const response = await this.$axios.get(this.$httpUrl + '/goods/seller/'+JSON.parse(localStorage.getItem('info')).username, {
           withCredentials: false,
           headers: {
             'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
@@ -248,7 +252,7 @@ export default {
             description: evo.description || "",
             category: evo.category || "",
             publishDate: evo.publishDate || "",
-            soldOut: evo.buyerId !== ""
+            soldOut: evo.buyerId !== null
           };
         });
         this.product = products;
@@ -259,7 +263,14 @@ export default {
   },
   mounted() {
     this.fetchCategory();
-  }
+    this.interval = setInterval(() => {
+      this.fetchCategory();
+    }, 10000); // 调用fetchCategory方法每10秒更新一次
+  },
+  beforeDestroy() {
+    clearInterval(this.interval); // 清除定时器
+  },
+
 }
 </script>
 

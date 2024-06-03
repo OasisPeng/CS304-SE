@@ -2,7 +2,7 @@
   <v-row >
     <v-col cols="12">
       <v-sheet >
-        <v-btn icon @click="selectedOen = false">
+        <v-btn icon @click="goback">
           <v-icon>mdi-backspace-outline
           </v-icon>
 
@@ -34,9 +34,6 @@
               <div class="event-text">{{ event.name }}</div>
             </div>
           </template>
-
-
-
         </v-calendar>
 
         <v-menu
@@ -121,7 +118,6 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-
 const selectedEvent = ref({})
 const selectedElement = ref(null)
 const selectedOpen = ref(false)
@@ -178,13 +174,13 @@ function updateTime () {
 
 <script>
 // import axios from "axios";
-
 export default {
+
   data: () => ({
     today: '2019-01-08',
-    weekday: [1, 2, 3, 4, 5, 6, 0],
+    weekday: [0,1, 2, 3, 4, 5, 6],
     weekdays: [
-      { title: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
+      { title: 'Mon - Sun', value: [0,1, 2, 3, 4, 5, 6] },
     ],
     // username:'12112323',
     // password:'yyc.20020418',
@@ -204,37 +200,35 @@ export default {
       return this.cal ? this.cal.timeToY(this.cal.times.now) + 'px' : '-10px'
     },
   },
-  mounted () {
-    this.ready = true
-    this.scrollToTime()
-    this.updateTime()
-    const cachedCourseList = localStorage.getItem('courseList')
+  mounted: async function () {
+    console.log("Events loaded1:", this.events);
+    this.ready = true;
+    this.scrollToTime();
+    this.updateTime();
+
+    // 确保queryCurrentCourse完成之后再继续执行
+    const cachedCourseList = localStorage.getItem('courseList');
     if (cachedCourseList) {
       // 如果存在缓存数据，则直接使用缓存数据
-      this.courseList = JSON.parse(cachedCourseList)
+      this.courseList = JSON.parse(cachedCourseList);
       this.events = this.courseList.map(event =>
           this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName, event.color, event.teachingBuilding, event.teacher, event.weeks, event.jc, event.classes, event.language)
       );
     } else {
       // 如果缓存中不存在数据，则从后端请求数据
-      this.queryCurrentCourse()
+      await this.queryCurrentCourse();
     }
+
+    console.log("Events loaded2:", this.events);
   },
 
     methods: {
       async queryCurrentCourse() {
         try {
           const storedInfo = JSON.parse(localStorage.getItem('info'));
-
-          // 检查 storedInfo 是否存在
           if (!storedInfo) {
             throw new Error('No user information found in localStorage');
           }
-
-          // 打印 storedInfo 中的 username
-          console.log("Username:", storedInfo.username);
-
-          // 发送请求
           const response = await this.$axios.post(this.$httpUrl + '/course/queryCurrentCourse', {
             username: storedInfo.username,
             password: storedInfo.password
@@ -245,9 +239,6 @@ export default {
             },
           });
 
-          console.log("Response data:", response.data);
-
-          // 处理响应数据
           this.courseList = response.data.data.map(evo => ({
             teacher: evo.teacher || "",
             englishName: evo.englishName || "",
@@ -267,8 +258,8 @@ export default {
           this.events = this.courseList.map(event =>
               this.createEventObject(event.startTime, event.endTime, event.xq, event.chineseName, event.color, event.teachingBuilding, event.teacher, event.weeks, event.jc, event.classes, event.language)
           );
-          localStorage.setItem('courseList', JSON.stringify(this.courseList))
-          console.log("Course List:", this.courseList);
+          console.log("kebiao",this.events)
+          localStorage.setItem('courseList', JSON.stringify(this.courseList));
         } catch (error) {
           console.error('Error querying current course:', error);
         }
@@ -283,9 +274,10 @@ export default {
       },
       getDateFromDayOfWeek(dayOfWeek) {
         const today = new Date();
-        const diff = dayOfWeek - today.getDay();
+        const diff = (dayOfWeek + 7 - today.getDay()) % 7;
         return new Date(today.setDate(today.getDate() + diff));
       },
+
 
 // 将字符串时间转换为日期时间
       getTimeFromString(timeString) {
@@ -293,31 +285,42 @@ export default {
         const date = new Date();
         date.setHours(parseInt(hours, 10));
         date.setMinutes(parseInt(minutes, 10));
+        date.setSeconds(0); // 确保秒数为0
         return date;
       },
-
 // 将时间和日期合并为完整的事件对象
-      createEventObject(start, end, dayOfWeek,name,color,building,teacher,week,jc,classes,language) {
+      createEventObject(start, end, dayOfWeek, name, color, building, teacher, week, jc, classes, language) {
         const date = this.getDateFromDayOfWeek(dayOfWeek);
         const startTime = this.getTimeFromString(start);
         const endTime = this.getTimeFromString(end);
-        // 设置日期和时间
-        const startDateTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), startTime.getHours(), startTime.getMinutes());
 
+        const startDateTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), startTime.getHours(), startTime.getMinutes());
         const endDateTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), endTime.getHours(), endTime.getMinutes());
+
+        // 格式化为 YYYY-MM-DD hh:mm
+        const formatDateTime = (date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+          return `${year}-${month}-${day} ${hours}:${minutes}`;
+        };
+
         return {
-          name: name, // 你的事件标题
-          start: this.formatDateTime(startDateTime),
-          end: this.formatDateTime(endDateTime),
-          color:this.colors[color],
-          building:building+"-"+classes,
-          teacher:teacher,
-          week:week,
-          jc:jc,
-          table:start+"-"+end,
-          language:language
+          name: name,
+          start: formatDateTime(startDateTime), // 使用正确的格式
+          end: formatDateTime(endDateTime),     // 使用正确的格式
+          color: this.colors[color],
+          building: building + "-" + classes,
+          teacher: teacher,
+          week: week,
+          jc: jc,
+          table: start + "-" + end,
+          language: language
         };
       },
+
       getCurrentTime () {
         return this.cal ? this.cal.times.now.hour * 60 + this.cal.times.now.minute : 0
       },
@@ -330,8 +333,12 @@ export default {
       updateTime () {
         setInterval(() => this.cal.updateTimes(), 60 * 1000)
       },
+      goback(){
+        this.$router.push('/');
+      },
     },
 }
+
 </script>
 
 <style scoped>

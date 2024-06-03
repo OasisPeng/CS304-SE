@@ -51,11 +51,24 @@
               </v-col>
             </v-row>
           </v-container>
+
+          <v-btn
+              fab
+              bottom
+              right
+              color="teal"
+              dark
+              @click="navigateTo('Chat')"
+              class="customer-service-button"
+          >
+            <v-icon>mdi-headset</v-icon>
+          </v-btn>
+
         </v-main>
       </v-container>
     </v-app>
 </template>
-  
+
 <script>
 export default {
   methods: {
@@ -89,5 +102,10 @@ export default {
   background-image: url('../assets/bg3.jpeg');
   background-size: cover;
 }
+
+.customer-service-button {
+  position: fixed;
+  bottom: 70px;
+  right: 35px;
+}
 </style>
-  

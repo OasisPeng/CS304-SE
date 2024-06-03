@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import { saveEvent } from '../../api/index';
+// import { saveEvent } from '../../api/index';
 export default {
   data() {
     return {
@@ -131,15 +131,17 @@ export default {
     this.title = localStorage.getItem("title") || '';
     this.text = localStorage.getItem("text") || '';
     this.finish = localStorage.getItem("finish") || 0;
-    this.owner = localStorage.getItem("owner") || 'visitor';
+    this.owner = JSON.parse(localStorage.getItem("info")).username || 'visitor';
     this.week = localStorage.getItem("week") || '1';
     this.xq = localStorage.getItem("xq") || '1';
     this.category = localStorage.getItem("category") || '学习';
     this.emotion = localStorage.getItem("emotion") || '开心😀';
     this.level = localStorage.getItem("level") || '不重要不紧急';
+    console.log("正文",this.week)
   },
   methods: {
-    saveTodo() {
+
+    async saveTodo() {
       const todoData = {
         title: this.title,
         text: this.text,
@@ -152,9 +154,18 @@ export default {
         finish: this.finish,
       };
       console.log("Saving todo:", todoData);
-      saveEvent(todoData);
-      localStorage.clear();
-      this.$router.push("/");
+      const response = await this.$axios.post(this.$httpUrl + '/event/save', todoData, {
+        withCredentials: false,
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem('info')).token}`,
+        },
+      });
+      console.log(response.data)
+      // localStorage.clear();
+      localStorage.removeItem('category')
+      localStorage.removeItem('emotion')
+      localStorage.removeItem('level')
+      await this.$router.push("/DoList");
     },
     // 打开编辑标签的对话框
     editCategory() {

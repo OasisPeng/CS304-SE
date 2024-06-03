@@ -65,7 +65,8 @@
   </v-container>
 </template>
 
-<script>import BottomNavigation from "@/components/second_hand/BottomNavigation";
+<script>
+import BottomNavigation from "@/components/second_hand/BottomNavigation";
 
 export default {
   components: {
@@ -86,7 +87,7 @@ export default {
       const id = userInfo.username;
 
       try {
-        const responseTo = await this.$axios.get(this.$httpUrl + `/message/getByOneUserTo/`+id, {
+        const responseTo = await this.$axios.get(this.$httpUrl + `/message/getByOneUserTo/` + id, {
           withCredentials: false,
           headers: {
             'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
@@ -100,10 +101,8 @@ export default {
           },
         });
 
-
         console.log("Response to:", responseTo.data.data);
         console.log("Response from:", responseFrom.data.data);
-
 
         this.interactionMessages = responseTo.data.data;
         this.orderMessages = responseFrom.data.data;

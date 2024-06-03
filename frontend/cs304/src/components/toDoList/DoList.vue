@@ -172,33 +172,7 @@ export default {
       this.show = !this.show;
     },
     newEvent() {
-      this.$router.push('/ToDoCreate');
-    },
-    editEvent(task) {
-      localStorage.setItem('id', task.id);
-      localStorage.setItem('category', task.category);
-      localStorage.setItem('emotion', task.emotion);
-      localStorage.setItem('level', task.level);
-      localStorage.setItem('title', task.title);
-      localStorage.setItem('text', task.text);
-      if (task.finish === 'no') task.finish = 0;
-      else task.finish = 1;
-      localStorage.setItem('finish', task.finish);
-      localStorage.setItem('owner', task.owner);
-
-      const taskDate = new Date(task.data);
-      const getWeekNumber = date => {
-        const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-        const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
-        return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-      };
-      const getDayOfWeek = date => date.getDay();
-      task.week = getWeekNumber(taskDate);
-      task.xq = getDayOfWeek(taskDate);
-
-      localStorage.setItem('week', task.week);
-      localStorage.setItem('xq', task.xq);
-      this.$router.push('/ToDoEdit');
+      this.$router.push('/CategorySelection');
     },
     updateWeek() {
       // 确保更新周的逻辑正确
@@ -292,15 +266,15 @@ export default {
             owner: evo.owner || '',
             week: evo.week || '',
             xq: evo.xq || '',
-            level: evo.level || '',
+            level: this.convertLevel(evo.level)|| '', // 使用转换函数
             finish: evo.finish || '',
             category: evo.category || '',
             emotion: evo.emotion || '',
-            text: evo.text !== '',
+            text: evo.text || '',
           };
         });
         this.list = products;
-        console.log('fetchCategory:', this.daysInWeek);
+        console.log('fetchCategory:', this.list);
       } catch (error) {
         console.error('Error querying category:', error);
       }
@@ -324,6 +298,30 @@ export default {
         task.finish = !task.finish;
       }
     },
+    convertLevel(level) {
+      switch (level) {
+        case '重要紧急':
+          return 'important';
+        case '重要不紧急':
+          return 'normal';
+        case '不重要不紧急':
+          return 'unimportant';
+        default:
+          return 'normal'; // 默认级别
+      }
+    },
+     reverseConvertLevel(level){
+      switch (level) {
+        case 'important':
+          return '重要紧急';
+        case 'normal':
+          return '重要不紧急';
+        case 'unimportant':
+          return '不重要不紧急';
+        default:
+          return '重要不紧急'; // 默认级别
+      }
+    },
     async deleteEvent(task) {
       console.log("任务", task);
       const updatedTask = { ...task, finish: task.finish ? 1 : 0, id: parseInt(task.id, 10) };
@@ -345,6 +343,34 @@ export default {
         task.finish = !task.finish;
       }
     },
+    async editEvent(task) {
+      console.log("任务", task);
+      localStorage.setItem('id', task.id);
+      localStorage.setItem('category', task.category);
+      localStorage.setItem('emotion', task.emotion);
+      localStorage.setItem('level', this.reverseConvertLevel(task.level));
+      localStorage.setItem('title', task.title);
+      localStorage.setItem('text', task.text);
+      if (task.finish === 'no') task.finish = 0;
+      else task.finish = 1;
+      localStorage.setItem('finish', task.finish);
+      localStorage.setItem('owner', task.owner);
+      //
+      // const taskDate = new Date(task.data);
+      // const getWeekNumber = date => {
+      //   const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+      //   const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+      //   return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+      // };
+      // const getDayOfWeek = date => date.getDay();
+      // task.week = getWeekNumber(taskDate);
+      // task.xq = getDayOfWeek(taskDate);
+      // // console.log("正文1",task)
+      localStorage.setItem('week', task.week);
+      localStorage.setItem('xq', task.xq);
+      await this.$router.push('/ToDoEdit');
+    },
+
 
     jumpToWeek() {
       if (this.selectedWeek !== null) {
