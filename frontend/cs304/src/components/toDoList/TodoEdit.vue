@@ -111,6 +111,7 @@
 export default {
   data() {
     return {
+      id:0,
       title: '',
       text: '',
       category: '学习', // 默认标签
@@ -128,6 +129,7 @@ export default {
     };
   },
   mounted() {
+    this.id = localStorage.getItem("id") || 0;
     this.title = localStorage.getItem("title") || '';
     this.text = localStorage.getItem("text") || '';
     this.finish = localStorage.getItem("finish") || 0;
@@ -153,19 +155,56 @@ export default {
         level: this.level,
         finish: this.finish,
       };
-      console.log("Saving todo:", todoData);
-      const response = await this.$axios.post(this.$httpUrl + '/event/save', todoData, {
-        withCredentials: false,
-        headers: {
-          Authorization: `Bearer ${JSON.parse(localStorage.getItem('info')).token}`,
-        },
-      });
-      console.log(response.data)
-      // localStorage.clear();
-      localStorage.removeItem('category')
-      localStorage.removeItem('emotion')
-      localStorage.removeItem('level')
+      const todoData2 = {
+        id:this.id,
+        title: this.title,
+        text: this.text,
+        owner: this.owner,
+        week: this.week,
+        xq: this.xq,
+        category: this.category,
+        emotion: this.emotion,
+        level: this.level,
+        finish: this.finish,
+      };
+
+      let response;
+      if (localStorage.getItem("state") === "0") {
+        response = await this.$axios.post(this.$httpUrl + '/event/save', todoData, {
+          withCredentials: false,
+          headers: {
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem('info')).token}`,
+          },
+        });
+        this.clear();
+      } else {
+        console.log("Saving todo:", todoData);
+        response = await this.$axios.post(this.$httpUrl + '/event/update', todoData2, {
+          withCredentials: false,
+          headers: {
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem('info')).token}`,
+          },
+        });
+        this.clear();
+      }
+      console.log(response.data);
+
+      // 如果需要，清除 localStorage
+
+      // 导航到 DoList 页面
       await this.$router.push("/DoList");
+    },
+    clear(){
+      localStorage.removeItem('category');
+      localStorage.removeItem('emotion');
+      localStorage.removeItem('level');
+      localStorage.removeItem('title');
+      localStorage.removeItem('finish');
+      localStorage.removeItem('owner');
+      localStorage.removeItem('week');
+      localStorage.removeItem('xq');
+      localStorage.removeItem('text');
+      localStorage.removeItem('id');
     },
     // 打开编辑标签的对话框
     editCategory() {
