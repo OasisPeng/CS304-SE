@@ -81,7 +81,7 @@
                   <!-- 占位符，保持容器的宽度 -->
                 </v-col>
                 <v-col cols="12" v-for="(item, index) in product" :key="index">
-                  <v-card class="product-card" outlined @click="goToProductDetail(product.id)">
+                  <v-card class="product-card" outlined @click="goToProductDetail(product[index].id)">
                     <v-img :src="item.image" aspect-ratio="1.5">
                       <template v-slot:placeholder>
                         <v-row class="fill-height ma-0" align="center" justify="center">
@@ -212,11 +212,11 @@ export default {
           label: '卖出',
           action: () => { this.$router.push('/SalePage');},
         },
-        {
-          icon: 'mdi-heart',
-          label: '想要',
-          action: () => { this.$router.push('/FavouritePage'); },
-        },
+        // {
+        //   icon: 'mdi-heart',
+        //   label: '想要',
+        //   action: () => { this.$router.push('/FavouritePage'); },
+        // },
         {
           icon: 'mdi-message-badge-outline',
           label: '聊天',
@@ -228,6 +228,7 @@ export default {
   },
   methods :{
     goToProductDetail(productId) {
+      console.log("productId: ", productId)
       this.$router.push({ name: 'GoodsPage', params: { id: productId } });
     },
     disconnect() {
@@ -318,7 +319,7 @@ export default {
 
 .button-col {
   display: inline-block;
-  margin: 0 12px; /* 设置图标之间的间距 */
+  margin: 0 20px; /* 设置图标之间的间距 */
   text-align: center;
   margin-bottom: 2px; /* 控制按钮和文字之间的间隔 */
 }
