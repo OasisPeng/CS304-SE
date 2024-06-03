@@ -152,7 +152,9 @@ export default {
         }
       });
 
-      this.$router.push('/FirstPage');
+      const message=greetingMessage
+      // this.$router.push('/FirstPage');
+      this.$router.push({ name: 'ChatPage', params: { message, tab:0 } });
     },
     async removeProduct() {
       try {

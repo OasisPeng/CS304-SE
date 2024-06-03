@@ -14,6 +14,7 @@
           <div class="product-price">{{ product.price }}</div>
         </div>
         <v-btn
+            :disabled="isBuyer"
             color="green"
             @click="confirmPurchase"
         >
@@ -77,7 +78,8 @@ export default {
       product: {},
       from: '',
       to: '',
-      tab: null
+      tab: null,
+      isBuyer: false
     };
   },
   methods: {
@@ -120,6 +122,31 @@ export default {
       } catch (error) {
         console.error('Error fetching product details:', error);
       }
+
+      let buyerId;
+      // if (this.tab === 0) {
+      //   buyerId = this.chatPartner;
+      // } else if (this.tab === 1) {
+      //   buyerId = this.currentUser;
+      // }
+      const owner=this.product.sellerId
+      console.log("this.product: ",this.product)
+      console.log("Owner: ",owner)
+      if (String(owner) === String(this.currentUser)) {
+        buyerId = this.chatPartner;
+      } else {
+        buyerId = this.currentUser;
+      }
+
+      // 设置是否为买家
+      if(this.currentUser === buyerId){
+        this.isBuyer = true;
+      } else {
+        this.isBuyer = false;
+      }
+
+      console.log("buyerId:", buyerId)
+      console.log("isBuyer:", this.isBuyer)
     },
     filterMessagesByGoodsId() {
       this.filteredMessages = this.chatMessages
@@ -155,9 +182,15 @@ export default {
     },
     async confirmPurchase() {
       let buyerId;
-      if (this.tab === 0) {
+      // if (this.tab === 0) {
+      //   buyerId = this.chatPartner;
+      // } else if (this.tab === 1) {
+      //   buyerId = this.currentUser;
+      // }
+      const owner=this.product.sellerId
+      if (String(owner) === String(this.currentUser)) {
         buyerId = this.chatPartner;
-      } else if (this.tab === 1) {
+      } else {
         buyerId = this.currentUser;
       }
 
@@ -174,11 +207,15 @@ export default {
         }
       });
 
-      if (response.data.msg=='成功') {
-        console.log('购买确认成功');
-      } else {
-        console.log('购买确认失败');
-      }
+        if (response.data.msg == '成功') {
+          console.log('购买确认成功');
+        } else {
+          console.log('购买确认失败');
+        }
+      // } catch (error) {
+      //   console.error('Error confirming purchase:', error);
+      //   console.log('购买确认失败');
+      // }
       // } catch (error) {
       //   console.error('Error confirming purchase:', error);
       //   console.log('购买确认失败');
@@ -186,9 +223,10 @@ export default {
     }
   },
   created() {
-    const from=this.$route.params.message.from;
-    const to=this.$route.params.message.to;
-    const tab=this.$route.params.tab;
+
+    const from = this.$route.params.message.from;
+    const to = this.$route.params.message.to;
+    const tab = this.$route.params.tab;
 
     console.log("this.$route.params.message:", this.$route.params.message);
     console.log("from:", from, "type:", typeof from);
@@ -206,11 +244,11 @@ export default {
     console.log("currentUser:", this.currentUser);
     console.log("chatPartner:", this.chatPartner);
 
+    this.fetchChatMessages();
+    this.fetchProductDetails();
     // 设置聊天对象的名称
     this.chatPartnerName = this.chatPartner;
 
-    this.fetchChatMessages();
-    this.fetchProductDetails(); // Fetch product details when the component is created
   }
 };
 </script>
