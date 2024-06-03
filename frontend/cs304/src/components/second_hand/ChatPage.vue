@@ -18,7 +18,7 @@
             color="green"
             @click="confirmPurchase"
         >
-          确认购买
+          确认成交
         </v-btn>
       </v-col>
     </v-row>
@@ -60,6 +60,18 @@
         </v-btn>
       </v-col>
     </v-row>
+
+    <!-- 交易成功提示弹窗 -->
+    <v-dialog v-model="successDialog" max-width="300">
+      <v-card>
+        <v-card-title class="headline">提示</v-card-title>
+        <v-card-text>交易成功</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="closeSuccessDialog">确定</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -79,7 +91,8 @@ export default {
       from: '',
       to: '',
       tab: null,
-      isBuyer: false
+      isBuyer: false,
+      successDialog: false
     };
   },
   methods: {
@@ -124,14 +137,9 @@ export default {
       }
 
       let buyerId;
-      // if (this.tab === 0) {
-      //   buyerId = this.chatPartner;
-      // } else if (this.tab === 1) {
-      //   buyerId = this.currentUser;
-      // }
-      const owner=this.product.sellerId
-      console.log("this.product: ",this.product)
-      console.log("Owner: ",owner)
+      const owner = this.product.sellerId;
+      console.log("this.product: ", this.product);
+      console.log("Owner: ", owner);
       if (String(owner) === String(this.currentUser)) {
         buyerId = this.chatPartner;
       } else {
@@ -139,14 +147,10 @@ export default {
       }
 
       // 设置是否为买家
-      if(this.currentUser === buyerId){
-        this.isBuyer = true;
-      } else {
-        this.isBuyer = false;
-      }
+      this.isBuyer = String(this.currentUser) === String(buyerId);
 
-      console.log("buyerId:", buyerId)
-      console.log("isBuyer:", this.isBuyer)
+      console.log("buyerId:", buyerId);
+      console.log("isBuyer:", this.isBuyer);
     },
     filterMessagesByGoodsId() {
       this.filteredMessages = this.chatMessages
@@ -182,12 +186,7 @@ export default {
     },
     async confirmPurchase() {
       let buyerId;
-      // if (this.tab === 0) {
-      //   buyerId = this.chatPartner;
-      // } else if (this.tab === 1) {
-      //   buyerId = this.currentUser;
-      // }
-      const owner=this.product.sellerId
+      const owner = this.product.sellerId;
       if (String(owner) === String(this.currentUser)) {
         buyerId = this.chatPartner;
       } else {
@@ -198,32 +197,32 @@ export default {
         ...this.product,
         buyerId
       };
-      console.log("buyerId: ",buyerId);
+      console.log("buyerId: ", buyerId);
 
-      // try {
-      const response = await axios.post(`${this.$httpUrl}/goods/update`, updatedProduct, {
-        headers: {
-          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-        }
-      });
+      try {
+        const response = await axios.post(`${this.$httpUrl}/goods/update`, updatedProduct, {
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          }
+        });
 
-        if (response.data.msg == '成功') {
+        if (response.data.msg === '成功') {
           console.log('购买确认成功');
+          this.successDialog = true;
         } else {
           console.log('购买确认失败');
         }
-      // } catch (error) {
-      //   console.error('Error confirming purchase:', error);
-      //   console.log('购买确认失败');
-      // }
-      // } catch (error) {
-      //   console.error('Error confirming purchase:', error);
-      //   console.log('购买确认失败');
-      // }
+      } catch (error) {
+        console.error('Error confirming purchase:', error);
+        console.log('购买确认失败');
+      }
+    },
+    closeSuccessDialog() {
+      this.successDialog = false;
+      this.$router.push('/MessagesPage');
     }
   },
   created() {
-
     const from = this.$route.params.message.from;
     const to = this.$route.params.message.to;
     const tab = this.$route.params.tab;
@@ -248,10 +247,11 @@ export default {
     this.fetchProductDetails();
     // 设置聊天对象的名称
     this.chatPartnerName = this.chatPartner;
-
   }
 };
 </script>
+
+
 <style scoped>
 .v-app-bar {
   justify-content: space-between;
