@@ -318,7 +318,7 @@ export default {
 
 .button-col {
   display: inline-block;
-  margin: 0 15px; /* 设置图标之间的间距 */
+  margin: 0 12px; /* 设置图标之间的间距 */
   text-align: center;
   margin-bottom: 2px; /* 控制按钮和文字之间的间隔 */
 }
