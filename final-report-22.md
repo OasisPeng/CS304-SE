@@ -5,9 +5,9 @@
 
 5212 (backend)
 
-1808779 (frontend)
+17804 (frontend)
 
-1814211 (total)
+24822 (total)
 
 **Tool used:**
 `cloc`
@@ -49,7 +49,7 @@ manual count via `package.json` for front-end and `pom.xml` for back-end
 **Location:** [End User Documentation](https://github.com//sustech-cs304/team-project-24spring-22/blob/master/README.md)
 ### Documentation for Developers
 
-**Location:** [Developer API Documentation](http://120.77.79.53:8090/swagger-ui/index.html)
+**Location:** [Developer API Documentation](http://120.78.7.40:8090/swagger-ui/index.html)
 ## 3. Tests
 ### Automated Testing
 **Tools/Frameworks Used:**
