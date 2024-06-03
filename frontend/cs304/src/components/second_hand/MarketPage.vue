@@ -185,7 +185,7 @@ export default {
             description: evo.description || "",
             category: evo.category || "",
             publishDate: evo.publishDate || "",
-            soldOut: evo.buyerId !== ""
+            soldOut: evo.buyerId !== null
           };
         });
 
