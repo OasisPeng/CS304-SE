@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     goBack() {
-      this.$router.go(-1);
+      this.$router.push('/MessagesPage');
     },
     async fetchChatMessages() {
       const from = this.currentUser;

@@ -9,13 +9,6 @@
 
     <v-card class="mx-auto my-5" max-width="600">
       <v-img :src="product.image"></v-img>
-      <v-btn
-          icon
-          class="favourite-btn"
-          @click="toggleFavourite"
-      >
-<!--        <v-icon :color="isFavourite ? 'red' : 'grey'">{{ isFavourite ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>-->
-      </v-btn>
       <v-card-title>{{ product.name }}</v-card-title>
       <v-card-subtitle class="pb-0">分类: {{ product.category }}</v-card-subtitle>
       <v-card-subtitle>发布时间: {{ formatDate(product.publishDate) }}</v-card-subtitle>
@@ -25,8 +18,6 @@
         <v-divider></v-divider>
         <div class="mt-3">卖家ID: {{ product.sellerId }}</div>
         <div>买家ID: {{ product.buyerId }}</div>
-<!--        <div class="mt-3">收藏了此商品的同学：</div>-->
-        <div v-for="user in favouriteUsers" :key="user">{{ user }}</div>
       </v-card-text>
       <v-card-actions>
         <v-btn color="green" @click="buyProduct">购买</v-btn>
@@ -69,16 +60,9 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <!-- 消息提示 -->
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="3000">
-      {{ snackbar.text }}
-    </v-snackbar>
   </v-container>
 </template>
 <script>
-import axios from 'axios';
-
 export default {
   data() {
     return {
@@ -97,14 +81,7 @@ export default {
       currentUser: JSON.parse(localStorage.getItem('info')).username,
       isSeller: false,
       dialog: false,
-      soldDialog: false,
-      isFavourite: false,
-      favouriteUsers: [],
-      snackbar: {
-        show: false,
-        text: '',
-        color: ''
-      }
+      soldDialog: false
     };
   },
   async created() {
@@ -129,13 +106,7 @@ export default {
         publishDate: productData.publishDate
       };
       // 检查当前用户是否是卖家
-      this.isSeller = this.product.sellerId === this.currentUser;
-
-      // 检查当前用户是否已收藏此商品
-      await this.checkFavouriteStatus();
-
-      // 获取收藏了此商品的用户
-      await this.fetchFavouriteUsers();
+      this.isSeller = String(this.product.sellerId) === String(this.currentUser);
     } catch (error) {
       console.error('Error fetching product details:', error);
     }
@@ -143,67 +114,6 @@ export default {
   methods: {
     goBack() {
       this.$router.go(-1);
-    },
-    async checkFavouriteStatus() {
-      try {
-        const response = await this.$axios.get(this.$httpUrl + `/favourite/user/${this.currentUser}`, {
-          headers: {
-            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-          }
-        });
-        const favourites = response.data.data;
-        this.isFavourite = favourites.some(fav => fav.goodsId === this.product.id);
-      } catch (error) {
-        console.error('Error checking favourite status:', error);
-      }
-    },
-    async fetchFavouriteUsers() {
-      try {
-        const response = await this.$axios.get(this.$httpUrl + `/favourite/good/${this.product.id}`, {
-          headers: {
-            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-          }
-        });
-        const favourites = response.data.data;
-        this.favouriteUsers = favourites.map(fav => fav.userId);
-      } catch (error) {
-        console.error('Error fetching favourite users:', error);
-      }
-    },
-    async toggleFavourite() {
-      const favourite = {
-        userId: this.currentUser,
-        goodsId: this.product.id
-      };
-      try {
-        if (this.isFavourite) {
-          await this.$axios.delete(this.$httpUrl + '/favourite', {
-            data: favourite,
-            headers: {
-              'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-            }
-          });
-          this.isFavourite = false;
-          this.showSnackbar('取消收藏成功', 'grey');
-        } else {
-          await this.$axios.post(this.$httpUrl + '/favourite', favourite, {
-            headers: {
-              'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-            }
-          });
-          this.isFavourite = true;
-          this.showSnackbar('收藏成功', 'red');
-        }
-        // 更新收藏用户列表
-        await this.fetchFavouriteUsers();
-      } catch (error) {
-        console.error('Error toggling favourite:', error);
-      }
-    },
-    showSnackbar(text, color) {
-      this.snackbar.text = text;
-      this.snackbar.color = color;
-      this.snackbar.show = true;
     },
     buyProduct() {
       if (this.isSeller) {
@@ -236,7 +146,6 @@ export default {
           time: new Date(),
           goodsId
         };
-
         console.log(greetingMessage);
 
         this.$axios.post(this.$httpUrl + '/message/sendMessage', greetingMessage, {
@@ -245,9 +154,10 @@ export default {
           }
         });
 
-        const message = greetingMessage;
+        const message=greetingMessage
+        // this.$router.push('/FirstPage');
         this.$router.push({ name: 'ChatPage', params: { message, tab:0 } });
-      }
+    }
     },
     async removeProduct() {
       try {
@@ -282,10 +192,6 @@ export default {
   padding-top: 64px;
 }
 
-.v-card {
-  position: relative;
-}
-
 .v-card-title {
   font-size: 24px;
   font-weight: bold;
@@ -304,12 +210,6 @@ export default {
   margin-right: 10px;
 }
 
-.favourite-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
 .fixed-bottom-right {
   position: fixed;
   bottom: 35px;
@@ -319,15 +219,10 @@ export default {
 
 .remove-text {
   position: fixed;
-  bottom: 15px;
-  right: 20px;
+  bottom: 15px; /* Adjust the position as needed */
+  right: 20px; /* Adjust the position as needed */
   font-size: 12px;
   color: red;
   text-align: center;
-}
-
-.v-snackbar__wrapper {
-  background: rgba(255, 0, 0, 0.7);
-  color: white;
 }
 </style>
