@@ -36,9 +36,20 @@
       </v-btn>
       <div v-if="isSeller" class="remove-text">下架该商品</div>
     </v-card>
+
+    <!-- 卖家本人提示弹窗 -->
+    <v-dialog v-model="dialog" max-width="300">
+      <v-card>
+        <v-card-title class="headline">提示</v-card-title>
+        <v-card-text>您就是卖家本人</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialog = false">确定</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
-
 <script>
 export default {
   data() {
@@ -56,7 +67,8 @@ export default {
       },
       websocket: null,
       currentUser: JSON.parse(localStorage.getItem('info')).username,
-      isSeller: false
+      isSeller: false,
+      dialog: false
     };
   },
   async created() {
@@ -91,22 +103,26 @@ export default {
       this.$router.go(-1);
     },
     buyProduct() {
-      const sellerId = this.product.sellerId;
-      const buyerId = this.currentUser;
-      const goodsId = this.product.id
-      const message = {
-        from: buyerId,
-        to: sellerId,
-        text: "你好，想买下这个商品。",
-        time: new Date(),
-        goodsId
+      if (this.isSeller) {
+        this.dialog = true;
+      } else {
+        const sellerId = this.product.sellerId;
+        const buyerId = this.currentUser;
+        const goodsId = this.product.id;
+        const message = {
+          from: buyerId,
+          to: sellerId,
+          text: "你好，想买下这个商品。",
+          time: new Date(),
+          goodsId
+        };
+        this.$router.push({ name: 'ChatPage', params: { message, tab:0 } });
       }
-      this.$router.push({ name: 'ChatPage', params: { message, tab:0} });
     },
     contactSeller() {
       const sellerId = this.product.sellerId;
       const buyerId = this.currentUser;
-      const goodsId = this.product.id
+      const goodsId = this.product.id;
       const greetingMessage = {
         from: buyerId,
         to: sellerId,
@@ -115,32 +131,13 @@ export default {
         goodsId
       };
 
-      console.log(greetingMessage)
+      console.log(greetingMessage);
 
       this.$axios.post(this.$httpUrl + '/message/sendMessage', greetingMessage, {
         headers: {
           'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
         }
       });
-
-      // const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      // const wsUrl = `${wsProtocol}//${window.location.host}/chatroom/${buyerId}`;
-      //
-      // this.websocket = new WebSocket(wsUrl);
-      // this.websocket.onopen = () => {
-      //   console.log('WebSocket connection established');
-      // };
-      // this.websocket.onmessage = (event) => {
-      //   const message = JSON.parse(event.data);
-      //   console.log('Received message:', message);
-      // };
-      // this.websocket.onclose = () => {
-      //   console.log('WebSocket connection closed');
-      // };
-      // this.websocket.onerror = (error) => {
-      //   console.error('WebSocket error:', error);
-      // };
-
 
       this.$router.push('/FirstPage');
     },
@@ -168,8 +165,6 @@ export default {
   }
 };
 </script>
-
-
 <style scoped>
 .v-container {
   padding-top: 64px;

@@ -26,17 +26,28 @@
         <div
             v-for="(msg, index) in filteredMessages"
             :key="index"
-            :class="['chat-bubble', msg.from === currentUser ? 'right' : 'left']"
+            :class="['chat-bubble', String(msg.from) === String(currentUser) ? 'right' : 'left']"
         >
-          <v-avatar
-              :left="msg.from !== currentUser"
-              :right="msg.from === currentUser"
-              size="32"
-          >
-            <v-icon v-if="msg.from !== currentUser">mdi-account-circle</v-icon>
-            <v-icon v-else>mdi-account-circle-outline</v-icon>
-          </v-avatar>
-          <div class="chat-text">{{ msg.text }}</div>
+          <template v-if="String(msg.from) === String(currentUser)">
+            <div class="chat-text">{{ msg.text }}</div>
+            <v-avatar
+                :left="false"
+                :right="true"
+                size="32"
+            >
+              <v-icon>mdi-account-circle-outline</v-icon>
+            </v-avatar>
+          </template>
+          <template v-else>
+            <v-avatar
+                :left="true"
+                :right="false"
+                size="32"
+            >
+              <v-icon>mdi-account-circle</v-icon>
+            </v-avatar>
+            <div class="chat-text">{{ msg.text }}</div>
+          </template>
         </div>
       </v-col>
     </v-row>
@@ -157,17 +168,17 @@ export default {
       console.log("buyerId: ",buyerId);
 
       // try {
-        const response = await axios.post(`${this.$httpUrl}/goods/update`, updatedProduct, {
-          headers: {
-            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-          }
-        });
-
-        if (response.data.msg=='成功') {
-          console.log('购买确认成功');
-        } else {
-          console.log('购买确认失败');
+      const response = await axios.post(`${this.$httpUrl}/goods/update`, updatedProduct, {
+        headers: {
+          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
         }
+      });
+
+      if (response.data.msg=='成功') {
+        console.log('购买确认成功');
+      } else {
+        console.log('购买确认失败');
+      }
       // } catch (error) {
       //   console.error('Error confirming purchase:', error);
       //   console.log('购买确认失败');
@@ -175,17 +186,15 @@ export default {
     }
   },
   created() {
-    // const { from, to, tab } = this.$route.params.message;
-
-    const from=this.$route.params.message.from
-    const to=this.$route.params.message.to
-    const tab=this.$route.params.tab
+    const from=this.$route.params.message.from;
+    const to=this.$route.params.message.to;
+    const tab=this.$route.params.tab;
 
     console.log("this.$route.params.message:", this.$route.params.message);
     console.log("from:", from, "type:", typeof from);
     console.log("this.currentUser:", this.currentUser, "type:", typeof this.currentUser);
 
-    console.log("tab: ", tab)
+    console.log("tab: ", tab);
     this.tab = tab;
 
     // 确定聊天对象
