@@ -106,7 +106,7 @@ export default {
         publishDate: productData.publishDate
       };
       // 检查当前用户是否是卖家
-      this.isSeller = this.product.sellerId === this.currentUser;
+      this.isSeller = String(this.product.sellerId) === String(this.currentUser);
     } catch (error) {
       console.error('Error fetching product details:', error);
     }
@@ -133,28 +133,31 @@ export default {
       }
     },
     contactSeller() {
-      const sellerId = this.product.sellerId;
-      const buyerId = this.currentUser;
-      const goodsId = this.product.id;
-      const greetingMessage = {
-        from: buyerId,
-        to: sellerId,
-        text: "你好，想了解下这个商品~",
-        time: new Date(),
-        goodsId
-      };
+      if (this.isSeller) {
+        this.dialog = true;
+      } else {
+        const sellerId = this.product.sellerId;
+        const buyerId = this.currentUser;
+        const goodsId = this.product.id;
+        const greetingMessage = {
+          from: buyerId,
+          to: sellerId,
+          text: "你好，想了解下这个商品~",
+          time: new Date(),
+          goodsId
+        };
+        console.log(greetingMessage);
 
-      console.log(greetingMessage);
+        this.$axios.post(this.$httpUrl + '/message/sendMessage', greetingMessage, {
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          }
+        });
 
-      this.$axios.post(this.$httpUrl + '/message/sendMessage', greetingMessage, {
-        headers: {
-          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-        }
-      });
-
-      const message=greetingMessage
-      // this.$router.push('/FirstPage');
-      this.$router.push({ name: 'ChatPage', params: { message, tab:0 } });
+        const message=greetingMessage
+        // this.$router.push('/FirstPage');
+        this.$router.push({ name: 'ChatPage', params: { message, tab:0 } });
+    }
     },
     async removeProduct() {
       try {
