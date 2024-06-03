@@ -119,9 +119,18 @@ We have integrated automated building and deployment, with front-end and back-en
 
 ### Final Artifacts
 
-**Description:** The build produces executable files, documentation.
+**Description:** 
+
+- FrontEnd: run `npm run build` we will get directory called **dist** which will contains all of the resource that we need to deploy
+- BackEnd: We use `mvn packge` to build springboot files and we will get executable jar file in the **target** directory called `cs304-0.0.1-SNAPSHOT.jar`
 
 ### Buildfile/Script
+
+We use **github action** to do the automatically build and deploy job, the github action script is shown below .
+
+[FrontEnd script](./.github/workflows/vue.yml) 
+
+[BackEnd script](./.github/workflows/deployment.yml)
 
 **Location**:
 
@@ -140,166 +149,20 @@ We have integrated automated building and deployment, with front-end and back-en
 #### Script/Artifacts
 - **FrontEnd Dockerfile**: 
 
-```dockerfile
-FROM nginx
-RUN rm /etc/nginx/conf.d/default.conf
-ADD default.conf /etc/nginx/conf.d/
-COPY dist/ /usr/share/nginx/html/
-```
+[	FrontEnd Dockerfile](./frontend/cs304/Dockerfile)
 
 - **BackEnd Dockerfile**: 
 
-```dockerfile
-FROM ubuntu:22.04
-RUN apt-get update && apt-get install -y openjdk-18-jdk
-RUN apt-get update && apt-get install -y python3 python3-pip
-RUN pip3 install pymysql openai
-RUN mkdir /app
-COPY ai.py /app/ai.py
-COPY target/cs304-0.0.1-SNAPSHOT.jar /app/back.jar
-WORKDIR /app
-CMD ["java", "-jar", "back.jar"]
-```
+​	[BackEnd Dockerfile](./cs304/Dockerfile)
 
 - **FrontEnd Github Action Script**
 
-```yml
-name: Vue Deploy
-
-on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'frontend/**'
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '17.9.1'
-
-      - name: Install dependencies
-        run: |
-          cd ./frontend/cs304
-          npm install
-
-      - name: Build
-        run: |
-          cd ./frontend/cs304
-          npm run build
-          
-      - name: Build docker image
-        run: |       
-          cd ./frontend/cs304                  # run：该步骤要执行的命令，| 代表可以有多条命令
-      
-          docker build -t front .   # 构建docker镜像，命令最后的点代表Dockerfile所在目录
-          docker save -o front.tar front # 保存压缩后的docker镜像，这一步是为了方便后面我们将该镜像上传至指定的服务器
-          ls
-
-      - name: delete old docker image
-        run: |
-          cd ./frontend/cs304
-          sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker stop front || true && docker rm front || true && docker rmi front || true"
-      
-            # 删除旧的docker镜像压缩包
-      - name: delete old docker tar
-        run: |
-          cd ./frontend/cs304
-          sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "cd ${{secrets.REMOTE_PROJECT_CATALOGUE}} && rm -f front.tar"
-            # 上传新的docker镜像
-      - name: upload new docker image and start-up script
-        run: |
-          cd ./frontend/cs304
-          sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} scp -r -o StrictHostKeyChecking=no ./front.tar root@${{secrets.REMOTE_SERVER01_IP}}:${{secrets.REMOTE_PROJECT_CATALOGUE}}
-            # 加载tar文件，加载docker镜像
-      - name: load new docker image
-        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker load -i ${{secrets.REMOTE_PROJECT_CATALOGUE}}/front.tar"
-            # docker run 运行，启动容器
-      - name: run project
-        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker run -d -p 8080:8080 --name front front"
-```
+​	[FrontEnd script](./.github/workflows/vue.yml) 
 
 - **BackEnd Github Action Script**
 
-  ```yml
-  name: Java CI with Maven
+  [BackEnd script](./.github/workflows/deployment.yml)
   
-  on:
-    push:
-      branches: [ "master" ] # 当向master分支进行git push时触发该工作流
-      paths:
-        - 'cs304/**'
-    pull_request:
-      branches: [ "master" ] # 当向master分支合并分支时触发该工作流
-      paths:
-        - 'cs304/**'
-  # 工作流具体执行的任务
-  jobs:
-    build:
-      runs-on: ubuntu-22.04
-      steps:
-      - name: pull latest code
-        uses: actions/checkout@v3 # 使用官方的checkout action，用于将仓库中的最新代码检查并拉取到工作目录中
-      - name: ls
-        run: |
-          ls
-      - name: Set up the working directory
-        run: |
-          cd ./cs304
-      - name: Set up JDK 18
-        uses: actions/setup-java@v3 # 安装java环境的action
-        with:
-          java-version: '18' # 指定jkd版本
-          distribution: 'temurin'
-          cache: maven # 使用maven缓存，避免每次构建项目时都要重新下载maven依赖
-      - name: packge
-        run: |
-          cd ./cs304
-          mvn clean
-          mvn package -DskipTests -Dmaven.compile.skip=true
-      - name: Build docker image
-        run: |       
-          cd ./cs304                  # run：该步骤要执行的命令，| 代表可以有多条命令
-          
-          docker build -t back .   # 构建docker镜像，命令最后的点代表Dockerfile所在目录
-          docker save -o back.tar back # 保存压缩后的docker镜像，这一步是为了方便后面我们将该镜像上传至指定的服务器
-          ls
-         # 删除旧的docker镜像
-         # 使用sshpass以非交互式的用户名密码方式登录远程服务器
-         # 停止运行中的docker容器、删除该容器、删除镜像
-         # docker命令后面的两条竖线 || 代表当前面的docker命令执行失败时，命令可以继续往下执行，这样做的原因是在第一次构建项目的时候肯定不会存在这些容器和镜像，此时删除或停止这些容器就会失败
-      - name: delete old docker image
-        run: |
-          cd ./cs304
-          sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker stop back || true && docker rm back || true && docker rmi back || true"
-  
-            # 删除旧的docker镜像压缩包
-      - name: delete old docker tar
-        run: |
-          cd ./cs304
-          sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "cd ${{secrets.REMOTE_PROJECT_CATALOGUE}} && rm -f back.tar"
-            # 上传新的docker镜像
-      - name: upload new docker image and start-up script
-        run: |
-          cd ./cs304
-          sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} scp -r -o StrictHostKeyChecking=no ./back.tar root@${{secrets.REMOTE_SERVER01_IP}}:${{secrets.REMOTE_PROJECT_CATALOGUE}}
-            # 加载tar文件，加载docker镜像
-      - name: load new docker image
-        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker load -i ${{secrets.REMOTE_PROJECT_CATALOGUE}}/back.tar"
-            # docker run 运行，启动容器
-      - name: run project
-        run: sshpass -p ${{secrets.REMOTE_SERVER01_PWD}} ssh -o StrictHostKeyChecking=no root@${{secrets.REMOTE_SERVER01_IP}} "docker run -d -p 8090:8090 --name back back"
-  
-  ```
-
   
 
 #### Proof of Successful Containerization
