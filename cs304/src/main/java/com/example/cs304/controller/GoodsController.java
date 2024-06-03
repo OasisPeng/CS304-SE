@@ -97,6 +97,7 @@ public class GoodsController {
     @PostMapping("/del")
     @Operation(description = "删除商品")
     public Result deleteGoods(@RequestBody Goods goods) {
+        System.out.println("删除商品："+goods);
         return (goodsService.deleteById(goods) != null) ? Result.suc(goods):Result.fail();
     }
 }
