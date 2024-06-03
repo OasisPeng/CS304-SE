@@ -48,6 +48,18 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 商品已售出提示弹窗 -->
+    <v-dialog v-model="soldDialog" max-width="300">
+      <v-card>
+        <v-card-title class="headline">提示</v-card-title>
+        <v-card-text>该商品已售出，不可下架。</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="soldDialog = false">确定</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -68,7 +80,8 @@ export default {
       websocket: null,
       currentUser: JSON.parse(localStorage.getItem('info')).username,
       isSeller: false,
-      dialog: false
+      dialog: false,
+      soldDialog: false
     };
   },
   async created() {
@@ -143,16 +156,20 @@ export default {
     },
     async removeProduct() {
       try {
-        console.log(this.product);
-        const response = await this.$axios.post(this.$httpUrl + '/goods/del', this.product, {
-          headers: {
-            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-          }
-        });
-        if (response.data.msg === '成功') {
-          await this.$router.push('/FirstPage');
+        if (this.product.buyerId) {
+          this.soldDialog = true;
         } else {
-          console.error('商品下架失败');
+          this.product.buyerId = '已下架';
+          const response = await this.$axios.post(this.$httpUrl + '/goods/update', this.product, {
+            headers: {
+              'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+            }
+          });
+          if (response.data.msg === '成功') {
+            await this.$router.push('/FirstPage');
+          } else {
+            console.error('商品下架失败');
+          }
         }
       } catch (error) {
         console.error('Error removing product:', error);
