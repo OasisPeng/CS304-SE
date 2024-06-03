@@ -5,7 +5,7 @@
     </v-app-bar>
     <v-tabs v-model="tab" background-color="white" grow color="teal">
       <v-tab>互动消息</v-tab>
-      <v-tab>我想要的</v-tab>
+      <v-tab>我的消息</v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item>
@@ -35,11 +35,11 @@
                 :src="message.goodsImage"
                 class="goods-image"
             ></v-img>
-            <v-icon
-                v-if="message.old !== 0"
-                color="red"
-                class="red-dot"
-            >mdi-circle</v-icon>
+<!--            <v-icon-->
+<!--                v-if="message.old !== 0"-->
+<!--                color="red"-->
+<!--                class="red-dot"-->
+<!--            >mdi-circle</v-icon>-->
           </v-list-item>
         </v-list>
       </v-tab-item>
@@ -70,11 +70,11 @@
                 :src="message.goodsImage"
                 class="goods-image"
             ></v-img>
-            <v-icon
-                v-if="message.old !== 0"
-                color="red"
-                class="red-dot"
-            >mdi-circle</v-icon>
+<!--            <v-icon-->
+<!--                v-if="message.old !== 0"-->
+<!--                color="red"-->
+<!--                class="red-dot"-->
+<!--            >mdi-circle</v-icon>-->
           </v-list-item>
         </v-list>
       </v-tab-item>
@@ -214,12 +214,12 @@ export default {
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.red-dot {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  font-size: 5px;
-}
+/*.red-dot {*/
+/*  position: absolute;*/
+/*  top: 10px;*/
+/*  left: 10px;*/
+/*  font-size: 5px;*/
+/*}*/
 
 .goods-image {
   width: 40px;
