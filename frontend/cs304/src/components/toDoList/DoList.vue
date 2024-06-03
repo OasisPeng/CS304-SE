@@ -310,6 +310,18 @@ export default {
           return 'normal'; // 默认级别
       }
     },
+     reverseConvertLevel(level){
+      switch (level) {
+        case 'important':
+          return '重要紧急';
+        case 'normal':
+          return '重要不紧急';
+        case 'unimportant':
+          return '不重要不紧急';
+        default:
+          return '重要不紧急'; // 默认级别
+      }
+    },
     async deleteEvent(task) {
       console.log("任务", task);
       const updatedTask = { ...task, finish: task.finish ? 1 : 0, id: parseInt(task.id, 10) };
@@ -336,7 +348,7 @@ export default {
       localStorage.setItem('id', task.id);
       localStorage.setItem('category', task.category);
       localStorage.setItem('emotion', task.emotion);
-      localStorage.setItem('level', task.level);
+      localStorage.setItem('level', this.reverseConvertLevel(task.level));
       localStorage.setItem('title', task.title);
       localStorage.setItem('text', task.text);
       if (task.finish === 'no') task.finish = 0;
