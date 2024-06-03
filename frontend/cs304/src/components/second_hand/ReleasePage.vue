@@ -35,6 +35,39 @@
         </v-col>
       </v-row>
       <v-row>
+        <v-col cols="12">
+          <v-expansion-panels>
+            <v-expansion-panel>
+              <v-expansion-panel-header>物品种类</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-radio-group
+                    v-model="condition"
+                    class="custom-radio-group"
+                    color="green"
+                    :rules="[rules.required]"
+                >
+                  <v-radio label="书籍" value="book"></v-radio>
+                  <v-radio label="电子产品" value="device"></v-radio>
+                  <v-radio label="食物" value="food"></v-radio>
+                  <v-radio label="其他" value="other"></v-radio>
+                </v-radio-group>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-text-field
+              v-model="price"
+              label="价格"
+              outlined
+              color="green"
+              :rules="[rules.required, rules.isNumber]"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row>
         <v-col cols="12" class="d-flex align-start">
           <div class="image-upload-section">
             <v-btn
@@ -68,39 +101,6 @@
               <v-icon color="red">mdi-close</v-icon>
             </v-btn>
           </div>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12">
-          <v-expansion-panels>
-            <v-expansion-panel>
-              <v-expansion-panel-header>物品种类</v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-radio-group
-                    v-model="condition"
-                    class="custom-radio-group"
-                    color="green"
-                    :rules="[rules.required]"
-                >
-                  <v-radio label="书籍" value="book"></v-radio>
-                  <v-radio label="电子产品" value="device"></v-radio>
-                  <v-radio label="食物" value="food"></v-radio>
-                  <v-radio label="其他" value="other"></v-radio>
-                </v-radio-group>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12">
-          <v-text-field
-              v-model="price"
-              label="价格"
-              outlined
-              color="green"
-              :rules="[rules.required, rules.isNumber]"
-          ></v-text-field>
         </v-col>
       </v-row>
       <v-row class="fixed-bottom">
