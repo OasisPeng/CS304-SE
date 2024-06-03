@@ -10,8 +10,8 @@
       <v-col cols="12" class="d-flex align-center">
         <v-img :src="product.image" class="goods-image"></v-img>
         <div class="product-info">
-          <div class="product-title">{{ product.title }}</div>
-          <div class="product-price">{{ product.price }}</div>
+          <div class="product-title">{{ product.name}}</div>
+          <div class="product-price">{{ product.price}}</div>
         </div>
       </v-col>
     </v-row>
@@ -104,6 +104,8 @@ export default {
       this.filteredMessages = this.chatMessages
           .filter(msg => msg.goodsId === this.goodsId)
           .sort((a, b) => new Date(a.time) - new Date(b.time));
+
+      console.log(this.filteredMessages)
     },
     async sendMessage() {
       if (this.newMessage.trim() !== '') {
