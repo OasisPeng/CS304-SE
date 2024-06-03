@@ -5,7 +5,7 @@
     </v-app-bar>
     <v-tabs v-model="tab" background-color="white" grow color="teal">
       <v-tab>互动消息</v-tab>
-      <v-tab>我想要的</v-tab>
+      <v-tab>我发出的</v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item>

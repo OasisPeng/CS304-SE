@@ -6,6 +6,15 @@
       </v-btn>
       <v-toolbar-title>{{ chatPartnerName }}</v-toolbar-title>
     </v-app-bar>
+    <v-row class="product-display">
+      <v-col cols="12" class="d-flex align-center">
+        <v-img :src="product.image" class="goods-image"></v-img>
+        <div class="product-info">
+          <div class="product-title">{{ product.title }}</div>
+          <div class="product-price">{{ product.price }}</div>
+        </div>
+      </v-col>
+    </v-row>
     <v-row class="chat-container">
       <v-col cols="12">
         <div
@@ -35,6 +44,7 @@
     </v-row>
   </v-container>
 </template>
+
 <script>
 import axios from 'axios';
 
@@ -46,8 +56,9 @@ export default {
       filteredMessages: [],
       newMessage: '',
       currentUser: JSON.parse(localStorage.getItem('info')).username,
-      retryInterval: 500, // Retry interval in milliseconds
-      goodsId: null
+      chatPartner: '', // 保存聊天对象的ID
+      goodsId: null,
+      product: {}
     };
   },
   methods: {
@@ -56,7 +67,7 @@ export default {
     },
     async fetchChatMessages() {
       const from = this.currentUser;
-      const to = this.$route.params.message.to;
+      const to = this.chatPartner;
       this.goodsId = this.$route.params.message.goodsId;
 
       try {
@@ -73,9 +84,20 @@ export default {
         }));
 
         this.filterMessagesByGoodsId();
-
       } catch (error) {
         console.error('Error fetching chat messages:', error);
+      }
+    },
+    async fetchProductDetails() {
+      try {
+        const response = await axios.get(`${this.$httpUrl}/goods/${this.goodsId}`, {
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          }
+        });
+        this.product = response.data.data;
+      } catch (error) {
+        console.error('Error fetching product details:', error);
       }
     },
     filterMessagesByGoodsId() {
@@ -86,7 +108,7 @@ export default {
     async sendMessage() {
       if (this.newMessage.trim() !== '') {
         const from = this.currentUser;
-        const to = this.$route.params.message.to;
+        const to = this.chatPartner;
 
         const message = {
           from: from,
@@ -103,8 +125,8 @@ export default {
             }
           });
           this.chatMessages.push({ ...message, avatarError: false });
-          this.newMessage = '';
           this.filterMessagesByGoodsId();
+          this.newMessage = '';
         } catch (error) {
           console.error('Error sending message:', error);
         }
@@ -112,14 +134,55 @@ export default {
     }
   },
   created() {
-    this.chatPartnerName = this.$route.params.message.name;
+    const from = this.$route.params.message.from;
+    const to = this.$route.params.message.to;
+
+    // 确定聊天对象
+    if (from === this.currentUser) {
+      this.chatPartner = to;
+    } else {
+      this.chatPartner = from;
+    }
+
+    // 设置聊天对象的名称
+    this.chatPartnerName = this.chatPartner;
+
     this.fetchChatMessages();
+    this.fetchProductDetails(); // Fetch product details when the component is created
   }
 };
 </script>
+
 <style scoped>
 .v-app-bar {
   justify-content: space-between;
+}
+
+.product-display {
+  padding: 16px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.goods-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
+.product-info {
+  flex-grow: 1;
+}
+
+.product-title {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.product-price {
+  color: #ff5722;
+  font-size: 16px;
 }
 
 .chat-container {
@@ -131,6 +194,10 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+}
+
+.chat-bubble.left {
+  justify-content: flex-start;
 }
 
 .chat-bubble.left .chat-text {
