@@ -18,6 +18,7 @@ public class MessageController {
     @GetMapping("/getByTwoUser/{id1}/{id2}")
     public Result getByTwoUser(@PathVariable Integer id1, @PathVariable Integer id2) {
         List<Message> list = service.SelectByTwoUser(id1, id2);
+        System.out.println(list);
         return Result.suc(list);
     }
     @GetMapping("/getByOneUserTo/{id}")
@@ -45,6 +46,7 @@ public class MessageController {
     @PostMapping("/sendMessage")
     public Result sendMessage(@RequestBody Message message) {
         message.setTime(new Timestamp(System.currentTimeMillis()));
+        System.out.println(message);
         service.InsertMessage(message);
         return Result.suc(200);
     }

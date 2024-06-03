@@ -17,4 +17,5 @@ public class Message {
     String text;
     Timestamp time;
     Integer old = 0;
+    Integer goodsId;
 }

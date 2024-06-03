@@ -30,8 +30,9 @@ public class MessageServiceImpl implements MessageService {
                     .eq(Message::getFrom, id2);
 
         }).orderByAsc(Message::getTime);
-
-        return dao.selectList(lqw);
+        List<Message> messages=dao.selectList(lqw);
+        System.out.println("SelectByTwoUser SQL: " + lqw.getSqlSegment());
+        return messages;
     }
 
     @Override

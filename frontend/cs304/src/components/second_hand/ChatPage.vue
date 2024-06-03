@@ -8,27 +8,20 @@
     </v-app-bar>
     <v-row class="chat-container">
       <v-col cols="12">
-        <div class="chat-bubble left" v-for="(msg, index) in chatMessages" :key="index">
-          <v-avatar left size="32">
-            <v-img
-                v-if="msg.avatar && !msg.avatarError"
-                :src="msg.avatar"
-                @error="msg.avatarError = true"
-            ></v-img>
-            <v-icon v-else>mdi-account-circle</v-icon>
-          </v-avatar>
-          <div class="chat-text">{{ msg.text }}</div>
-        </div>
-        <div class="chat-bubble right" v-for="(msg, index) in myMessages" :key="index">
-          <div class="chat-text">{{ msg.text }}</div>
-          <v-avatar right size="32">
-            <v-img
-                v-if="myAvatar && !msg.avatarError"
-                :src="myAvatar"
-                @error="msg.avatarError = true"
-            ></v-img>
+        <div
+            v-for="(msg, index) in filteredMessages"
+            :key="index"
+            :class="['chat-bubble', msg.from === currentUser ? 'right' : 'left']"
+        >
+          <v-avatar
+              :left="msg.from !== currentUser"
+              :right="msg.from === currentUser"
+              size="32"
+          >
+            <v-icon v-if="msg.from !== currentUser">mdi-account-circle</v-icon>
             <v-icon v-else>mdi-account-circle-outline</v-icon>
           </v-avatar>
+          <div class="chat-text">{{ msg.text }}</div>
         </div>
       </v-col>
     </v-row>
@@ -42,7 +35,6 @@
     </v-row>
   </v-container>
 </template>
-
 <script>
 import axios from 'axios';
 
@@ -51,11 +43,11 @@ export default {
     return {
       chatPartnerName: '',
       chatMessages: [],
-      myMessages: [],
+      filteredMessages: [],
       newMessage: '',
-      websocket: null,
-      myAvatar: 'path/to/my-avatar.jpg', // Replace with your actual avatar path
-      retryInterval: 500 // Retry interval in milliseconds
+      currentUser: JSON.parse(localStorage.getItem('info')).username,
+      retryInterval: 500, // Retry interval in milliseconds
+      goodsId: null
     };
   },
   methods: {
@@ -63,8 +55,9 @@ export default {
       this.$router.go(-1);
     },
     async fetchChatMessages() {
-      const from = this.$route.params.message.from;
+      const from = this.currentUser;
       const to = this.$route.params.message.to;
+      this.goodsId = this.$route.params.message.goodsId;
 
       try {
         const response = await axios.get(`${this.$httpUrl}/message/getByTwoUser/${from}/${to}`, {
@@ -74,89 +67,56 @@ export default {
         });
         const messages = response.data.data;
 
-        this.chatMessages = messages
-            .filter(msg => msg.from === to)
-            .map(msg => ({
-              text: msg.text,
-              avatarError: false
-            }));
+        this.chatMessages = messages.map(msg => ({
+          ...msg,
+          avatarError: false
+        }));
 
-        this.myMessages = messages
-            .filter(msg => msg.from === from)
-            .map(msg => ({
-              text: msg.text,
-              avatarError: false
-            }));
+        this.filterMessagesByGoodsId();
 
-        // Sort messages by timestamp
-        this.chatMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-        this.myMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
       } catch (error) {
         console.error('Error fetching chat messages:', error);
       }
     },
-    sendMessage() {
+    filterMessagesByGoodsId() {
+      this.filteredMessages = this.chatMessages
+          .filter(msg => msg.goodsId === this.goodsId)
+          .sort((a, b) => new Date(a.time) - new Date(b.time));
+    },
+    async sendMessage() {
       if (this.newMessage.trim() !== '') {
-        const from = this.$route.params.message.from;
+        const from = this.currentUser;
         const to = this.$route.params.message.to;
 
         const message = {
           from: from,
           to: to,
           text: this.newMessage,
-          time: new Date()
+          time: new Date(),
+          goodsId: this.goodsId
         };
 
-        const sendMsg = () => {
-          if (this.websocket.readyState === WebSocket.OPEN) {
-            this.websocket.send(JSON.stringify(message));
-            this.myMessages.push({ text: this.newMessage, avatarError: false });
-            this.newMessage = '';
-          } else if (this.websocket.readyState === WebSocket.CONNECTING) {
-            setTimeout(sendMsg, this.retryInterval);
-          } else {
-            console.error('WebSocket connection is not open');
-          }
-        };
-
-        sendMsg();
-      }
-    },
-    initWebSocket() {
-      const from = this.$route.params.message.from;
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${wsProtocol}//${window.location.host}/chatroom/${from}`;
-
-      this.websocket = new WebSocket(wsUrl);
-
-      this.websocket.onopen = () => {
-        console.log('WebSocket connection established');
-      };
-
-      this.websocket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        if (message.from === this.$route.params.message.to) {
-          this.chatMessages.push({ text: message.text, avatarError: false });
+        try {
+          await axios.post(`${this.$httpUrl}/message/sendMessage`, message, {
+            headers: {
+              'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+            }
+          });
+          this.chatMessages.push({ ...message, avatarError: false });
+          this.newMessage = '';
+          this.filterMessagesByGoodsId();
+        } catch (error) {
+          console.error('Error sending message:', error);
         }
-      };
-
-      this.websocket.onclose = () => {
-        console.log('WebSocket connection closed');
-      };
-
-      this.websocket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
+      }
     }
   },
   created() {
     this.chatPartnerName = this.$route.params.message.name;
     this.fetchChatMessages();
-    this.initWebSocket();
   }
 };
 </script>
-
 <style scoped>
 .v-app-bar {
   justify-content: space-between;
