@@ -470,6 +470,8 @@ export default {
     async  getDian(){
       const {data}= await getDian(this.pageInfo)
       this.dianZanNum=data.length
+      const zan=data.some(item=>item.courseId==this.pageInfo.id && item.userId==this.commonParams.userId)
+     this.isZan=zan
       console.log(data)
     },
     async getFen(){

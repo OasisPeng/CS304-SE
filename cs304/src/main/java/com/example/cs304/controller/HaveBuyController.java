@@ -25,6 +25,8 @@ public class HaveBuyController {
         HaveBuy haveBuy1 = service.delete(haveBuy);
         return Result.suc(haveBuy1);
     }
+
+
     @GetMapping("/user/{id}")
     public Result getByUserId(@PathVariable Integer id) {
         return Result.suc(service.selectByUserId(id));
