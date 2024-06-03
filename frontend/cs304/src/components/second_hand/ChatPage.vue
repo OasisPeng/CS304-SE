@@ -10,8 +10,8 @@
       <v-col cols="12" class="d-flex align-center">
         <v-img :src="product.image" class="goods-image"></v-img>
         <div class="product-info">
-          <div class="product-title">{{ product.name}}</div>
-          <div class="product-price">{{ product.price}}</div>
+          <div class="product-title">{{ product.name }}</div>
+          <div class="product-price">{{ product.price }}</div>
         </div>
       </v-col>
     </v-row>
@@ -20,16 +20,13 @@
         <div
             v-for="(msg, index) in filteredMessages"
             :key="index"
-            :class="['chat-bubble', msg.from === currentUser ? 'right' : 'left']"
+            :class="['chat-bubble', isCurrentUser(msg.from) ? 'right' : 'left']"
         >
-          <v-avatar
-              :left="msg.from !== currentUser"
-              :right="msg.from === currentUser"
-              size="32"
-          >
-            <v-icon v-if="msg.from !== currentUser">mdi-account-circle</v-icon>
-            <v-icon v-else>mdi-account-circle-outline</v-icon>
-          </v-avatar>
+          <div :class="isCurrentUser(msg.from) ? 'right-avatar' : 'left-avatar'">
+            <v-avatar size="32">
+              <v-icon>{{ getIconType(msg.from) }}</v-icon>
+            </v-avatar>
+          </div>
           <div class="chat-text">{{ msg.text }}</div>
         </div>
       </v-col>
@@ -50,13 +47,14 @@ import axios from 'axios';
 
 export default {
   data() {
+    const storedInfo = JSON.parse(localStorage.getItem('info')) || {};
     return {
       chatPartnerName: '',
       chatMessages: [],
       filteredMessages: [],
       newMessage: '',
-      currentUser: JSON.parse(localStorage.getItem('info')).username,
-      chatPartner: '', // 保存聊天对象的ID
+      currentUser: storedInfo.username || '',
+      chatPartner: '',
       goodsId: null,
       product: {}
     };
@@ -105,7 +103,7 @@ export default {
           .filter(msg => msg.goodsId === this.goodsId)
           .sort((a, b) => new Date(a.time) - new Date(b.time));
 
-      console.log(this.filteredMessages)
+      console.log(this.filteredMessages);
     },
     async sendMessage() {
       if (this.newMessage.trim() !== '') {
@@ -133,24 +131,87 @@ export default {
           console.error('Error sending message:', error);
         }
       }
-    }
+    },
+    async prepare() {
+      const storedInfoRaw = localStorage.getItem('info');
+      if (!storedInfoRaw) {
+        console.error('No user info found in localStorage');
+        return;
+      }
+
+      let storedInfo;
+      try {
+        storedInfo = JSON.parse(storedInfoRaw);
+      } catch (error) {
+        console.error('Error parsing user info from localStorage', error);
+        return;
+      }
+
+      if (!storedInfo || !storedInfo.username) {
+        console.error('Invalid user info in localStorage');
+        return;
+      }
+
+      this.currentUser = storedInfo.username;
+
+      const from = this.$route.params.message.from || "";
+      const to = this.$route.params.message.to || "";
+
+      console.log("from", from);
+      console.log("to", to);
+
+      if (from === this.currentUser) {
+        this.chatPartner = to;
+      } else {
+        this.chatPartner = from;
+      }
+      this.chatPartnerName = this.chatPartner;
+    },
+    isCurrentUser(user) {
+      console.log("当前用户:", this.currentUser, "类型:", typeof this.currentUser);
+      console.log("消息发送者:", user, "类型:", typeof user);
+
+      if (this.currentUser === null || this.currentUser === undefined || this.currentUser === '') {
+        console.error("当前用户未定义或为空");
+        return false;
+      }
+
+      if (user === null || user === undefined || user === '') {
+        console.error("消息发送者未定义或为空");
+        return false;
+      }
+
+      // 将两者都转换为字符串进行比较
+      const result = String(user) === String(this.currentUser);
+      console.log("比较结果:", result);
+      return result;
+    },
+
+    getIconType(user) {
+      console.log("当前用户:", this.currentUser, "类型:", typeof this.currentUser);
+      console.log("消息发送者:", user, "类型:", typeof user);
+
+      if (this.currentUser === null || this.currentUser === undefined || this.currentUser === '') {
+        console.error("当前用户未定义或为空");
+        return 'mdi-account-circle'; // 返回默认值
+      }
+
+      if (user === null || user === undefined || user === '') {
+        console.error("消息发送者未定义或为空");
+        return 'mdi-account-circle'; // 返回默认值
+      }
+
+      // 将两者都转换为字符串进行比较
+      const result = String(user) !== String(this.currentUser) ? 'mdi-account-circle' : 'mdi-account-circle-outline';
+      console.log("图标类型:", result);
+      return result;
+    },
   },
-  created() {
-    const from = this.$route.params.message.from;
-    const to = this.$route.params.message.to;
-
-    // 确定聊天对象
-    if (from === this.currentUser) {
-      this.chatPartner = to;
-    } else {
-      this.chatPartner = from;
-    }
-
-    // 设置聊天对象的名称
-    this.chatPartnerName = this.chatPartner;
-
+  mounted() {
+    this.prepare();
     this.fetchChatMessages();
-    this.fetchProductDetails(); // Fetch product details when the component is created
+    this.fetchProductDetails();
+    console.log("当前是谁", this.currentUser)
   }
 };
 </script>
@@ -211,6 +272,7 @@ export default {
 
 .chat-bubble.right {
   justify-content: flex-end;
+  flex-direction: row-reverse;
 }
 
 .chat-bubble.right .chat-text {
@@ -219,6 +281,14 @@ export default {
   border-radius: 10px;
   padding: 10px;
   margin-right: 10px;
+}
+
+.left-avatar {
+  margin-right: 10px;
+}
+
+.right-avatar {
+  margin-left: 10px;
 }
 
 .message-input-container {
