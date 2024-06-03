@@ -30,27 +30,31 @@ public class MessageServiceImpl implements MessageService {
                     .eq(Message::getFrom, id2);
 
         }).orderByAsc(Message::getTime);
-
-        return dao.selectList(lqw);
+        List<Message> messages=dao.selectList(lqw);
+        System.out.println("SelectByTwoUser SQL: " + lqw.getSqlSegment());
+        return messages;
     }
 
     @Override
     public List<Message> SelectByOneUserTo(Integer id) {
         LambdaQueryWrapper<Message> lqw = new LambdaQueryWrapper<>();
-        lqw.nested(wrapper -> {
-            wrapper.eq(Message::getTo, id);
-        }).orderByAsc(Message::getTime);
-        return dao.selectList(lqw);
+        lqw.eq(Message::getTo, id)
+                .orderByAsc(Message::getTime);
+        List<Message> messages = dao.selectList(lqw);
+        System.out.println("SelectByOneUserTo SQL: " + lqw.getSqlSegment());
+        return messages;
     }
 
     @Override
     public List<Message> SelectByOneUserFrom(Integer id) {
         LambdaQueryWrapper<Message> lqw = new LambdaQueryWrapper<>();
-        lqw.nested(wrapper -> {
-            wrapper.eq(Message::getFrom, id);
-        }).orderByAsc(Message::getTime);
-        return dao.selectList(lqw);
+        lqw.eq(Message::getFrom, id)
+                .orderByAsc(Message::getTime);
+        List<Message> messages = dao.selectList(lqw);
+        System.out.println("SelectByOneUserFrom SQL: " + lqw.getSqlSegment());
+        return messages;
     }
+
 
     @Override
     public Message InsertMessage(Message message) {

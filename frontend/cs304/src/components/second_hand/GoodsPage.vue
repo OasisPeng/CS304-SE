@@ -1,194 +1,228 @@
 <template>
   <v-container>
     <v-app-bar app color="white" flat>
-      <v-btn icon @click="goBack">
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
-      <v-toolbar-title>商品详情</v-toolbar-title>
+      <v-toolbar-title>消息中心</v-toolbar-title>
     </v-app-bar>
-
-    <v-card class="mx-auto my-5" max-width="600">
-      <v-img :src="product.image"></v-img>
-      <v-card-title>{{ product.name }}</v-card-title>
-      <v-card-subtitle class="pb-0">分类: {{ product.category }}</v-card-subtitle>
-      <v-card-subtitle>发布时间: {{ formatDate(product.publishDate) }}</v-card-subtitle>
-      <v-card-text>
-        <div class="text-h5 font-weight-bold mb-2">¥{{ product.price }}</div>
-        <div class="mb-3">{{ product.description }}</div>
-        <v-divider></v-divider>
-        <div class="mt-3">卖家ID: {{ product.sellerId }}</div>
-        <div>买家ID: {{ product.buyerId }}</div>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn color="green" @click="buyProduct">购买</v-btn>
-        <v-btn text @click="contactSeller">联系卖家</v-btn>
-      </v-card-actions>
-      <v-btn
-          v-if="isSeller"
-          color="red"
-          fab
-          bottom
-          right
-          @click="removeProduct"
-          class="fixed-bottom-right"
-      >
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-      <div v-if="isSeller" class="remove-text">下架该商品</div>
-    </v-card>
+    <v-tabs v-model="tab" background-color="white" grow color="teal">
+      <v-tab>互动消息</v-tab>
+      <v-tab>我想要的</v-tab>
+    </v-tabs>
+    <v-tabs-items v-model="tab">
+      <v-tab-item>
+        <v-list>
+          <v-list-item
+              v-for="(message, index) in interactionMessages"
+              :key="index"
+              @click="goToChat(message)"
+          >
+            <v-list-item-avatar>
+              <v-img
+                  v-if="message.avatar && !message.avatarError"
+                  :src="message.avatar"
+                  @error="message.avatarError = true"
+              ></v-img>
+              <v-icon v-else>mdi-account-circle</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>{{ message.from }}</v-list-item-title>
+              <v-list-item-subtitle>{{ message.text }}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-list-item-action-text>{{ formatTime(message.time) }}</v-list-item-action-text>
+            </v-list-item-action>
+            <v-img
+                v-if="message.goodsImage"
+                :src="message.goodsImage"
+                class="goods-image"
+            ></v-img>
+            <v-icon
+                v-if="message.old !== 0"
+                color="red"
+                class="red-dot"
+            >mdi-circle</v-icon>
+          </v-list-item>
+        </v-list>
+      </v-tab-item>
+      <v-tab-item>
+        <v-list>
+          <v-list-item
+              v-for="(message, index) in orderMessages"
+              :key="index"
+              @click="goToChat(message)"
+          >
+            <v-list-item-avatar>
+              <v-img
+                  v-if="message.avatar && !message.avatarError"
+                  :src="message.avatar"
+                  @error="message.avatarError = true"
+              ></v-img>
+              <v-icon v-else>mdi-account-circle</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>{{ message.to }}</v-list-item-title>
+              <v-list-item-subtitle>{{ message.text }}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-list-item-action-text>{{ formatTime(message.time) }}</v-list-item-action-text>
+            </v-list-item-action>
+            <v-img
+                v-if="message.goodsImage"
+                :src="message.goodsImage"
+                class="goods-image"
+            ></v-img>
+            <v-icon
+                v-if="message.old !== 0"
+                color="red"
+                class="red-dot"
+            >mdi-circle</v-icon>
+          </v-list-item>
+        </v-list>
+      </v-tab-item>
+    </v-tabs-items>
+    <div class="fixed-bottom">
+      <BottomNavigation :value="selectedPage" />
+    </div>
   </v-container>
 </template>
-
 <script>
+import BottomNavigation from "@/components/second_hand/BottomNavigation";
+import moment from "moment";
+
 export default {
+  components: {
+    BottomNavigation
+  },
   data() {
     return {
-      product: {
-        id: 1,
-        name: '示例商品',
-        price: 299.99,
-        image: '',
-        sellerId: 'Aaa',
-        buyerId: 'Bbb',
-        description: '好东西',
-        category: 'book',
-        publishDate: new Date()
-      },
-      websocket: null,
-      currentUser: JSON.parse(localStorage.getItem('info')).username,
-      isSeller: false
+      selectedPage: 'MessagesPage',
+      tab: 0,
+      interactionMessages: [],
+      orderMessages: []
     };
   },
-  async created() {
-    const productId = this.$route.params.id;
-    try {
-      const response = await this.$axios.get(this.$httpUrl + '/goods/' + productId, {
-        withCredentials: false,
-        headers: {
-          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-        },
-      });
-      const productData = response.data.data;
-      this.product = {
-        id: productData.id,
-        name: productData.name,
-        price: productData.price,
-        image: productData.image,
-        sellerId: productData.sellerId,
-        buyerId: productData.buyerId,
-        description: productData.description,
-        category: productData.category,
-        publishDate: productData.publishDate
-      };
-      // 检查当前用户是否是卖家
-      this.isSeller = this.product.sellerId === this.currentUser;
-    } catch (error) {
-      console.error('Error fetching product details:', error);
-    }
-  },
   methods: {
-    goBack() {
-      this.$router.go(-1);
-    },
-    buyProduct() {
-      // 购买逻辑
-    },
-    contactSeller() {
-      const sellerId = this.product.sellerId;
-      const buyerId = this.currentUser;
-      const greetingMessage = {
-        from: buyerId,
-        to: sellerId,
-        text: "你好，想了解下这个商品~",
-        time: new Date()
-      };
+    async fetchInteractionMessages() {
+      const data = localStorage.getItem('info');
+      const userInfo = JSON.parse(data);
+      const id = userInfo.username;
 
-      this.$axios.post(this.$httpUrl + '/message/sendMessage', greetingMessage, {
-        headers: {
-          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-        }
-      });
-
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${wsProtocol}//${window.location.host}/chatroom/${buyerId}`;
-
-      this.websocket = new WebSocket(wsUrl);
-      this.websocket.onopen = () => {
-        console.log('WebSocket connection established');
-      };
-      this.websocket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        console.log('Received message:', message);
-      };
-      this.websocket.onclose = () => {
-        console.log('WebSocket connection closed');
-      };
-      this.websocket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
-    },
-    async removeProduct() {
       try {
-        console.log(this.product);
-        const response = await this.$axios.post(this.$httpUrl + '/goods/del', this.product, {
+        const response = await this.$axios.get(this.$httpUrl + `/message/getByOneUserTo/` + id, {
+          withCredentials: false,
           headers: {
             'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-          }
+          },
         });
-        if (response.data.msg === '成功') {
-          this.$router.push('/FirstPage');
-        } else {
-          console.error('商品下架失败');
+
+        const messages = response.data.data;
+        const uniqueMessages = {};
+
+        for (let message of messages) {
+          const key = `${message.from}-${message.goodsId}`;
+          if (!uniqueMessages[key] || new Date(uniqueMessages[key].time) < new Date(message.time)) {
+            // Fetch product info
+            const productResponse = await this.$axios.get(this.$httpUrl + `/goods/${message.goodsId}`, {
+              withCredentials: false,
+              headers: {
+                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+              }
+            });
+            message.goodsImage = productResponse.data.data.image;
+            uniqueMessages[key] = message;
+          }
         }
+
+        this.interactionMessages = Object.values(uniqueMessages);
+
       } catch (error) {
-        console.error('Error removing product:', error);
+        console.error('Error fetching interaction messages:', error);
       }
     },
-    formatDate(date) {
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return new Date(date).toLocaleDateString(undefined, options);
+    async fetchOrderMessages() {
+      const data = localStorage.getItem('info');
+      const userInfo = JSON.parse(data);
+      const id = userInfo.username;
+
+      try {
+        const response = await this.$axios.get(this.$httpUrl + `/message/getByOneUserFrom/` + id, {
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          },
+        });
+
+        const messages = response.data.data;
+        const uniqueMessages = {};
+
+        for (let message of messages) {
+          const key = `${message.to}-${message.goodsId}`;
+          if (!uniqueMessages[key] || new Date(uniqueMessages[key].time) < new Date(message.time)) {
+            // Fetch product info
+            const productResponse = await this.$axios.get(this.$httpUrl + `/goods/${message.goodsId}`, {
+              withCredentials: false,
+              headers: {
+                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+              }
+            });
+            message.goodsImage = productResponse.data.data.image;
+            uniqueMessages[key] = message;
+          }
+        }
+
+        this.orderMessages = Object.values(uniqueMessages);
+
+      } catch (error) {
+        console.error('Error fetching order messages:', error);
+      }
+    },
+    goToChat(message) {
+      this.$router.push({ name: 'ChatPage', params: { message } });
+    },
+    formatTime(time) {
+      return moment(time).format('YYYY-MM-DD HH:mm');
     }
+  },
+  watch: {
+    tab(newVal) {
+      if (newVal === 0) {
+        this.fetchInteractionMessages();
+      } else if (newVal === 1) {
+        this.fetchOrderMessages();
+      }
+    }
+  },
+  created() {
+    this.fetchInteractionMessages(); // 默认加载互动消息
   }
 };
 </script>
-
-
 <style scoped>
-.v-container {
-  padding-top: 64px;
+.v-app-bar {
+  justify-content: center;
 }
 
-.v-card-title {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.v-card-subtitle {
-  font-size: 16px;
-  color: rgb(128, 128, 128);
-}
-
-.v-card-text {
-  font-size: 14px;
-}
-
-.v-btn {
-  margin-right: 10px;
-}
-
-.fixed-bottom-right {
+.fixed-bottom {
   position: fixed;
-  bottom: 35px;
-  right: 20px;
-  z-index: 10;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 10px 0;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.remove-text {
-  position: fixed;
-  bottom: 15px; /* Adjust the position as needed */
-  right: 20px; /* Adjust the position as needed */
-  font-size: 12px;
-  color: red;
-  text-align: center;
+.red-dot {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 5px;
+}
+
+.goods-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-left: 10px;
 }
 </style>

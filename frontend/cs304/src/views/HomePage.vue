@@ -11,7 +11,7 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item @click="goToProfile">
+                <v-list-item @click="goToProfile" v-if="false">
                   <v-list-item-title>个人信息</v-list-item-title>
                 </v-list-item>
                 <v-list-item @click="logout">

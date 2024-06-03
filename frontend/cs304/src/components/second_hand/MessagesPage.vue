@@ -5,7 +5,7 @@
     </v-app-bar>
     <v-tabs v-model="tab" background-color="white" grow color="teal">
       <v-tab>互动消息</v-tab>
-      <v-tab>我想要的</v-tab>
+      <v-tab>我发出的</v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item>
@@ -28,8 +28,13 @@
               <v-list-item-subtitle>{{ message.text }}</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-list-item-action-text>{{ message.time }}</v-list-item-action-text>
+              <v-list-item-action-text>{{ formatTime(message.time) }}</v-list-item-action-text>
             </v-list-item-action>
+            <v-icon
+                v-if="message.old !== 0"
+                color="red"
+                class="red-dot"
+            >mdi-circle</v-icon>
           </v-list-item>
         </v-list>
       </v-tab-item>
@@ -53,8 +58,13 @@
               <v-list-item-subtitle>{{ message.text }}</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-list-item-action-text>{{ message.time }}</v-list-item-action-text>
+              <v-list-item-action-text>{{ formatTime(message.time) }}</v-list-item-action-text>
             </v-list-item-action>
+            <v-icon
+                v-if="message.old !== 0"
+                color="red"
+                class="red-dot"
+            >mdi-circle</v-icon>
           </v-list-item>
         </v-list>
       </v-tab-item>
@@ -67,6 +77,7 @@
 
 <script>
 import BottomNavigation from "@/components/second_hand/BottomNavigation";
+import moment from "moment";
 
 export default {
   components: {
@@ -81,42 +92,82 @@ export default {
     };
   },
   methods: {
-    async fetchMessages() {
+    async fetchInteractionMessages() {
       const data = localStorage.getItem('info');
       const userInfo = JSON.parse(data);
       const id = userInfo.username;
 
       try {
-        const responseTo = await this.$axios.get(this.$httpUrl + `/message/getByOneUserTo/` + id, {
+        const response = await this.$axios.get(this.$httpUrl + `/message/getByOneUserTo/` + id, {
           withCredentials: false,
           headers: {
             'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
           },
         });
 
-        const responseFrom = await this.$axios.get(this.$httpUrl + `/message/getByOneUserFrom/${id}`, {
-          withCredentials: false,
-          headers: {
-            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
-          },
+        const messages = response.data.data;
+        const uniqueMessages = {};
+
+        messages.forEach(message => {
+          const key = `${message.from}-${message.goodsId}`;
+          if (!uniqueMessages[key] || new Date(uniqueMessages[key].time) < new Date(message.time)) {
+            uniqueMessages[key] = message;
+          }
         });
 
-        console.log("Response to:", responseTo.data.data);
-        console.log("Response from:", responseFrom.data.data);
-
-        this.interactionMessages = responseTo.data.data;
-        this.orderMessages = responseFrom.data.data;
+        this.interactionMessages = Object.values(uniqueMessages);
 
       } catch (error) {
-        console.error('Error fetching messages:', error);
+        console.error('Error fetching interaction messages:', error);
+      }
+    },
+    async fetchOrderMessages() {
+      const data = localStorage.getItem('info');
+      const userInfo = JSON.parse(data);
+      const id = userInfo.username;
+
+      try {
+        const response = await this.$axios.get(this.$httpUrl + `/message/getByOneUserFrom/` + id, {
+          withCredentials: false,
+          headers: {
+            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('info')).token}`
+          },
+        });
+
+        const messages = response.data.data;
+        const uniqueMessages = {};
+
+        messages.forEach(message => {
+          const key = `${message.to}-${message.goodsId}`;
+          if (!uniqueMessages[key] || new Date(uniqueMessages[key].time) < new Date(message.time)) {
+            uniqueMessages[key] = message;
+          }
+        });
+
+        this.orderMessages = Object.values(uniqueMessages);
+
+      } catch (error) {
+        console.error('Error fetching order messages:', error);
       }
     },
     goToChat(message) {
       this.$router.push({ name: 'ChatPage', params: { message } });
+    },
+    formatTime(time) {
+      return moment(time).format('YYYY-MM-DD HH:mm');
+    }
+  },
+  watch: {
+    tab(newVal) {
+      if (newVal === 0) {
+        this.fetchInteractionMessages();
+      } else if (newVal === 1) {
+        this.fetchOrderMessages();
+      }
     }
   },
   created() {
-    this.fetchMessages();
+    this.fetchInteractionMessages(); // 默认加载互动消息
   }
 };
 </script>
@@ -134,5 +185,12 @@ export default {
   background: white;
   padding: 10px 0;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.red-dot {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 5px;
 }
 </style>
