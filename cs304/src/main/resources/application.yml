@@ -4,6 +4,12 @@ server:
 spring:
 #  profiles:
 #    active: dev
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+      poll-interval: 3000
+      quiet-period: 1000
   datasource:
     url: jdbc:mysql://120.78.7.40:3306/cs304?useUnicode=true&characterEncoding=utf-8&useSSL=false&severTimezone=GM%2B8
     driver-class-name: com.mysql.cj.jdbc.Driver

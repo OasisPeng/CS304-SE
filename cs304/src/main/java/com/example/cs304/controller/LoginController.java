@@ -24,7 +24,7 @@ public class LoginController {
     @PostMapping("/login")
     @MonitorPerformance
     public Result login(@RequestBody Student student) {
-//        System.out.println(student);
+        System.out.println("已登录");
         if (!Util.loginVerify(student.getUsername(), student.getPassword())) {
             return Result.fail();
         } else {
