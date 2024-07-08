@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.example.cs304.annotation.MonitorPerformance;
 import com.example.cs304.entity.Course;
 import com.example.cs304.entity.CourseForTimetable;
 import org.apache.http.Header;
@@ -68,7 +67,7 @@ public class Util {
         times[1] = timeConvert.get(et);
         return times;
     }
-    @MonitorPerformance
+
     public static ArrayList<CourseForTimetable> getCourses(String coursesJSON) {
         if (Objects.equals(coursesJSON, "")) {
             return null;
@@ -127,7 +126,6 @@ public class Util {
         }
         return courseForTimetables;
     }
-    @MonitorPerformance
     public static String getCourInfo(String route, String js) throws IOException {
         if (Objects.equals(route, "") || (Objects.equals(js, ""))) {
             return "";
@@ -296,7 +294,6 @@ public class Util {
         LocalDate time = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         return calculateWeek(time);
     }
-    @MonitorPerformance
     public static boolean loginVerify(String username, String password) {
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setRedirectStrategy(new DisableRedirectStrategy())

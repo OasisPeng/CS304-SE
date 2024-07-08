@@ -22,10 +22,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = util.extractJWT(request);
-        System.out.println(token);
+//        System.out.println(token);
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             String username = util.parseJWT(token);
-            System.out.println("parsed from token: "+username);
+//            System.out.println("parsed from token: "+username);
             // TODO: 判断解析得到的username是否和真实username相同
             // 如果token有效
             if (username != null) {

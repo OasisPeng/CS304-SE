@@ -1,5 +1,6 @@
 package com.example.cs304.controller;
 
+import com.example.cs304.annotation.MonitorPerformance;
 import com.example.cs304.common.JwtUtil;
 import com.example.cs304.common.Result;
 import com.example.cs304.common.Util;
@@ -21,8 +22,9 @@ public class LoginController {
     @Autowired
     JwtUtil util;
     @PostMapping("/login")
+    @MonitorPerformance
     public Result login(@RequestBody Student student) {
-        System.out.println(student);
+//        System.out.println(student);
         if (!Util.loginVerify(student.getUsername(), student.getPassword())) {
             return Result.fail();
         } else {

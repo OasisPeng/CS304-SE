@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.cs304.annotation.MonitorPerformance;
 import com.example.cs304.common.Code;
 import com.example.cs304.common.Result;
 import com.example.cs304.common.Util;
@@ -39,6 +40,7 @@ public class CourseController {
 
     //分页查询
     @PostMapping("/listPage")
+//    @MonitorPerformance
     public Result listPage(@RequestBody HashMap param) {
         IPage result = courseService.listPage(param);
         return Result.suc(result.getRecords());
@@ -46,6 +48,7 @@ public class CourseController {
 
     //查找课程表
     @PostMapping ("/queryCurrentCourse")
+    @MonitorPerformance
     public Result queryKCB(@RequestBody Student student) throws IOException, URISyntaxException {
        String[] cookies =  Util.casLogin(student.getUsername(), student.getPassword());
        String rawCourseInfo = Util.getCourInfo(cookies[0], cookies[1]);
