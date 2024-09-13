@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Transactional()
+@Transactional
 public interface GoodsService {
 
 //    @Cacheable(cacheNames= "goods", key = "'category:' + #category")
