@@ -3,11 +3,14 @@ package com.example.cs304.common;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Value;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
 import java.nio.charset.StandardCharsets;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -87,7 +90,6 @@ public class JwtUtil {
         }
         return null;
     }
-
     /**
      * 从请求头中提取token
      * @param request 拦截到的请求
